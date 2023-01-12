@@ -3,13 +3,13 @@ from .hierarchy import Hierarchy
 
 
 class Target(Hierarchy):
-    RESULT_NOK       = {'name': 'Not OK',    'symbol': '×', 'color': 'red'    }
-    RESULT_OK        = {'name': 'OK',        'symbol': '✓', 'color': 'green'  }
-    RESULT_TOLERATED = {'name': 'Tolerated', 'symbol': '≈', 'color': 'yellow' }
-    RESULT_INVEST    = {'name': 'Invest',    'symbol': '↗', 'color': 'red'    }
-    RESULT_DEVEST    = {'name': 'Devest',    'symbol': '↘', 'color': 'red'    }
-    RESULT_START     = {'name': 'Start',     'symbol': '↯', 'color': 'cyan'   }
-    RESULT_NONE      = {'name': 'No target', 'symbol': '‣', 'color': 'blue'   }
+    RESULT_NOK       = {'name': 'Not OK',    'symbol': '×', 'color': 'red'   }
+    RESULT_OK        = {'name': 'OK',        'symbol': '✓', 'color': 'green' }
+    RESULT_TOLERATED = {'name': 'Tolerated', 'symbol': '≈', 'color': 'yellow'}
+    RESULT_INVEST    = {'name': 'Invest',    'symbol': '↗', 'color': 'red'   }
+    RESULT_DEVEST    = {'name': 'Devest',    'symbol': '↘', 'color': 'red'   }
+    RESULT_START     = {'name': 'Start',     'symbol': '↯', 'color': 'cyan'  }
+    RESULT_NONE      = {'name': 'No target', 'symbol': '‣', 'color': 'blue'  }
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -24,13 +24,16 @@ class Target(Hierarchy):
             return Target.RESULT_START
         return Target.RESULT_NONE
     
+    def prehint(self):
+        return ''
+    
     def hint(self):
-        return 'Gotta invest!' if self.check() == Target.RESULT_START else 'No target'
+        return '- Gotta invest!' if self.check() == Target.RESULT_START else '- No target'
     
     def render_amount(self, n_characters=0):
         result = self.check() 
         result = result if result != True else Target.RESULT_NOK # TODO weird bug??? Workaround for now
-        return f'[{result["color"]}]{result["symbol"]} {round(self.get_amount()):>{n_characters}} €[/]'
+        return f'[{result["color"]}]{result["symbol"]} {round(self.get_amount()):>{n_characters}} €[/][dim white]{self.prehint()}[/]'
     
 
 class TargetRange(Target):
@@ -57,7 +60,7 @@ class TargetRange(Target):
         return self.get_amount()
     
     def hint(self):
-        return f'Target {self.target_min}-{self.target_max} €'
+        return f'- Range {self.target_min}-{self.target_max} €'
 
 
 class TargetMax(TargetRange):
@@ -65,7 +68,7 @@ class TargetMax(TargetRange):
         super().__init__(0, target_max, tolerance, parent)
     
     def hint(self):
-        return f'Maximum {self.target_max} €'
+        return f'- Maximum {self.target_max} €'
 
 
 class TargetMin(TargetRange):
@@ -73,11 +76,11 @@ class TargetMin(TargetRange):
         super().__init__(target_min, np.inf, tolerance, parent)
     
     def hint(self):
-        return f'Minimum {self.target_min} €'
+        return f'- Minimum {self.target_min} €'
 
 
 class TargetRatio(TargetRange):
-    def __init__(self, target_ratio, zone=0, tolerance=0, parent=None): # TODO rename zone?
+    def __init__(self, target_ratio, zone=4, tolerance=2, parent=None):
         target_min = max(target_ratio - zone, 0)
         target_max = min(target_ratio + zone, 100)
         super().__init__(target_min, target_max, tolerance, parent)
@@ -93,8 +96,11 @@ class TargetRatio(TargetRange):
     def _get_reference_amount(self):
         return self.parent.parent.get_amount()
     
+    def prehint(self):
+        return f' ({round(self.get_ratio()):>2}%)'
+    
     def hint(self):
-        return f'Ratio {round(self.get_ratio())}% → {self.target_ratio}%'
+        return f'→ {self.target_ratio}%'
 
 
 class TargetGlobalRatio(TargetRatio):
@@ -108,4 +114,4 @@ class TargetGlobalRatio(TargetRatio):
         return root.get_amount()
     
     def hint(self):
-        return f'Global ratio {round(self.get_ratio())}% → {self.target_ratio}%'
+        return f'→ Global {self.target_ratio}%'

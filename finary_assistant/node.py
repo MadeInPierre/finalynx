@@ -36,5 +36,5 @@ class Node(Hierarchy):
         return f'{self.get_amount()} {self.name}'
         
     def __str__(self):
-        hint = f'[dim white] - {self.target.hint()}[/]' if self.target.check() not in [Target.RESULT_NONE, Target.RESULT_START] else ''
+        hint = f'[dim white] {self.target.hint()}[/]' if self.target.check() not in [Target.RESULT_NONE, Target.RESULT_START] else ''
         return f'{self._render_amount()} {self._render_name()}' + hint

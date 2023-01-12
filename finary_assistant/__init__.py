@@ -1,5 +1,5 @@
 from .console import console
-from .fetch import match_finary
+from .finary_fetch import finary_fetch
 from .folder import Folder
 from .line import Line
 from .node import Node

@@ -4,7 +4,7 @@ from rich.tree import Tree
 from .console import console
 from .line import Line
 
-def match_finary(patrimoine):
+def finary_fetch(patrimoine):
     def match_line(patrimoine, key, amount, node, indent=0):
         key, amount = unidecode(key), round(amount)
         node_child = node.add(f"{amount} {key}")

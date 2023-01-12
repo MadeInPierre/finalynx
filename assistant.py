@@ -8,8 +8,8 @@ traceback.install()
 pretty.install()
 
 from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
+from finary_assistant import finary_fetch
 from finary_assistant import Folder, Line
-from finary_assistant import match_finary
 from finary_assistant import console
 
 if __name__ == '__main__':
@@ -84,6 +84,7 @@ if __name__ == '__main__':
 
     # Fill tree with current valuations fetched from Finary
     with console.status("[bold green]Fetching data from Finary...") as status:
-        finary_tree = match_finary(patrimoine)
+        finary_tree = finary_fetch(patrimoine)
 
-    console.print(Columns([patrimoine.build_tree(), Panel(finary_tree, title="Finary data")], padding=(2, 50)))
+    console.print('\n')
+    console.print(Columns([patrimoine.build_tree(), Panel(finary_tree, title="Finary data")], padding=(2, 20)))

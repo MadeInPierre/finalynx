@@ -3,13 +3,13 @@ from .hierarchy import Hierarchy
 
 
 class Target(Hierarchy):
-    RESULT_NOK       = {'name': 'Not OK',    'symbol': '×', 'color': 'red'   }
-    RESULT_OK        = {'name': 'OK',        'symbol': '✓', 'color': 'green' }
-    RESULT_TOLERATED = {'name': 'Tolerated', 'symbol': '≈', 'color': 'yellow'}
-    RESULT_INVEST    = {'name': 'Invest',    'symbol': '↗', 'color': 'red'   }
-    RESULT_DEVEST    = {'name': 'Devest',    'symbol': '↘', 'color': 'red'   }
-    RESULT_START     = {'name': 'Start',     'symbol': '↯', 'color': 'cyan'  }
-    RESULT_NONE      = {'name': 'No target', 'symbol': '‣', 'color': 'blue'  }
+    RESULT_NOK       = {'name': 'Not OK',    'symbol': '×', 'color': 'red'    }
+    RESULT_OK        = {'name': 'OK',        'symbol': '✓', 'color': 'green'  }
+    RESULT_TOLERATED = {'name': 'Tolerated', 'symbol': '≈', 'color': 'yellow' }
+    RESULT_INVEST    = {'name': 'Invest',    'symbol': '↗', 'color': 'red'    }
+    RESULT_DEVEST    = {'name': 'Devest',    'symbol': '↘', 'color': 'magenta'}
+    RESULT_START     = {'name': 'Start',     'symbol': '↯', 'color': 'cyan'   }
+    RESULT_NONE      = {'name': 'No target', 'symbol': '‣', 'color': 'blue'   }
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -32,7 +32,7 @@ class Target(Hierarchy):
     
     def render_amount(self, n_characters=0):
         result = self.check() 
-        result = result if result != True else Target.RESULT_NOK # TODO weird bug??? Workaround for now
+        result = result if result != True else Target.RESULT_START # TODO weird bug??? Workaround for now
         return f'[{result["color"]}]{result["symbol"]} {round(self.get_amount()):>{n_characters}} €[/][dim white]{self.prehint()}[/]'
     
 

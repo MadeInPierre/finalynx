@@ -59,10 +59,11 @@ class Bucket:
         return self.get_amount() - self.get_used_amount()
 
 
-class BucketFolder(Folder):
-    def __init__(self, name, bucket, target_amount=np.inf, parent=None, target=None):
-        super().__init__(name, parent, target, bucket.lines)
+class SharedFolder(Folder):
+    def __init__(self, name, bucket, target_amount=np.inf, parent=None, target=None, newline=False):
+        super().__init__(name, parent, target, bucket.lines, newline=False)
         self.target_amount = target_amount
+        self.newline = newline
         self.bucket = bucket
     
     def process(self):
@@ -71,6 +72,9 @@ class BucketFolder(Folder):
 
         for child in self.children:
             child.set_parent(self)
+        
+        if self.children:
+            self.children[-1].newline = self.newline
     
 
     

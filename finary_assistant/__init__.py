@@ -5,7 +5,7 @@ from .line import Line
 from .node import Node
 from .hierarchy import Hierarchy
 from .targets import *
-from .bucket import Bucket, BucketFolder
+from .bucket import Bucket, SharedFolder
 
 # Enable rich's features
 from rich import print, inspect, pretty, traceback

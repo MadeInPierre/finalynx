@@ -5,9 +5,10 @@ from .hierarchy import Hierarchy
 
 
 class Node(Hierarchy):
-    def __init__(self, name, parent=None, target=None):
+    def __init__(self, name, parent=None, target=None, newline=False):
         super().__init__(parent)
         self.name = name
+        self.newline = newline
         self.target = target if target is not None else Target()
         self.target.set_parent(self)
 
@@ -32,9 +33,12 @@ class Node(Hierarchy):
     def _render_name(self):
         return self.name
     
+    def _render_newline(self):
+        return '\n' if self.newline else ''
+    
     def __repr__(self):
         return f'{self.get_amount()} {self.name}'
         
     def __str__(self):
         hint = f'[dim white] {self.target.hint()}[/]' if self.target.check() not in [Target.RESULT_NONE, Target.RESULT_START] else ''
-        return f'{self._render_amount()} {self._render_name()}' + hint
+        return f'{self._render_amount()} {self._render_name()}' + hint + self._render_newline()

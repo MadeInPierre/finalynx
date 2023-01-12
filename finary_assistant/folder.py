@@ -5,12 +5,15 @@ from .line import Line
 
 
 class Folder(Node):
-    def __init__(self, name, parent=None, target=None, children=None):
-        super().__init__(name, parent, target)
+    def __init__(self, name, parent=None, target=None, children=None, newline=False):
+        super().__init__(name, parent, target, newline=False)
         self.children = [] if children is None else children
 
         for child in self.children:
             child.set_parent(self)
+        
+        if self.children:
+            child.newline = newline
     
     def add_child(self, child):
         child.set_parent(self)
@@ -41,3 +44,6 @@ class Folder(Node):
     
     def _render_name(self):
         return f'[blue bold]{self.name}[/]'
+    
+    def _render_newline(self):
+        return ''

@@ -9,7 +9,7 @@ class Target(Hierarchy):
     RESULT_INVEST    = {'name': 'Invest',    'symbol': '↗', 'color': 'red'    }
     RESULT_DEVEST    = {'name': 'Devest',    'symbol': '↘', 'color': 'red'    }
     RESULT_START     = {'name': 'Start',     'symbol': '↯', 'color': 'cyan'   }
-    RESULT_NONE      = {'name': 'No target', 'symbol': '‣', 'color': 'magenta'}
+    RESULT_NONE      = {'name': 'No target', 'symbol': '‣', 'color': 'blue'   }
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -47,9 +47,9 @@ class TargetRange(Target):
             return Target.RESULT_INVEST
         elif self._get_variable() < self.target_min:
             return Target.RESULT_TOLERATED
-        elif self._get_variable() < self.target_max:
+        elif self._get_variable() <= self.target_max:
             return Target.RESULT_OK
-        elif self._get_variable() < self.target_max + self.tolerance:
+        elif self._get_variable() <= self.target_max + self.tolerance:
             return Target.RESULT_TOLERATED
         return Target.RESULT_DEVEST
     
@@ -57,7 +57,7 @@ class TargetRange(Target):
         return self.get_amount()
     
     def hint(self):
-        return f'Objective {self.target_min}-{self.target_max} €'
+        return f'Target {self.target_min}-{self.target_max} €'
 
 
 class TargetMax(TargetRange):

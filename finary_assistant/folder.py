@@ -25,14 +25,19 @@ class Folder(Node):
             child.build_tree(node)
         return node
     
+    def process(self):
+        for child in self.children:
+            child.process()
+    
     def set_child_amount(self, key, amount):
+        success = False
         for child in self.children:
             if isinstance(child, Line) and child.key == key:
                 child.amount = amount
-                return True
+                success = True
             elif isinstance(child, Folder) and child.set_child_amount(key, amount) == True:
-                 return True
-        return False
+                success = True
+        return success
     
     def _render_name(self):
         return f'[blue bold]{self.name}[/]'

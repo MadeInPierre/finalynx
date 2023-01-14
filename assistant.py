@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy as np
 
 # Enable rich's features
@@ -8,12 +9,46 @@ from rich.panel import Panel
 traceback.install()
 pretty.install()
 
+# Portfolio imports
 from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
-from finary_assistant import Folder, Line, Bucket, SharedFolder
+from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio
+
+# Fetch imports
 from finary_assistant import finary_fetch
+
+# Advisor imports
+from finary_assistant import Advisor, Simulator
+
+# Utilities imports
 from finary_assistant import console
 
+# Main routine to fetch amounts, process targets and display the tree
+def main(portfolio, scenario):
+    # Fill tree with current valuations fetched from Finary
+    with console.status('[bold green]Fetching data from Finary...') as status:
+        finary_tree = finary_fetch(portfolio)
+    
+    # Mandatory step after fetching to process some targets and buckets
+    portfolio.process()
+
+    # Get recommendations for immediate investment operations
+    advice = Advisor().advise(portfolio)
+
+    # Simulate the portolio's evolution through the years by auto-investing each month
+    simulation = scenario.simulate(portfolio)
+
+    # Display the final tree and fetched data coming from Finary
+    console.print('\n', Columns([
+        Text(''), 
+        Panel(portfolio.build_tree(hide_root=False), title='Portfolio', padding=(1, 4)), 
+        Panel(finary_tree, title='Finary data'),
+        Panel(advice, title='Advisor'),
+        Panel(simulation, title='Simulation'),
+        ], padding=(2, 10))
+    )
+
 if __name__ == '__main__':
+    # Define groups of Lines, called Buckets, that can be considered as a single line in your portfolio
     bucket_garanti = Bucket([
         Line('Livret A', key='LIVRET A'),
         Line('LDDS', key='Livret de Developpement Durable et Solidaire'),
@@ -21,7 +56,8 @@ if __name__ == '__main__':
         Line('Fonds euro Linxea', key='Fonds Euro Nouvelle Generation'),
     ])
 
-    patrimoine = Folder('Patrimoine', children=[
+    # Define your complete portfolio structure with Lines, Folders (groups of Lines), and SharedFolders (Folder with one Bucket)
+    portfolio = Portfolio(children=[
         Folder('Court Terme', newline=True, children=[
             Folder('Quotidien', target=TargetRange(100, 500, tolerance=100), children=[
                 Line('N26', key='CCP N26'),
@@ -79,17 +115,6 @@ if __name__ == '__main__':
         ]),
     ])
 
-    # Fill tree with current valuations fetched from Finary
-    with console.status('[bold green]Fetching data from Finary...') as status:
-        finary_tree = finary_fetch(patrimoine)
-    
-    # Mandatory step after fetching to process some targets and buckets
-    patrimoine.process()
+    scenario = Simulator()
 
-    # Display the final tree and fetched data coming from Finary
-    console.print('\n', Columns([
-        Text(''), 
-        Panel(patrimoine.build_tree(hide_root=False), title='Patrimoine', padding=(1, 4)), 
-        Panel(finary_tree, title='Finary data')
-        ], padding=(2, 10))
-    )
+    main(portfolio, scenario)

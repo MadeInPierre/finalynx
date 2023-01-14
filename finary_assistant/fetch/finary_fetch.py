@@ -1,21 +1,22 @@
-import finary_api as ff # noqa
+from finary_api.constants import CREDENTIAL_FILE
+import finary_api.__main__ as ff
 from unidecode import unidecode
 from rich.tree import Tree
 from ..console import console
-from ..patrimoine.line import Line
+from ..portfolio.line import Line
 
-def finary_fetch(patrimoine):
-    def match_line(patrimoine, key, amount, node, indent=0):
+def finary_fetch(portfolio):
+    def match_line(portfolio, key, amount, node, indent=0):
         key, amount = unidecode(key), round(amount)
         node_child = node.add(f"{amount} {key}")
-        if not patrimoine.set_child_amount(key, amount):
+        if not portfolio.set_child_amount(key, amount):
             node_child.add('[yellow]WARNING: This line did not match with any envelope, attaching to root')
-            patrimoine.add_child(Line(key, amount=amount))
+            portfolio.add_child(Line(key, amount=amount))
 
     tree = Tree("Finary API", highlight=True, hide_root=True)
 
     # Login to Finary
-    console.log('Signing in to Finary using credentials in \'credentials.json\'...')
+    console.log(f'Signing in to Finary using credentials in \'{CREDENTIAL_FILE}\'...')
     result = ff.signin()
     if result is None or result['message'] != 'Created':
         return tree
@@ -30,7 +31,7 @@ def finary_fetch(patrimoine):
         console.log(f'Fetching {name.lower()}...')
         node = tree.add('[bold]' + str(round(result['timeseries'][-1][1])) + ' ' + name)
         for k, e in result['distribution'].items():
-            match_line(patrimoine, k, e['amount'], node, indent=1)
+            match_line(portfolio, k, e['amount'], node, indent=1)
 
     # Autres
     console.log(f'Fetching other assets...')
@@ -38,7 +39,7 @@ def finary_fetch(patrimoine):
     f_other_total = round(other['timeseries'][-1][1])
     node = tree.add('[bold]' + str(round(f_other_total)) + ' Autres')
     for item in other['data']:
-        match_line(patrimoine, item['name'], item['current_value'], node, indent=1)
+        match_line(portfolio, item['name'], item['current_value'], node, indent=1)
 
     # Investissements
     console.log(f'Fetching investments...')
@@ -49,6 +50,6 @@ def finary_fetch(patrimoine):
         node_account = node.add("[bold]Account: " + account['name'])
         for category in ['fiats', 'securities', 'cryptos', 'fonds_euro', 'startups', 'precious_metals', 'scpis', 'generic_assets', 'real_estates', 'loans', 'crowdlendings']:
             for item in account[category]:
-                match_line(patrimoine, item['security']['name'], item['current_value'], node_account, indent=2)
+                match_line(portfolio, item['security']['name'], item['current_value'], node_account, indent=2)
     
     return tree

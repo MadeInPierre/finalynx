@@ -23,7 +23,7 @@ class Folder(Node):
         return np.sum([child.get_amount() for child in self.children]) if self.children else 0
 
     def build_tree(self, tree=None, **args):
-        node = Tree(str(self), guide_style='blue', **args) if tree is None else tree.add(str(self))
+        node = Tree(str(self), guide_style='grey42', **args) if tree is None else tree.add(str(self))
         for child in self.children:
             child.build_tree(node)
         return node

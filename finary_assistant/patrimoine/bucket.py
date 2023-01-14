@@ -1,7 +1,7 @@
 import numpy as np
 from .folder import Folder
 from .line import Line
-from .console import console
+from ..console import console
 import itertools
 import copy
 

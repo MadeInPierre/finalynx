@@ -14,22 +14,21 @@ from finary_assistant import finary_fetch
 from finary_assistant import console
 
 if __name__ == '__main__':
-    
     bucket_garanti = Bucket([
-        Line("Livret A", key="LIVRET A"),
-        Line("LDDS", key="Livret de Developpement Durable et Solidaire"),
-        Line("Livret Jeune", key="LIVRET JEUNE"),
-        Line("Fonds euro Linxea", key="Fonds Euro Nouvelle Generation"),
+        Line('Livret A', key='LIVRET A'),
+        Line('LDDS', key='Livret de Developpement Durable et Solidaire'),
+        Line('Livret Jeune', key='LIVRET JEUNE'),
+        Line('Fonds euro Linxea', key='Fonds Euro Nouvelle Generation'),
     ])
 
     patrimoine = Folder('Patrimoine', children=[
         Folder('Court Terme', newline=True, children=[
             Folder('Quotidien', target=TargetRange(100, 500, tolerance=100), children=[
-                Line("CCP N26"),
+                Line('N26', key='CCP N26'),
             ]),
             Folder('Mensuel', target=TargetRange(1000, 2000, tolerance=500), children=[
-                Line("CCP Boursorama"),
-                Line("CCP Banque Postale")
+                Line('Boursorama', key='CCP Boursorama'),
+                Line('La Banque Postale', key='CCP Banque Postale')
             ]),
             SharedFolder('Précaution', bucket=bucket_garanti, target_amount=6000, target=TargetMin(6000)),
             SharedFolder('Voyages & Projets', bucket=bucket_garanti, target_amount=2000, target=TargetRange(1500, 2000, tolerance=500)),
@@ -42,22 +41,22 @@ if __name__ == '__main__':
             ]),
             Folder('Actions', target=TargetRatio(40), children=[
                 Folder('ETFs World (Business as usual)', target=TargetRatio(50), children=[
-                    Line("SP500", key="Amundi PEA S&P 500 UCITS ETF", target=TargetRatio(41)),
-                    Line("Russell 2000", key="", target=TargetRatio(9)),
-                    Line("Europe 600", key="BNP Paribas Stoxx Europe 600 UCITS ETF Acc", target=TargetRatio(25)),
-                    Line("Europe Small Cap", key="", target=TargetRatio(5)),
-                    Line("Emerging markets", key="Amundi PEA MSCI Emerging Markets UCITS ETF", target=TargetRatio(14)),
-                    Line("Japon", key="", target=TargetRatio(6))
+                    Line('SP500', key='Amundi PEA S&P 500 UCITS ETF', target=TargetRatio(41)),
+                    Line('Russell 2000', key='', target=TargetRatio(9)),
+                    Line('Europe 600', key='BNP Paribas Stoxx Europe 600 UCITS ETF Acc', target=TargetRatio(25)),
+                    Line('Europe Small Cap', key='', target=TargetRatio(5)),
+                    Line('Emerging markets', key='Amundi PEA MSCI Emerging Markets UCITS ETF', target=TargetRatio(14)),
+                    Line('Japon', key='', target=TargetRatio(6))
                 ]),
                 Folder('ETFs World (Croissance verte)', target=TargetRatio(40), children=[
-                    Line("World ESG", key="Amundi MSCI World SRI UCITS ETF DR", target=TargetRatio(50)),
-                    Line("USA ESG", key="Amundi INDEX MSCI USA SRI UCITS ETF DR", target=TargetRatio(30)),
-                    Line("Euro ESG (PEA)", key="Amundi EURO ISTOXX CLIMATE PARIS ALIGNED PAB UCITS ETF DR - EUR (C)", target=TargetRatio(20)),
-                    Line("Euro ESG (AV)", key="Amundi INDEX MSCI EUROPE SRI UCITS ETF DR", target=TargetRatio(0)),
-                    Line("Emerging markets ESG", key="Amundi INDEX MSCI EMERGING MARKETS SRI UCITS ETF DR", target=TargetRatio(10)),
+                    Line('World ESG', key='Amundi MSCI World SRI UCITS ETF DR', target=TargetRatio(50)),
+                    Line('USA ESG', key='Amundi INDEX MSCI USA SRI UCITS ETF DR', target=TargetRatio(30)),
+                    Line('Euro ESG (PEA)', key='Amundi EURO ISTOXX CLIMATE PARIS ALIGNED PAB UCITS ETF DR - EUR (C)', target=TargetRatio(20)),
+                    Line('Euro ESG (AV)', key='Amundi INDEX MSCI EUROPE SRI UCITS ETF DR', target=TargetRatio(0)),
+                    Line('Emerging markets ESG', key='Amundi INDEX MSCI EMERGING MARKETS SRI UCITS ETF DR', target=TargetRatio(10)),
                 ]),
                 Folder('Gestion pilotée ISR', target=TargetRatio(10), children=[
-                    Line("Goodvest"),
+                    Line('Goodvest'),
                 ]),
             ]),
             Folder('Satellites & Fun', newline=True, target=TargetRatio(10), children=[
@@ -81,7 +80,7 @@ if __name__ == '__main__':
     ])
 
     # Fill tree with current valuations fetched from Finary
-    with console.status("[bold green]Fetching data from Finary...") as status:
+    with console.status('[bold green]Fetching data from Finary...') as status:
         finary_tree = finary_fetch(patrimoine)
     
     # Mandatory step after fetching to process some targets and buckets
@@ -91,6 +90,6 @@ if __name__ == '__main__':
     console.print('\n', Columns([
         Text(''), 
         Panel(patrimoine.build_tree(hide_root=False), title='Patrimoine', padding=(1, 4)), 
-        Panel(finary_tree, title="Finary data")
+        Panel(finary_tree, title='Finary data')
         ], padding=(2, 10))
     )

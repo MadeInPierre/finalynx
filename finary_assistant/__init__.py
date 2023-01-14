@@ -1,11 +1,12 @@
-from .console import console
-from .finary_fetch import finary_fetch
-from .folder import Folder
-from .line import Line
-from .node import Node
-from .hierarchy import Hierarchy
-from .targets import *
-from .bucket import Bucket, SharedFolder
+from .patrimoine import console
+from .patrimoine import Folder
+from .patrimoine import Line
+from .patrimoine import Node
+from .patrimoine import Hierarchy
+from .patrimoine import Bucket, SharedFolder
+from .patrimoine import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
+
+from .fetch import finary_fetch
 
 # Enable rich's features
 from rich import print, inspect, pretty, traceback

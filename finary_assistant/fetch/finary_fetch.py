@@ -1,8 +1,8 @@
 import finary_api as ff # noqa
 from unidecode import unidecode
 from rich.tree import Tree
-from .console import console
-from .line import Line
+from ..console import console
+from ..patrimoine.line import Line
 
 def finary_fetch(patrimoine):
     def match_line(patrimoine, key, amount, node, indent=0):

@@ -8,7 +8,14 @@ This tool synchronizes with your [Finary](https://finary.com/) account to show r
 <img align="center" src="./doc/screenshot.png" width="500" />
 
 ## ✨ Features
-- Hello
+
+1. **✅ Portfolio:** Organize your assets, set targets, and sync with your Finary account.
+2. **⏳ Analyzer:** Generate global statistics and graphs to understand each line and folder.
+3. **⏳ Simulator:** Define your life goals and events, simulate your portfolio's future.
+4. **⏳ Assistant:** Get monthly recommendations on where to invest next to meet your goals.
+5. **⏳ Optional:** Nice but difficult or time-consuming features. Any volunteers?
+
+You can check the [current development status](./TODO.md) anytime. Contributions are warmly welcome!
 
 ## 🤝 Requirements
 1. Install `finary_api` by following the instructions there and make sure everything works.
@@ -96,17 +103,6 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
 ```
 
 In this case, 
-
-
-## ⏳ Development milestones
-
-1. **Portfolio:** Organize your assets, set targets, and sync with your Finary account.
-2. **Analyzer:** Generate global statistics and graphs to understand each line and folder.
-3. **Simulator:** Define your life goals and events, simulate your portfolio's future.
-4. **Assistant:** Get monthly recommendations on where to invest next to meet your goals.
-5. **Optional:** Nice but difficult or time-consuming features. Any volunteers?
-
-You can check the [current development status](./TODO.md) anytime. Contributions are warmly welcome!
 
 ## 👨‍💻 Contributions and requests
 This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://OPENISSUE) about future features are warmly welcome!

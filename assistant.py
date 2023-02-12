@@ -79,8 +79,10 @@ if __name__ == '__main__':
         SharedFolder('Moyen Terme (1-8 ans)', bucket=bucket_garanti, target_amount=20000, target=TargetMin(20000), newline=True),
         Folder('Long Terme (10+ ans)', children=[
             SharedFolder('Tranquille garanti', bucket=bucket_garanti, target=TargetRatio(25)),
-            Folder('SCPIs', target=TargetRatio(25), children=[
-                Line('Chercher...'),
+            Folder('Immobilier papier', target=TargetRatio(25), children=[
+                Line('Chercher SCPIs...', target=TargetRatio(50)),
+                Line('Chercher REITs...', target=TargetRatio(30)),
+                Line('Chercher Crowdfunding immobilier...', target=TargetRatio(20)),
             ]),
             Folder('Actions', target=TargetRatio(40), children=[
                 Folder('ETFs World (Business as usual)', target=TargetRatio(50), children=[
@@ -119,7 +121,7 @@ if __name__ == '__main__':
         Folder('En attente (reventes passifs, liquidités, ...)', children=[
             Line('Moto (à revendre)', key='Moto Z650'),
             Line('Liquidités PEA (à investir)', key='Liquidites'),
-            Line('Linxea court terme (à arbitrer)', key='AXA Court Terme AC'),
+            Line('Linxea court terme (à arbitrer)', key='AXA Court Terme AC', target=TargetMax(0)),
         ]),
     ])
 

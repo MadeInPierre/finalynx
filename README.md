@@ -44,4 +44,4 @@ TODO Declare portfolio, targets, ...
 
 If you found this project useful and wish to support my work, you can buy me a coffee so I can work more on my personal projects and improve them :) Thank you!
 
-[![paypal](https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png =180x)](https://www.buymeacoffee.com/MadeInPierre)
+[<img src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="180" />](https://www.buymeacoffee.com/MadeInPierre)

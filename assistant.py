@@ -50,7 +50,7 @@ def main(portfolio, advisor, scenario):
 
 if __name__ == '__main__':
     '''
-    Define groups of Lines, called Buckets, that can be considered as 
+    Define groups of Lines, called Buckets, that will be considered as 
     a single line in your portfolio
     '''
     bucket_garanti = Bucket([
@@ -62,7 +62,8 @@ if __name__ == '__main__':
 
     '''
     Define your complete portfolio structure with Lines, Folders (groups 
-    of Lines), and SharedFolders (Folder with one Bucket).
+    of Lines), and SharedFolders (Folder with one Bucket). See the 
+    README file or the documentation for complete usage instructions.
     '''
     portfolio = Portfolio('Patrimoine', children=[
         Folder('Court Terme', newline=True, children=[
@@ -129,13 +130,13 @@ if __name__ == '__main__':
     Define your monthly investment strategy to get automated investment 
     recommendations at each salary day.
     '''
-    advisor = Advisor()
+    advisor = Advisor() # TODO Coming soon
 
     '''
     Define your life events and investment strategy on the long term 
     to simulate your portfolio's evolution.
     '''
-    scenario = Simulator()
+    scenario = Simulator() # TODO Coming soon
 
     # Run all routines and display results in the terminal
     main(portfolio, advisor, scenario)

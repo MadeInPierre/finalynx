@@ -1,14 +1,25 @@
 # Finary Assistant :robot:
 
-A command-line tool to organize your investments portfolio in custom folders, synchronize it with your [Finary](https://finary.com) account, get automated monthly investment recommendations, and see your portfolio's future! :superhero: Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2)!
+A command-line tool to organize your investments portfolio in custom folders, synchronize it with your [Finary](https://finary.com) account, get automated monthly investment recommendations, and see your portfolio's future! :superhero: 
 
-:warning: Use at your own risk. I'm not responsible for any issues with your account. :warning:
+Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) or through the regular [sign up](https://finary.com/signup) page.
 
 ![Employee data](/doc/screenshot.png "Portfolio example")
 
-## Installation
+## ✨ Features
+- Hello
 
+## 🤝 Requirements
 1. Install `finary_api` by following the instructions there and make sure everything works.
+
+2. Add the following line at the end of your `.bashrc` (or `.zshrc`) file and relaunch your terminal:
+
+```sh
+export PYTHONPATH=/full/path/to/finary:$PYTHONPATH
+```
+
+## 🚀 Installation
+
 2. Inside `finary_api`, modify the `finary_api/constants.py` file and provide the full path to the credentials and cookies file:
 
 ```python
@@ -16,11 +27,6 @@ CREDENTIAL_FILE = "/full/path/to/credentials.json"
 COOKIE_FILENAME = "/full/path/to/localCookiesMozilla.txt"
 ```
 
-3. Add the following line at the end of your `.bashrc` (or `.zshrc`) file and relaunch your terminal:
-
-```sh
-export PYTHONPATH=/full/path/to/finary:$PYTHONPATH
-```
 
 4. Clone this repository anywhere:
 
@@ -42,45 +48,73 @@ python assistant.py
 
 And you're done! Now go customize the `assistant.py` file for your own needs.
 
-## Usage 
-TODO Declare portfolio, targets, ...
+## ⚙️ Usage 
+The goal is to declare a tree structure of your entire portfolio investments independently from their host envelopes (e.g. PEA, AV, CTO, etc). Define your own asset-based global strategy without feeling constrainted on keeping similar assets in common envelopes. Once your entire portfolio strategy is defined here, find the best envelope for each line and add your envelopes to your Finary account (manual or automatic sync). This project will fetch each line amount from Finary and display your full portfolio with real-time amounts.
 
-## Development status
-- [X] **Chapter 1: Portfolio Classifier**
-  - [X] Create a tree structure with `Lines` and `Folders`
-  - [X] Command-line printing with [`rich`](https://pypi.org/project/rich/)
-  - [X] Define `Targets` and colorful rendering
-  - [X] Create `Bucket` and `SharedFolder` objects
-  - [X] Finary sync with [`finary_api`](https://github.com/lasconic/finary)
-- [ ] **Chapter 2: Analyzer**
-  - [ ] Table with asset classes, types, envelopes, amounts, ...
-  - [ ] Graphs of percentages for asset classes
-  - [ ] Others?
-- [ ] **Chapter 3: Simulator**
-  - [ ] Create an event-based simulation engine
-  - [ ] Declare yearly (or monthly?) life objectives, events, and income
-  - [ ] Display a graph of the entire portfolio evolution
-  - [ ] Model the evolution of each investment (with optimistic-pessimistic probabilities), propagate uncertainties through time
-  - [ ] Define a `Scenario` that describes portfolio operations (e.g. transfer funds, spend _x_ € on investment _y_)
-  - [ ] Define investment constraints and effects (e.g. PER blocked until a set event, tax effects)
-  - [ ] Simulate taxes
-  - [ ] Plot the full portfolio nicely as the _tax-deducted_ evolution, classified as available/taxed/blocked
-- [ ] **Chapter 4: Assistant**
-  - [ ] Programmable rules to invest your salary each month
-  - [ ] Rich display on terminal
-  - [ ] Yearly PEA/AV/CTO vs. PER optimisation fiscale (like ramify)
-  - [ ] SAT solver-based AI-like assistant that optimizes taxes and evolution to meet life goals
-- [ ] **Chapter 5: Optional**
-  - [ ] Create a web interface?
-  - [ ] Regular backup of the portfolio state?
-  - [ ] Monte Carlo simulation instead of probabilities? Customizable Monte Carlo with personal ideas (e.g. environmental crisis effects on ETFs)?
+To declare your portfolio, create a nested list of `Folder` objects as your structure. Each folder can hold multiple `Line` objects, one for each of your investments. You can define `Target` amounts at each structure level.
 
-## Contributions and Requests
-If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome!
+#### Example
 
-## License
+Here is an example of a portfolio structure:
+```python
+# Create a list of Lines that will be considered as a single Line.
+my_bucket = Bucket([
+  Line('My Asset 1', key='name_in_finary'),
+  Line('My Asset 2', key='name_in_finary'),
+  # ...
+])
+
+# Define your entire portfolio structure
+portfolio = Portfolio('My Portfolio', children=[
+  # Add a list of `Line`, `Folder`, and `SharedFolder` objects
+  Folder('Short term', children=[
+    Line('My Asset 3', key='name_in_finary'),
+    Folder('Stocks', children=[
+      # ...
+    ]),
+    # ...
+  ]),
+  Folder('Long term', children=[
+    SharedFolder('My Folder', bucket=my_bucket, bucket_amount=1000),
+    # ...
+  ])
+])
+```
+
+#### Buckets & Shared Folders
+Hey
+
+#### Targets
+Any node in the tree accepts an optional `target` parameter. Here is an example:
+
+```python
+Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
+  Line('ETF World', key='Amundi ETF ...', target=TargetRange(80, tolerance=5)), 
+  # ... Other lines with the remaining 20% of the Stocks folder.
+])
+```
+
+In this case, 
+
+
+## ⏳ Development milestones
+
+1. **Portfolio:** Organize your assets, set targets, and sync with your Finary account.
+2. **Analyzer:** Generate global statistics and graphs to understand each line and folder.
+3. **Simulator:** Define your life goals and events, simulate your portfolio's future.
+4. **Assistant:** Get monthly recommendations on where to invest next to meet your goals.
+5. **Optional:** Nice but difficult or time-consuming features. Any volunteers?
+
+You can check the [current development status](./TODO.md) anytime. Contributions are warmly welcome!
+
+## 👨‍💻 Contributions and requests
+This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a full documentation 😄 For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://OPENISSUE) about future features are warmly welcome!
+
+## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.
 
-## Donations
+:warning: Use at your own risk. I'm not responsible for any issues with your Finary account. :warning:
+
+## 💌 Donations
 [<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="180" />](https://www.buymeacoffee.com/MadeInPierre)
-If you found this project useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! Coffee gives me the motivation to work on my personal projects and improve them :smile: Thank you!
+If you found this project useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving this project :smile: Thank you!

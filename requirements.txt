@@ -1,1 +1,9 @@
 rich==12.0.1
+-e . # Install this project in editable mode
+
+Investmate
+Investree
+Investime
+Investimate
+Assist
+Finary

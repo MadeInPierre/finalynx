@@ -1,10 +1,11 @@
 # Finary Assistant :robot:
 
-A command-line tool to organize your investments portfolio in custom folders, synchronize it with your [Finary](https://finary.com) account, get automated monthly investment recommendations, and see your portfolio's future! :superhero: 
+Finary Assistant is a command-line tool to organize your investments portfolio in a custom structure and get automated monthly investment recommendations based on your future life goals :superhero: 
 
-Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) or through the regular [sign up](https://finary.com/signup) page.
+This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) or through the regular [sign up](https://finary.com/signup) page.
 
-![Employee data](/doc/screenshot.png "Portfolio example")
+
+<img align="center" src="./doc/screenshot.png" width="500" />
 
 ## ✨ Features
 - Hello
@@ -108,7 +109,7 @@ In this case,
 You can check the [current development status](./TODO.md) anytime. Contributions are warmly welcome!
 
 ## 👨‍💻 Contributions and requests
-This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a full documentation 😄 For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://OPENISSUE) about future features are warmly welcome!
+This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://OPENISSUE) about future features are warmly welcome!
 
 ## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.

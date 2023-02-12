@@ -5,11 +5,11 @@ from rich.tree import Tree
 from ..console import console
 from ..portfolio.line import Line
 
-def finary_fetch(portfolio):
+def finary_fetch(portfolio, ignore_orphans=False):
     def match_line(portfolio, key, amount, node, indent=0):
         key, amount = unidecode(key), round(amount)
         node_child = node.add(f"{amount} {key}")
-        if not portfolio.set_child_amount(key, amount):
+        if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
             node_child.add('[yellow]WARNING: This line did not match with any envelope, attaching to root')
             portfolio.add_child(Line(key, amount=amount))
 

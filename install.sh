@@ -8,5 +8,21 @@ if ! grep -q finary_assistant "$CONSTANTS_FILE"; then
   echo "COOKIE_FILENAME = \"$FINARY_API_ROOT/localCookiesMozilla.txt\"" >> $CONSTANTS_FILE
 fi
 
+
+# Add finary_api to your python path
+RCFILE=$HOME/.zshrc
+if [ ! -f "$HOME/.zshrc" ]; then
+    RCFILE=$HOME/.bashrc
+fi
+
+if ! grep -q finary_assistant "$RCFILE"; then
+    echo "\n\n# finary_assistant: Add finary_api to your python path" >> $RCFILE
+    echo "export PYTHONPATH=$FINARY_API_ROOT:\$PYTHONPATH" >> $RCFILE
+fi
+
+export PYTHONPATH=$FINARY_API_ROOT:\$PYTHONPATH
+
 # Install dependencies
 pip install -r requirements.txt
+
+echo "Finished install!"

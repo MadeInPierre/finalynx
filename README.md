@@ -15,26 +15,55 @@ This tool synchronizes with your [Finary](https://finary.com/) account to show r
 4. **⏳ Assistant:** Get monthly recommendations on where to invest next to meet your goals.
 5. **⏳ Optional:** Nice but difficult or time-consuming features. Any volunteers?
 
-You can check the [current development status](./TODO.md) anytime. Contributions are warmly welcome!
+You can check the [current development status](./doc/TODO.md) anytime. Contributions are warmly welcome!
 
-## 🤝 Requirements
-1. Install `finary_api` by following the instructions there and make sure everything works.
+## 🚀 Installation
+1. Make sure you have python 3.8 or later installed.
 
+2. Clone this repository using the `--recursive` option to include [`finary_api`](https://github.com/lasconic/finary):
+```sh
+git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
+```
+
+3. _(Optional) If you forgot to clone recursively, run this command at the root folder:_
+```sh
+git submodule update --init --recursive
+```
+4. Run the install script with `./install.sh`.
+5. Go inside the `lib/finary_api` folder and follow the [setup instructions](https://github.com/lasconic/finary#quick-start). Make sure you have access to your account by running:
+```sh
+cd lib/finary_api
+# Enter your Finary account credentials in credentials.json
+python -m finary_api signin
+```
+6. Run the assistant with `python assistant.py`.
+<!-- ```sh
+./install.sh
+``` -->
+
+<!-- ```sh
+python assistant.py
+``` -->
+
+And you're done! You should see a template portfolio tree and your investments detected from Finary. Now go customize the `assistant.py` file for your own needs 🚀
+
+<!-- 1. Install [`finary_api`](https://github.com/lasconic/finary) by following the instructions there and make sure everything works.
+
+```
+git submodule add -f https://github.com/lasconic/finary lib/finary_api
+```
 2. Add the following line at the end of your `.bashrc` (or `.zshrc`) file and relaunch your terminal:
 
 ```sh
 export PYTHONPATH=/full/path/to/finary:$PYTHONPATH
 ```
 
-## 🚀 Installation
-
-2. Inside `finary_api`, modify the `finary_api/constants.py` file and provide the full path to the credentials and cookies file:
+1. Inside `finary_api`, modify the `finary_api/constants.py` file and provide the full path to the credentials and cookies file:
 
 ```python
 CREDENTIAL_FILE = "/full/path/to/credentials.json"
 COOKIE_FILENAME = "/full/path/to/localCookiesMozilla.txt"
 ```
-
 
 4. Clone this repository anywhere:
 
@@ -46,15 +75,7 @@ git clone https://github.com/MadeInPierre/finary_assistant.git
 
 ```sh
 pip install -r requirements.txt
-```
-
-6. Run the assistant:
-
-```sh
-python assistant.py
-```
-
-And you're done! Now go customize the `assistant.py` file for your own needs.
+``` -->
 
 ## ⚙️ Usage 
 The goal is to declare a tree structure of your entire portfolio investments independently from their host envelopes (e.g. PEA, AV, CTO, etc). Define your own asset-based global strategy without feeling constrainted on keeping similar assets in common envelopes. Once your entire portfolio strategy is defined here, find the best envelope for each line and add your envelopes to your Finary account (manual or automatic sync). This project will fetch each line amount from Finary and display your full portfolio with real-time amounts.
@@ -110,8 +131,8 @@ This repository is at a very early stage. If you'd like to contribute, please op
 ## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.
 
-:warning: Use at your own risk. I'm not responsible for any issues with your Finary account. :warning:
+:warning: Use at your own risk. I'm not responsible for any issues with your Finary account.
 
 ## 💌 Donations
-[<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="180" />](https://www.buymeacoffee.com/MadeInPierre)
+[<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="161" />](https://www.buymeacoffee.com/MadeInPierre)
 If you found this project useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving this project :smile: Thank you!

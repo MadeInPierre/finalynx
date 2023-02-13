@@ -1,0 +1,12 @@
+# Modify finary_api's constants with the full path to prevent relative path issues
+FINARY_API_ROOT=$(pwd)/lib/finary_api
+CONSTANTS_FILE=$FINARY_API_ROOT/finary_api/constants.py
+
+if ! grep -q finary_assistant "$CONSTANTS_FILE"; then
+  echo "\n\n# finary_assistant: Set constants with the full path" >> $CONSTANTS_FILE
+  echo "CREDENTIAL_FILE = \"$FINARY_API_ROOT/credentials.json\"" >> $CONSTANTS_FILE
+  echo "COOKIE_FILENAME = \"$FINARY_API_ROOT/localCookiesMozilla.txt\"" >> $CONSTANTS_FILE
+fi
+
+# Install dependencies
+pip install -r requirements.txt

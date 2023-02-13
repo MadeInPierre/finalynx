@@ -1,0 +1,3 @@
+[submodule "lib/finary_api"]
+	path = lib/finary_api
+	url = https://github.com/lasconic/finary

@@ -24,10 +24,10 @@ from finary_assistant import console
 
 
 # Main routine to fetch amounts, process targets and display the tree
-def main(portfolio, scenario, advisor):
+def main(portfolio, scenario, advisor, show_fetch=False, ignore_orphans=False):
     # Fill tree with current valuations fetched from Finary
     with console.status('[bold green]Fetching data from Finary...'):
-        finary_tree = finary_fetch(portfolio, ignore_orphans=False)
+        finary_tree = finary_fetch(portfolio, ignore_orphans)
     
     # Mandatory step after fetching to process some targets and buckets
     portfolio.process()
@@ -42,9 +42,9 @@ def main(portfolio, scenario, advisor):
     console.print('\n', Columns([
         Text(''), 
         Panel(portfolio.build_tree(hide_root=False), title='Portfolio', padding=(1, 4)), 
-        Panel(finary_tree, title='Finary data'),
-        Panel(simulation, title='Simulation'),
-        Panel(advice, title='Advisor'),
+        Panel(finary_tree, title='Finary data') if show_fetch else None,
+        # Panel(simulation, title='Simulation'), # TODO Coming soon
+        # Panel(advice, title='Advisor'),        # TODO Coming soon
     ], padding=(2, 10)))
 
 
@@ -81,9 +81,7 @@ if __name__ == '__main__':
         Folder('Long Term (10+ years)', children=[
             SharedFolder('Guaranteed', bucket=bucket_garanti, target=TargetRatio(25)),
             Folder('Real estate', target=TargetRatio(25), children=[
-                Line('SCPIs...', target=TargetRatio(50)),
-                Line('REITs...', target=TargetRatio(30)),
-                Line('Crowdfunding...', target=TargetRatio(20)),
+                Line('SCPIs, REITs, ...'),
             ]),
             Folder('Stocks', target=TargetRatio(40), children=[
                 Folder('ETF World (Business as usual)', target=TargetRatio(50), children=[
@@ -105,23 +103,10 @@ if __name__ == '__main__':
                     Line('Goodvest'),
                 ]),
             ]),
-            Folder('Satellite & Fun', newline=True, target=TargetRatio(10), children=[
+            Folder('Satellite & Fun', target=TargetRatio(10), children=[
                 Line('Dividends, forests, others, ...'),
             ]),
-        ]),
-        Folder('Retirement (freezed investments)', newline=True, children=[
-            Line('Préfon', key='Prefon PER'),
-            Line('Linxea Spirit PER'),
-        ]),
-        Folder('Defense', newline=True, target=TargetRatio(10), children=[
-            Line('Gold', target=TargetRatio(60)),
-            Line('Silver', target=TargetRatio(20)),
-            Line('Crypto', target=TargetRatio(20)),
-        ]),
-        Folder('Standby (to be sold, cash, ...)', children=[
-            Line('Motorcycle', key='Moto Z650'),
-            Line('Cash PEA', key='Liquidites'),
-            Line('Linxea short term', key='AXA Court Terme AC', target=TargetMax(0)),
+            Line('...'),
         ]),
     ])
 
@@ -138,4 +123,4 @@ if __name__ == '__main__':
     advisor = Advisor() # TODO Coming soon(ish-ish)!
 
     # Run all routines and display results in the terminal
-    main(portfolio, scenario, advisor)
+    main(portfolio, scenario, advisor, show_fetch=True, ignore_orphans=True)

@@ -1,7 +1,9 @@
 # Finary Assistant :robot:
 
-Finary Assistant is a command-line tool to organize your investments portfolio in a custom structure and get automated monthly investment recommendations based on your future life goals :superhero: 
-This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) or through the [default](https://finary.com/signup) page.
+Finary Assistant is a command-line tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals. 
+This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. 
+
+Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) :sparkles: (or through the [default](https://finary.com/signup) page).
 
 <p align="center">
   <img src="./doc/screenshot.png" width="500" />
@@ -15,7 +17,7 @@ This tool synchronizes with your [Finary](https://finary.com/) account to show r
 4. **⏳ Assistant:** Get monthly recommendations on where to invest next to meet your goals.
 5. **⏳ Optional:** Nice but difficult or time-consuming features. Any volunteers?
 
-You can check the [current development status](./doc/TODO.md) anytime. Contributions are warmly welcome!
+You can check the [current development status](./doc/TODO.md). Contributions are warmly welcome!
 
 ## 🚀 Installation
 1. Make sure you have python 3.8 or later installed.
@@ -33,7 +35,7 @@ git submodule update --init --recursive
 ```sh
 ./install.sh
 ```
-5. Go inside the `lib/finary_api` folder and follow the [setup instructions](https://github.com/lasconic/finary#quick-start). Make sure you have access to your account by running:
+1. Go inside the `lib/finary_api` folder and follow the [setup instructions](https://github.com/lasconic/finary#quick-start) summarized here:
 ```sh
 cd lib/finary_api                         # Go to 
 cp credentials.json.tpl credentials.json  # Use the template to create credentials.json
@@ -42,7 +44,6 @@ python -m finary_api signin               # Sign in and make sure everything wor
 cd ../..                                  # Go back to finary_assistant
 ```
 6. Run the assistant with `python assistant.py`.
-
 <!-- ```sh
 python assistant.py
 ``` -->
@@ -105,14 +106,14 @@ portfolio = Portfolio('My Portfolio', children=[
   # Add a list of `Line`, `Folder`, and `SharedFolder` objects
   Folder('Short term', children=[
     Line('My Asset 3', key='name_in_finary'),
-    Folder('Stocks', children=[
-      SharedFolder('My Folder', bucket=my_bucket, bucket_amount=500),
-      # ...
-    ]),
+    SharedFolder('My Folder', bucket=my_bucket, bucket_amount=1000),
     # ...
   ]),
   Folder('Long term', children=[
-    SharedFolder('My Folder', bucket=my_bucket, bucket_amount=1000),
+    Folder('Stocks', children=[
+      SharedFolder('My Folder', bucket=my_bucket), # display what's left in the bucket
+      # ...
+    ]),
     # ...
   ])
 ])

@@ -3,7 +3,9 @@
 Finary Assistant is a command-line tool to organize your investments portfolio in a custom structure and get automated monthly investment recommendations based on your future life goals :superhero: 
 This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) or through the [default](https://finary.com/signup) page.
 
-<img align="center" src="./doc/screenshot.png" width="500" />
+<p align="center">
+  <img src="./doc/screenshot.png" width="500" />
+</p>
 
 ## ✨ Features
 
@@ -78,9 +80,14 @@ pip install -r requirements.txt
 ``` -->
 
 ## ⚙️ Usage 
-The goal is to declare a tree structure of your entire portfolio investments independently from their host envelopes (e.g. PEA, AV, CTO, etc). Define your own asset-based global strategy without feeling constrainted on keeping similar assets in common envelopes. Once your entire portfolio strategy is defined here, find the best envelope for each line and add your envelopes to your Finary account (manual or automatic sync). This project will fetch each line amount from Finary and display your full portfolio with real-time amounts.
+The goal is to declare a tree structure of your entire portfolio investments independently from their host envelopes (e.g. PEA, AV, CTO, etc). Define your own asset-based global strategy without feeling constrainted by keeping similar assets in common envelopes. Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Assistant will fetch each line and display your full portfolio with real-time amounts.
 
-To declare your portfolio, create a nested list of `Folder` objects as your structure. Each folder can hold multiple `Line` objects, one for each of your investments. You can define `Target` amounts at each structure level.
+To create your portfolio, start with a `Portfolio` object which holds a nested list of `Line`, `Folder`, and `SharedFolder` objects:
+- `Line` represents each individual investment. Set the `key` parameter as the name shown in your Finary account if different from the display name.
+- `Folder` holds a group of lines or subfolders to create a structure.
+- `SharedFolder` accepts a `Bucket` object which groups multiple lines as a single object. You can reference the same bucket multiple times in the tree and set different `bucket_amount` for each shared folder. Each folder will only take the provided amount and let others use the rest.
+
+Finally, any object in the structure accepts an optional `Target`. See the implementation guidelines below.
 
 #### Example
 
@@ -99,6 +106,7 @@ portfolio = Portfolio('My Portfolio', children=[
   Folder('Short term', children=[
     Line('My Asset 3', key='name_in_finary'),
     Folder('Stocks', children=[
+      SharedFolder('My Folder', bucket=my_bucket, bucket_amount=500),
       # ...
     ]),
     # ...
@@ -110,11 +118,8 @@ portfolio = Portfolio('My Portfolio', children=[
 ])
 ```
 
-#### Buckets & Shared Folders
-Hey
-
 #### Targets
-Any node in the tree accepts an optional `target` parameter. Here is an example:
+Any node in the tree accepts an optional `target` parameter. See the full list of available targets [here](./finary_assistant/portfolio/targets.py). Here is an example:
 
 ```python
 Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
@@ -122,8 +127,6 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
   # ... Other lines with the remaining 20% of the Stocks folder.
 ])
 ```
-
-In this case, 
 
 ## 👨‍💻 Contributions and requests
 This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://OPENISSUE) about future features are warmly welcome!

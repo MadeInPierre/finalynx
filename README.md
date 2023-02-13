@@ -1,9 +1,7 @@
 # Finary Assistant :robot:
 
 Finary Assistant is a command-line tool to organize your investments portfolio in a custom structure and get automated monthly investment recommendations based on your future life goals :superhero: 
-
-This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) or through the regular [sign up](https://finary.com/signup) page.
-
+This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. Don't have Finary yet? Sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) or through the [default](https://finary.com/signup) page.
 
 <img align="center" src="./doc/screenshot.png" width="500" />
 
@@ -29,17 +27,19 @@ git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
 ```sh
 git submodule update --init --recursive
 ```
-4. Run the install script with `./install.sh`.
+4. Run the install script:
+```sh
+./install.sh
+```
 5. Go inside the `lib/finary_api` folder and follow the [setup instructions](https://github.com/lasconic/finary#quick-start). Make sure you have access to your account by running:
 ```sh
-cd lib/finary_api
-# Enter your Finary account credentials in credentials.json
-python -m finary_api signin
+cd lib/finary_api                         # Go to 
+cp credentials.json.tpl credentials.json  # Use the template to create credentials.json
+nano credentials.json                     # <- Enter your Finary account credentials
+python -m finary_api signin               # Sign in and make sure everything works
+cd ../..                                  # Go back to finary_assistant
 ```
 6. Run the assistant with `python assistant.py`.
-<!-- ```sh
-./install.sh
-``` -->
 
 <!-- ```sh
 python assistant.py
@@ -130,8 +130,6 @@ This repository is at a very early stage. If you'd like to contribute, please op
 
 ## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.
-
-:warning: Use at your own risk. I'm not responsible for any issues with your Finary account.
 
 ## 💌 Donations
 [<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="161" />](https://www.buymeacoffee.com/MadeInPierre)

@@ -11,7 +11,7 @@ fi
 
 # Add finary_api to your python path
 RCFILE=$HOME/.zshrc
-if [ ! -f "$HOME/.zshrc" ]; then
+if [ ! -f "$RCFILE" ]; then
     RCFILE=$HOME/.bashrc
 fi
 

@@ -22,10 +22,10 @@ class Folder(Node):
     def get_amount(self):
         return np.sum([child.get_amount() for child in self.children]) if self.children else 0
 
-    def build_tree(self, tree=None, **args):
-        node = Tree(str(self), guide_style='grey42', **args) if tree is None else tree.add(str(self))
+    def rich_tree(self, hide_amount=False, _tree=None, **args):
+        node = Tree(self._render(hide_amount=hide_amount), guide_style='grey42', **args) if _tree is None else _tree.add(self._render(hide_amount=hide_amount))
         for child in self.children:
-            child.build_tree(node)
+            child.rich_tree(hide_amount=hide_amount, _tree=node)
         return node
     
     def process(self):

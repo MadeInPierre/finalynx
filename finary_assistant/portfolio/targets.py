@@ -30,10 +30,11 @@ class Target(Hierarchy):
     def hint(self):
         return '- Gotta invest!' if self.check() == Target.RESULT_START else '- No target'
     
-    def render_amount(self, n_characters=0):
+    def render_amount(self, hide_amount=False, n_characters=0):
         result = self.check() 
         result = result if result != True else Target.RESULT_START # TODO weird bug??? Workaround for now
-        return f'[{result["color"]}]{result["symbol"]} {round(self.get_amount()):>{n_characters}} €[/][dim white]{self.prehint()}[/]'
+        number = f'{round(self.get_amount()):>{n_characters}}' if not hide_amount else '···'
+        return f'[{result["color"]}]{result["symbol"]} {number} €[/][dim white]{self.prehint()}[/]'
     
 
 class TargetRange(Target):

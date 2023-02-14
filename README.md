@@ -124,17 +124,17 @@ Any node in the tree accepts an optional `target` parameter. See the full list o
 
 ```python
 Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
-  Line('ETF World', key='Amundi ETF ...', target=TargetRange(80, tolerance=5)), 
+  Line('ETF World', key='Amundi ETF ...', target=TargetRatio(80, tolerance=5)), 
   # ... Other lines with the remaining 20% of the Stocks folder.
 ])
 ```
 
 ## 👨‍💻 Contributions and requests
-This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://OPENISSUE) about future features are warmly welcome!
+This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://github.com/MadeInPierre/finary_assistant/issues/new) about future features are warmly welcome!
 
 ## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.
 
 ## 💌 Donations
 [<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="161" />](https://www.buymeacoffee.com/MadeInPierre)
-If you found this project useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving this project :smile: Thank you!
+This is a personal project I have fun with on my free time. If you found it useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving it further :smile: Thank you! 

@@ -8,27 +8,16 @@ This module is maintained by MadeInPierre.
 You can always get the latest version of this module at:
 > https://github.com/madeinpierre/finary_assistant
 """
-
-# Enable rich's features
-from rich import print, inspect, pretty, traceback
-from rich.columns import Columns
-from rich.text import Text
-from rich.panel import Panel
-traceback.install()
-pretty.install()
-
-# Assistant imports
 from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
 from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio
 from finary_assistant import Copilot, Simulator
 from finary_assistant import Assistant
 
-
 if __name__ == '__main__':
-    '''
+    """
     Define groups of Lines, called Buckets, that will be considered as 
-    a single line in your portfolio
-    '''
+    a single line in your portfolio.
+    """
     bucket_garanti = Bucket([
         Line('Livret A', key='LIVRET A'),
         Line('LDDS', key='Livret de Developpement Durable et Solidaire'),
@@ -36,11 +25,11 @@ if __name__ == '__main__':
         Line('Fonds euro', key='Fonds Euro Nouvelle Generation'),
     ])
 
-    '''
+    """
     Define your complete portfolio structure with Lines, Folders (groups 
     of Lines), and SharedFolders (Folder with one Bucket). See the 
     README file or the documentation for complete usage instructions.
-    '''
+    """
     portfolio = Portfolio('Portfolio', children=[
         Folder('Short Term', newline=True, children=[
             Folder('Daily', target=TargetRange(100, 500, tolerance=100), children=[
@@ -81,21 +70,21 @@ if __name__ == '__main__':
         ]),
     ])
 
-    '''
+    """
     Define your life events and investment strategy on the long term 
     to simulate your portfolio's evolution.
-    '''
+    """
     scenario = Simulator() # TODO Coming soon(ish)!
 
-    '''
+    """
     Define your monthly investment strategy to get automated investment 
     recommendations at each salary day.
-    '''
+    """
     copilot = Copilot() # TODO Coming soon(ish-ish)!
 
     # Run all routines and display results in the terminal
     Assistant(portfolio, scenario, copilot, 
-        ignore_orphans=True, 
-        hide_amount=False,
-        hide_root=False,
+        ignore_orphans=True, # Ignore fetched lines that you didn't reference in your portfolio.
+        hide_amount=False,   # Display your portfolio with dots instead of the real values (easier to share).
+        hide_root=False,     # Display your portfolio without the root (cosmetic preference).
     ).run()

@@ -11,7 +11,7 @@ Contributions and feature ideas are warmly welcome!
   - [x] Nice GitHub landing page (hopefully) just to have fun
   - [x] Demo file with comments
   - [x] Create a central Assistant class instead of a main function
-  - [ ] Parse options in command line
+  - [x] Parse options in command line
   - [ ] Learn to do versioning, releases, PEP8, ...
   - [ ] Write detailed instructions to create your own config
   - [ ] Documentation? Wait to see if people are interested
@@ -39,3 +39,6 @@ Contributions and feature ideas are warmly welcome!
   - [ ] Regular backup of the portfolio tree for archive?
   - [ ] Monte Carlo simulation instead of probabilities? 
   - [ ] Customizable Monte Carlo with personal beliefs (e.g. climate crisis effects)?
+
+Minor improvements:
+- [ ] Create an option for buckets to show either as folders or lines

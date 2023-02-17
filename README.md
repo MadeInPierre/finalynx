@@ -2,7 +2,7 @@
   <a href="https://github.com/MadeInPierre/finary_assistant">
     <img src="./doc/logo_assistant_transparent.png" width="400" />
   </a>
-  <br>Finary Assistant<br>
+  <br>Finalynx Assistant<br>
 </h1>
 
 <!-- <h4 align="center">
@@ -18,7 +18,7 @@
 <br>
 
 Finary Assistant is a command-line tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals. 
-This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. 
+This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values.
 
 Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) :sparkles: (or through the [default](https://finary.com/signup) page).
 
@@ -32,8 +32,8 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 2. **⏳ Analyzer:** Generate global statistics and graphs to understand each line and folder.
 3. **⏳ Simulator:** Define your life goals and events, simulate your portfolio's future.
 4. **⏳ Assistant:** Get monthly recommendations on where to invest next to meet your goals.
-5. **🙏 Optional:** Nice but difficult or time-consuming features. Any volunteers?
-6. **🙏 Usefulness:** Make this tool work for other people's situations. Contributions needed!
+5. **🙏 Extensions:** Make this tool work for other people's situations. Contributions needed!
+6. **🙏 Optional:** Nice but out-of-my-skills or time-consuming features. Any volunteers?
 
 You can check the [current development status](./doc/TODO.md). Contributions are warmly welcome!
 

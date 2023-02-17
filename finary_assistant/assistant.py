@@ -1,3 +1,21 @@
+"""
+Finary Assistant command line
+Usage:
+    your_config.py [-iar]
+    your_config.py (-h | --help)
+    your_config.py (-v | --version)
+
+Options:
+  -h --help           Show this help message.
+  -v --version        Display this module's current version.
+  -i --ignoreOrphans  Ignore fetched lines that you didn't reference in your portfolio.
+  -a --hideAmount     Display your portfolio with dots instead of the real values (easier to share).
+  -r --hideRoot       Display your portfolio without the root (cosmetic preference).
+
+"""
+from finary_assistant import Copilot, Simulator, finary_fetch, console, __version__
+from docopt import docopt
+
 # Enable rich's features
 from rich import print, inspect, pretty, traceback
 from rich.columns import Columns
@@ -6,13 +24,15 @@ from rich.panel import Panel
 traceback.install()
 pretty.install()
 
-# # Fetch imports
-from finary_assistant import Copilot, Simulator
-from finary_assistant import finary_fetch
-from finary_assistant import console
-
 
 class Assistant:
+    """
+    Main entry class. Declare your portfolio config (and other extensions
+    such as scenario and copilot) in a separate file and create an instance
+    of this Assistant class.
+
+    TODO Full code documentation! Ping me if I still didn't write it :)
+    """
     def __init__(self, portfolio, scenario=None, copilot=None, 
         ignore_orphans=False, 
         hide_amount=False,
@@ -25,9 +45,17 @@ class Assistant:
         self.ignore_orphans = ignore_orphans
         self.hide_amount = hide_amount
         self.hide_root = hide_root
+
+        self.parse_args()
     
-    def parse_args(self, args):
-        print('TODO') # TODO
+    def parse_args(self):
+        args = docopt(__doc__, version=__version__)
+        if args['--ignoreOrphans']:
+            self.ignore_orphans = True
+        if args['--hideAmount']:
+            self.hide_amount = True
+        if args['--hideRoot']:
+            self.hide_root = True
 
     def run(self):
         # Fill tree with current valuations fetched from Finary

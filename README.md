@@ -65,7 +65,7 @@ python assistant.py
 cp demo.py assistant_config.py
 ```
 
-**Pro Tip:** Why not setup a script to autorun this project in a new terminal when your computer starts up? Could be a nice view 🤭
+**Pro Tip:** _Why not setup a script to autorun this project in a new terminal when your computer starts up? Could be a nice view_ 🤭
 
 <!-- 1. Install [`finary_api`](https://github.com/lasconic/finary) by following the instructions there and make sure everything works.
 
@@ -146,14 +146,14 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
 ])
 ```
 
-## 👨‍💻 Contributions and requests
-This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests as well as [open discussions](https://github.com/MadeInPierre/finary_assistant/issues/new) about future features are warmly welcome!
+## 👨‍💻 Contributions
+This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests, [issues](https://github.com/MadeInPierre/finary_assistant/issues/new) and [open discussions](https://github.com/MadeInPierre/finary_assistant/discussions/new) are warmly welcome!
+
+Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project yourself (or [hire me](https://www.buymeacoffee.com/MadeInPierre/commissions) if you can't develop it yourself). Pull requests are welcome to create a useful tool for everyone!
 
 ## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.
 
-## 💌 Donations & Requests
+## 💌 Donations
 [<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="161" />](https://www.buymeacoffee.com/MadeInPierre)
-This is a personal project I have fun with on my free time. If you found it useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving it further :smile: Thank you! 
-
-<!-- P.S. You can also '[hire me](https://www.buymeacoffee.com/MadeInPierre/commissions)' to develop unplanned features. Unfortunately, I won't have time to make this tool work for everyone by default. Extensions and contributions are welcome! -->
+This is a personal project I have fun with on my free time. If you found it useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving it further :smile: Thank you!

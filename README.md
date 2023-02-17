@@ -1,4 +1,20 @@
-# Finary Assistant :robot:
+<h1 align="center">
+  <a href="https://github.com/MadeInPierre/finary_assistant">
+    <img src="./doc/logo_assistant_transparent.png" width="400" />
+  </a>
+  <br>Finary Assistant<br>
+</h1>
+
+<!-- <h4 align="center">
+  Minimalistic investment portfolio organizer with real-time sync from your <a href="http://zsh.org" target="_blank">Finary</a> account
+</h4> -->
+
+<div align="center">
+  <sub>Built with ❤︎ by
+  <a href="https://linkedin.com/in/pierre-laclau">Pierre Laclau</a> (and
+  <a href="https://github.com/MadeInPierre/finary_assistant/graphs/contributors">contributors</a> soon?)
+</div>
+<br>
 
 Finary Assistant is a command-line tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals. 
 This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values. 
@@ -6,7 +22,7 @@ This tool synchronizes with your [Finary](https://finary.com/) account to show r
 Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) :sparkles: (or through the [default](https://finary.com/signup) page).
 
 <p align="center">
-  <img src="./doc/screenshot.png" width="500" />
+  <img src="./doc/screenshot.png" width="400" />
 </p>
 
 ## ✨ Features
@@ -15,7 +31,8 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 2. **⏳ Analyzer:** Generate global statistics and graphs to understand each line and folder.
 3. **⏳ Simulator:** Define your life goals and events, simulate your portfolio's future.
 4. **⏳ Assistant:** Get monthly recommendations on where to invest next to meet your goals.
-5. **⏳ Optional:** Nice but difficult or time-consuming features. Any volunteers?
+5. **🙏 Optional:** Nice but difficult or time-consuming features. Any volunteers?
+6. **🙏 Versatility:** Make this tool work for other people's situations. Contributions needed!
 
 You can check the [current development status](./doc/TODO.md). Contributions are warmly welcome!
 
@@ -49,6 +66,8 @@ python assistant.py
 ``` -->
 
 And you're done! You should see a template portfolio tree and your investments detected from Finary. Now go customize the `assistant.py` file for your own needs 🚀
+
+**Pro Tip:** Why not setup a script to autorun this project in a new terminal when your computer starts up? Could be a nice view 🤭
 
 <!-- 1. Install [`finary_api`](https://github.com/lasconic/finary) by following the instructions there and make sure everything works.
 
@@ -135,6 +154,8 @@ This repository is at a very early stage. If you'd like to contribute, please op
 ## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.
 
-## 💌 Donations
+## 💌 Donations & Requests
 [<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="161" />](https://www.buymeacoffee.com/MadeInPierre)
 This is a personal project I have fun with on my free time. If you found it useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving it further :smile: Thank you! 
+
+P.S. You can also '[hire me](https://www.buymeacoffee.com/MadeInPierre/commissions)' to develop unplanned features. Unfortunately, I won't have time to make this tool work for everyone by default. Extensions and contributions are welcome!

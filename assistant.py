@@ -117,4 +117,4 @@ if __name__ == '__main__':
     advisor = Advisor() # TODO Coming soon(ish-ish)!
 
     # Run all routines and display results in the terminal
-    main(portfolio, scenario, advisor, ignore_orphans=True, hide_amount=True)
+    main(portfolio, scenario, advisor, ignore_orphans=True, hide_amount=False)

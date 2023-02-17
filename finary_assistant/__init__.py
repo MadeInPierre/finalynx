@@ -29,10 +29,13 @@ from .portfolio import console
 from .fetch import finary_fetch
 
 # Advisor
-from .advisor import Advisor
+from .copilot import Copilot
 
 # Simulator
 from .simulator import Simulator
+
+# Main
+from .assistant import Assistant
 
 # Enable rich's features
 from rich import print, inspect, pretty, traceback

@@ -1,2 +1,0 @@
--r requirements.txt
-pdoc3==0.10.0

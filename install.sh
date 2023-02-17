@@ -1,3 +1,7 @@
+# Clone submodules just in case the user forgot to clone recursively
+git submodule update --init --recursive
+
+
 # Modify finary_api's constants with the full path to prevent relative path issues
 FINARY_API_ROOT=$(pwd)/lib/finary_api
 CONSTANTS_FILE=$FINARY_API_ROOT/finary_api/constants.py
@@ -22,7 +26,9 @@ fi
 
 export PYTHONPATH=$FINARY_API_ROOT:\$PYTHONPATH
 
+
 # Install dependencies
 pip install -r requirements.txt
+
 
 echo "Finished install!"

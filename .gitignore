@@ -1,5 +1,5 @@
-assistant_perso.py
-.vscode/
+# Define your own portfolio using this name if you plan to contribute
+assistant_config.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -161,3 +161,5 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+.vscode/

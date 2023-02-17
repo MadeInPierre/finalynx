@@ -1,5 +1,13 @@
 #!/usr/bin/env python
-import numpy as np
+"""
+Finary Assistant is a tool to organize your investments in a custom hierarchy, 
+fetch real-time values using the Finary API, set targets, and simulate your 
+portfolio evolution with optional life events and portfolio operations.
+
+This module is maintained by MadeInPierre.
+You can always get the latest version of this module at:
+> https://github.com/madeinpierre/finary_assistant
+"""
 
 # Enable rich's features
 from rich import print, inspect, pretty, traceback
@@ -9,42 +17,11 @@ from rich.panel import Panel
 traceback.install()
 pretty.install()
 
-# Portfolio imports
+# Assistant imports
 from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
 from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio
-
-# Fetch imports
-from finary_assistant import finary_fetch
-
-# Advisor imports
-from finary_assistant import Advisor, Simulator
-
-# Utilities imports
-from finary_assistant import console
-
-
-# Main routine to fetch amounts, process targets and display the tree
-def main(portfolio, scenario, advisor, ignore_orphans=False, hide_amount=False):
-    # Fill tree with current valuations fetched from Finary
-    with console.status('[bold green]Fetching data from Finary...'):
-        finary_tree = finary_fetch(portfolio, ignore_orphans)
-    
-    # Mandatory step after fetching to process some targets and buckets
-    portfolio.process()
-
-    # Simulate the portolio's evolution through the years by auto-investing each month
-    simulation = scenario.simulate(portfolio)
-
-    # Get recommendations for immediate investment operations
-    advice = advisor.advise(portfolio)
-
-    # Display the entire portfolio and associated recommendations
-    console.print('\n', Columns([
-        Panel(portfolio.rich_tree(hide_amount=hide_amount, hide_root=False), title='Portfolio', padding=(1, 4)), 
-        Panel(finary_tree, title='Finary data'),
-        # Panel(simulation, title='Simulation'), # TODO Coming soon
-        # Panel(advice, title='Advisor'),        # TODO Coming soon
-    ], padding=(2, 10)))
+from finary_assistant import Copilot, Simulator
+from finary_assistant import Assistant
 
 
 if __name__ == '__main__':
@@ -114,7 +91,11 @@ if __name__ == '__main__':
     Define your monthly investment strategy to get automated investment 
     recommendations at each salary day.
     '''
-    advisor = Advisor() # TODO Coming soon(ish-ish)!
+    copilot = Copilot() # TODO Coming soon(ish-ish)!
 
     # Run all routines and display results in the terminal
-    main(portfolio, scenario, advisor, ignore_orphans=True, hide_amount=False)
+    Assistant(portfolio, scenario, copilot, 
+        ignore_orphans=True, 
+        hide_amount=False,
+        hide_root=False,
+    ).run()

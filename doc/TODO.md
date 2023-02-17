@@ -7,6 +7,14 @@ Contributions and feature ideas are warmly welcome!
   - [X] Define `Targets` with colorful rendering
   - [X] Create `Bucket` and `SharedFolder` objects to consider multiple lines as a unique position
   - [X] Fetch real-time investment amounts from Finary using [`finary_api`](https://github.com/lasconic/finary)
+- [ ] **Chapter 2: Publish to GitHub**
+  - [x] Nice GitHub landing page (hopefully) just to have fun
+  - [x] Demo file with comments
+  - [x] Create a central Assistant class instead of a main function
+  - [ ] Parse options in command line
+  - [ ] Learn to do versioning, releases, PEP8, ...
+  - [ ] Write detailed instructions to create your own config
+  - [ ] Documentation? Wait to see if people are interested
 - [ ] **Chapter 2: Analyzer**
   - [ ] Print a table with asset classes, types, envelopes, amounts, ...
   - [ ] Graphs of percentages for asset classes

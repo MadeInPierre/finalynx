@@ -3,4 +3,4 @@ class Copilot:
         pass
 
     def rich_recommendations(self, portfolio):
-        return 'Advice'
+        return "Advice"

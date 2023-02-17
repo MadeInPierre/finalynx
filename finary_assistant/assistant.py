@@ -21,6 +21,7 @@ from rich import print, inspect, pretty, traceback
 from rich.columns import Columns
 from rich.text import Text
 from rich.panel import Panel
+
 traceback.install()
 pretty.install()
 
@@ -33,13 +34,19 @@ class Assistant:
 
     TODO Full code documentation! Ping me if I still didn't write it :)
     """
-    def __init__(self, portfolio, scenario=None, copilot=None, 
-        ignore_orphans=False, 
+
+    def __init__(
+        self,
+        portfolio,
+        scenario=None,
+        copilot=None,
+        ignore_orphans=False,
         hide_amount=False,
-        hide_root=False):
+        hide_root=False,
+    ):
         self.portfolio = portfolio
-        self.scenario = scenario if scenario else Simulator() # TODO Coming soon
-        self.copilot = copilot if copilot else Copilot()      # TODO Coming soon
+        self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
+        self.copilot = copilot if copilot else Copilot()  # TODO Coming soon
 
         # Options
         self.ignore_orphans = ignore_orphans
@@ -47,21 +54,21 @@ class Assistant:
         self.hide_root = hide_root
 
         self.parse_args()
-    
+
     def parse_args(self):
         args = docopt(__doc__, version=__version__)
-        if args['--ignoreOrphans']:
+        if args["--ignoreOrphans"]:
             self.ignore_orphans = True
-        if args['--hideAmount']:
+        if args["--hideAmount"]:
             self.hide_amount = True
-        if args['--hideRoot']:
+        if args["--hideRoot"]:
             self.hide_root = True
 
     def run(self):
         # Fill tree with current valuations fetched from Finary
-        with console.status('[bold green]Fetching data from Finary...'):
+        with console.status("[bold green]Fetching data from Finary..."):
             finary_tree = finary_fetch(self.portfolio, self.ignore_orphans)
-        
+
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()
 
@@ -75,16 +82,15 @@ class Assistant:
         panels = [
             Panel(
                 self.portfolio.rich_tree(
-                    hide_amount=self.hide_amount, 
-                    hide_root=self.hide_root
-                ), 
-                title=self.portfolio.name, 
-                padding=(1, 4)
-            ), 
-            Panel(finary_tree, title='Finary data'),
+                    hide_amount=self.hide_amount, hide_root=self.hide_root
+                ),
+                title=self.portfolio.name,
+                padding=(1, 4),
+            ),
+            Panel(finary_tree, title="Finary data"),
             # Panel(simulation, title='Simulation'),   # TODO Coming soon
             # Panel(recommendations, title='Advisor'), # TODO Coming soon
         ]
 
         # Display the entire portfolio and associated recommendations
-        console.print('\n', Columns(panels, padding=(2, 10)))
+        console.print("\n", Columns(panels, padding=(2, 10)))

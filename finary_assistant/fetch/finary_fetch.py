@@ -5,51 +5,74 @@ from rich.tree import Tree
 from ..console import console
 from ..portfolio.line import Line
 
+
 def finary_fetch(portfolio, ignore_orphans=False):
     def match_line(portfolio, key, amount, node, indent=0):
         key, amount = unidecode(key), round(amount)
         node_child = node.add(f"{amount} {key}")
         if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
-            node_child.add('[yellow]WARNING: This line did not match with any envelope, attaching to root')
+            node_child.add(
+                "[yellow]WARNING: This line did not match with any envelope, attaching to root"
+            )
             portfolio.add_child(Line(key, amount=amount))
 
     tree = Tree("Finary API", highlight=True, hide_root=True)
 
     # Login to Finary
-    console.log(f'Signing in to Finary using credentials in \'{CREDENTIAL_FILE}\'...')
+    console.log(f"Signing in to Finary using credentials in '{CREDENTIAL_FILE}'...")
     result = ff.signin()
-    if result is None or result['message'] != 'Created':
+    if result is None or result["message"] != "Created":
         return tree
-    console.log('Successfully signed in')
+    console.log("Successfully signed in")
     session = ff.prepare_session()
 
     # Comptes courants, Livrets et Fonds euro
-    checkings = ff.get_checking_accounts(session, '1w')['result']
-    savings = ff.get_savings_accounts(session, '1w')['result']
-    fonds = ff.get_fonds_euro(session, '1w')['result']
-    for result, name in zip([checkings, savings, fonds], ['Comptes courants', 'Livrets', 'Fonds euro']):
-        console.log(f'Fetching {name.lower()}...')
-        node = tree.add('[bold]' + str(round(result['timeseries'][-1][1])) + ' ' + name)
-        for k, e in result['distribution'].items():
-            match_line(portfolio, k, e['amount'], node, indent=1)
+    checkings = ff.get_checking_accounts(session, "1w")["result"]
+    savings = ff.get_savings_accounts(session, "1w")["result"]
+    fonds = ff.get_fonds_euro(session, "1w")["result"]
+    for result, name in zip(
+        [checkings, savings, fonds], ["Comptes courants", "Livrets", "Fonds euro"]
+    ):
+        console.log(f"Fetching {name.lower()}...")
+        node = tree.add("[bold]" + str(round(result["timeseries"][-1][1])) + " " + name)
+        for k, e in result["distribution"].items():
+            match_line(portfolio, k, e["amount"], node, indent=1)
 
     # Autres
-    console.log(f'Fetching other assets...')
-    other = ff.get_other_assets(session, '1w')['result']
-    f_other_total = round(other['timeseries'][-1][1])
-    node = tree.add('[bold]' + str(round(f_other_total)) + ' Autres')
-    for item in other['data']:
-        match_line(portfolio, item['name'], item['current_value'], node, indent=1)
+    console.log(f"Fetching other assets...")
+    other = ff.get_other_assets(session, "1w")["result"]
+    f_other_total = round(other["timeseries"][-1][1])
+    node = tree.add("[bold]" + str(round(f_other_total)) + " Autres")
+    for item in other["data"]:
+        match_line(portfolio, item["name"], item["current_value"], node, indent=1)
 
     # Investissements
-    console.log(f'Fetching investments...')
-    investments = ff.get_portfolio_investments(session)['result']
-    f_invest_total = round(investments['total']['amount'])
-    node = tree.add('[bold]' + str(round(f_invest_total)) + ' Investissements')
-    for account in investments['accounts']:
-        node_account = node.add("[bold]Account: " + account['name'])
-        for category in ['fiats', 'securities', 'cryptos', 'fonds_euro', 'startups', 'precious_metals', 'scpis', 'generic_assets', 'real_estates', 'loans', 'crowdlendings']:
+    console.log(f"Fetching investments...")
+    investments = ff.get_portfolio_investments(session)["result"]
+    f_invest_total = round(investments["total"]["amount"])
+    node = tree.add("[bold]" + str(round(f_invest_total)) + " Investissements")
+    for account in investments["accounts"]:
+        node_account = node.add("[bold]Account: " + account["name"])
+        for category in [
+            "fiats",
+            "securities",
+            "cryptos",
+            "fonds_euro",
+            "startups",
+            "precious_metals",
+            "scpis",
+            "generic_assets",
+            "real_estates",
+            "loans",
+            "crowdlendings",
+        ]:
             for item in account[category]:
-                match_line(portfolio, item['security']['name'], item['current_value'], node_account, indent=2)
-    
+                match_line(
+                    portfolio,
+                    item["security"]["name"],
+                    item["current_value"],
+                    node_account,
+                    indent=2,
+                )
+
     return tree

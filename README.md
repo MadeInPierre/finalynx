@@ -1,8 +1,8 @@
 <h1 align="center">
   <a href="https://github.com/MadeInPierre/finary_assistant">
-    <img src="./doc/logo_assistant_transparent.png" width="400" />
+    <img src="https://raw.githubusercontent.com/MadeInPierre/finary_assistant/main/doc/logo_assistant_transparent.png" width="400" />
   </a>
-  <br>Finalynx Assistant<br>
+  <br>Finary Assistant<br>
 </h1>
 
 <!-- <h4 align="center">
@@ -23,7 +23,7 @@ This tool synchronizes with your [Finary](https://finary.com/) account to show r
 Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) :sparkles: (or through the [default](https://finary.com/signup) page).
 
 <p align="center">
-  <img src="./doc/screenshot.png" width="500" />
+  <img src="https://raw.githubusercontent.com/MadeInPierre/finary_assistant/main/doc/screenshot.png" width="500" />
 </p>
 
 ## ✨ Features
@@ -38,23 +38,34 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 You can check the [current development status](./doc/TODO.md). Contributions are warmly welcome!
 
 ## 🚀 Installation
+### Users
+If you don't plan on touching the code, simply run (with python 3.8 and pip installed):
+```sh
+pip install finary_assistant
+```
+
+And you're done! Now create your own copy of the [`demo.py`](./examples/demo.py) example anywhere. You can try to run the demo first to make sure everything works. Now go customize it for your own needs 🚀
+
+**Pro Tip:** _Why not setup a script to autorun this project in a new terminal at startup? Could be a nice view_ 🤭
+
+### Contributors
 1. Clone this repository using the `--recursive` option to include [`finary_api`](https://github.com/lasconic/finary):
 ```sh
 git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
+# If you forgot --recursive: git submodule update --init --recursive
 ```
-2. _(Optional) If you forgot to clone recursively, run this command at the root folder:_
+2. Install the project in editable mode:
 ```sh
-git submodule update --init --recursive
+cd finary_assistant && pip install -e .
 ```
-3. Try the assistant with `python demo.py`. You should be prompted to enter your Finary credentials (it is not necessary to save the credentials as `finary_api` stores a cookies file).
-4. If you see a template portfolio tree and your investments detected from Finary, then congratulations, you're done! 🎉
-
-Now create your own copy of the demo file and go customize it for your own needs 🚀 (the name `assistant_config` is recommended as it is ignored from git):
+3. Try the assistant with:
 ```sh
-cp demo.py assistant_config.py # <- Edit the tree to fir your own needs
+python examples/demo.py
 ```
-
-**Pro Tip:** _Why not setup a script to autorun this project in a new terminal when your computer starts up? Could be a nice view_ 🤭
+If you see a template portfolio tree and your investments detected from Finary, then welcome to the (small) team! 🎉 Now create your own copy of the demo file and go customize it for your own needs (the name `assistant_config` is recommended as it is ignored from git):
+```sh
+cp examples/demo.py assistant_config.py # <- Your own portfolio here
+```
 
 ## ⚙️ Usage 
 The goal is to declare a tree structure of your entire portfolio investments independently from their host envelopes (e.g. PEA, AV, CTO, etc). Define your own asset-based global strategy without feeling constrainted by keeping similar assets in common envelopes. Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Assistant will fetch each line and display your full portfolio with real-time amounts.

@@ -17,7 +17,7 @@ setup(
     packages=find_packages(),
     package_data={
         'doc': ['*.png'],
-        'submodules': ['*'],
+        'finary_assistant': ['finary_api/*'],
     },
     include_package_data=True,
     install_requires=[

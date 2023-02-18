@@ -24,8 +24,7 @@ import os
 import sys
 
 # add finary_api submodule to path to allow imports to work
-parent_folder_path, _ = os.path.split(os.path.dirname(__file__))
-sys.path.append(os.path.join(parent_folder_path, "submodules", "finary_api"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "finary_api"))
 
 # Portfolio
 from .portfolio import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio

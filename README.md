@@ -46,15 +46,12 @@ git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
 ```sh
 git submodule update --init --recursive
 ```
-3. Create and edit a `credentials.json` file using the template to provide your Finary username/password:
+3. Try the assistant with `python demo.py`. You should be prompted to enter your Finary credentials (it is not necessary to save the credentials as `finary_api` stores a cookies file).
+4. If you see a template portfolio tree and your investments detected from Finary, then congratulations, you're done! 🎉
+
+Now create your own copy of the demo file and go customize it for your own needs 🚀 (the name `assistant_config` is recommended as it is ignored from git):
 ```sh
-cp credentials.json.tpl credentials.json
-nano credentials.json # <- Enter your Finary account credentials
-```
-4. Try the assistant with `python demo.py`. You should see a template portfolio tree and your investments detected from Finary.
-5. And you're done! Now create your own copy of the demo file and go customize it for your own needs 🚀 (the name `assistant_config` is recommended as it is ignored from git):
-```sh
-cp demo.py assistant_config.py
+cp demo.py assistant_config.py # <- Edit the tree to fir your own needs
 ```
 
 **Pro Tip:** _Why not setup a script to autorun this project in a new terminal when your computer starts up? Could be a nice view_ 🤭

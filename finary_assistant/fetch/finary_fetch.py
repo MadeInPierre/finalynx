@@ -7,16 +7,16 @@ from ..portfolio.line import Line
 import os
 import json
 
+def match_line(portfolio, key, amount, node, ignore_orphans, indent=0):
+    key, amount = unidecode(key), round(amount)
+    node_child = node.add(f"{amount} {key}")
+    if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
+        node_child.add(
+            "[yellow]WARNING: This line did not match with any envelope, attaching to root"
+        )
+        portfolio.add_child(Line(key, amount=amount))
 
 def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path management?
-    def match_line(portfolio, key, amount, node, indent=0):
-        key, amount = unidecode(key), round(amount)
-        node_child = node.add(f"{amount} {key}")
-        if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
-            node_child.add(
-                "[yellow]WARNING: This line did not match with any envelope, attaching to root"
-            )
-            portfolio.add_child(Line(key, amount=amount))
 
     tree = Tree("Finary API", highlight=True, hide_root=True)
 
@@ -28,7 +28,9 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
     local_cookies_path = os.path.join(local_directory_path, "localCookiesMozilla.txt")
 
     # Manage the credentials file creation and signin
-    if not os.environ.get("FINARY_EMAIL") or not os.environ.get("FINARY_PASSWORD"):
+    if not os.path.exists(local_cookies_path) and (
+        not os.environ.get("FINARY_EMAIL") or not os.environ.get("FINARY_PASSWORD")
+    ):
         credentials = {}
         if os.path.exists(credentials_path):
             cred_file = open(credentials_path, "r")
@@ -39,7 +41,9 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
                 "Your Finary [yellow bold]password[/]: ", password=True
             )
 
-            if Confirm.ask(f"Would like to save your credentials in '{credentials_path}'?"):
+            if Confirm.ask(
+                f"Would like to save your credentials in '{credentials_path}'?"
+            ):
                 with open(credentials_path, "w") as f:
                     f.write(json.dumps(credentials, indent=4))
 
@@ -72,7 +76,7 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
                 "[bold]" + str(round(result["timeseries"][-1][1])) + " " + name
             )
             for k, e in result["distribution"].items():
-                match_line(portfolio, k, e["amount"], node, indent=1)
+                match_line(portfolio, k, e["amount"], node, ignore_orphans, indent=1)
 
         # Autres
         console.log(f"Fetching other assets...")
@@ -80,7 +84,7 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
         f_other_total = round(other["timeseries"][-1][1])
         node = tree.add("[bold]" + str(round(f_other_total)) + " Autres")
         for item in other["data"]:
-            match_line(portfolio, item["name"], item["current_value"], node, indent=1)
+            match_line(portfolio, item["name"], item["current_value"], node, ignore_orphans, indent=1)
 
         # Investissements
         console.log(f"Fetching investments...")
@@ -108,6 +112,7 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
                         item["security"]["name"],
                         item["current_value"],
                         node_account,
+                        ignore_orphans, 
                         indent=2,
                     )
 

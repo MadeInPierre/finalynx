@@ -7,11 +7,12 @@ Contributions and feature ideas are warmly welcome!
   - [X] Define `Targets` with colorful rendering
   - [X] Create `Bucket` and `SharedFolder` objects to consider multiple lines as a unique position
   - [X] Fetch real-time investment amounts from Finary using [`finary_api`](https://github.com/lasconic/finary)
+  - [X] Folders can be displayed as expanded, collapsed or look like a single line
 - [ ] **Chapter 2: Publish to GitHub**
-  - [x] Nice GitHub landing page (hopefully) just to have fun
-  - [x] Demo file with comments
-  - [x] Create a central Assistant class instead of a main function
-  - [x] Parse options in command line
+  - [X] Nice GitHub landing page (hopefully) just to have fun
+  - [X] Demo file with comments
+  - [X] Create a central Assistant class instead of a main function
+  - [X] Parse options in command line
   - [ ] Learn to do versioning, releases, PEP8, ...
   - [ ] Write detailed instructions to create your own config
   - [ ] Documentation? Wait to see if people are interested
@@ -39,6 +40,3 @@ Contributions and feature ideas are warmly welcome!
   - [ ] Regular backup of the portfolio tree for archive?
   - [ ] Monte Carlo simulation instead of probabilities? 
   - [ ] Customizable Monte Carlo with personal beliefs (e.g. climate crisis effects)?
-
-Minor improvements:
-- [ ] Create an option for buckets to show either as folders or lines

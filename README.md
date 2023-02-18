@@ -48,9 +48,9 @@ git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
 ```sh
 ./install.sh
 ```
-4. Go inside the `lib/finary_api` directory and follow the [setup instructions](https://github.com/lasconic/finary#quick-start) summarized here:
+4. Go inside the `submodules/finary_api` directory and follow the [setup instructions](https://github.com/lasconic/finary#quick-start) summarized here:
 ```sh
-cd lib/finary_api                        # Go to 
+cd submodules/finary_api                 # Go to the fianry_api project folder
 cp credentials.json.tpl credentials.json # Use the template to create credentials.json
 nano credentials.json                    # <- Enter your Finary account credentials
 python -m finary_api signin              # Sign in and make sure everything works
@@ -66,36 +66,6 @@ cp demo.py assistant_config.py
 ```
 
 **Pro Tip:** _Why not setup a script to autorun this project in a new terminal when your computer starts up? Could be a nice view_ 🤭
-
-<!-- 1. Install [`finary_api`](https://github.com/lasconic/finary) by following the instructions there and make sure everything works.
-
-```
-git submodule add -f https://github.com/lasconic/finary lib/finary_api
-```
-1. Add the following line at the end of your `.bashrc` (or `.zshrc`) file and relaunch your terminal:
-
-```sh
-export PYTHONPATH=/full/path/to/finary:$PYTHONPATH
-```
-
-1. Inside `finary_api`, modify the `finary_api/constants.py` file and provide the full path to the credentials and cookies file:
-
-```python
-CREDENTIAL_FILE = "/full/path/to/credentials.json"
-COOKIE_FILENAME = "/full/path/to/localCookiesMozilla.txt"
-```
-
-4. Clone this repository anywhere:
-
-```sh
-git clone https://github.com/MadeInPierre/finary_assistant.git
-```
-
-5. Install pip dependencies:
-
-```sh
-pip install -r requirements.txt
-``` -->
 
 ## ⚙️ Usage 
 The goal is to declare a tree structure of your entire portfolio investments independently from their host envelopes (e.g. PEA, AV, CTO, etc). Define your own asset-based global strategy without feeling constrainted by keeping similar assets in common envelopes. Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Assistant will fetch each line and display your full portfolio with real-time amounts.

@@ -5,7 +5,7 @@ git submodule update --init --recursive
 
 
 # Modify finary_api's constants with the full path to prevent relative path issues
-FINARY_API_ROOT=$(pwd)/lib/finary_api
+FINARY_API_ROOT=$(pwd)/submodules/finary_api
 CONSTANTS_FILE=$FINARY_API_ROOT/finary_api/constants.py
 
 if ! grep -q finary_assistant "$CONSTANTS_FILE"; then

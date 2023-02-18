@@ -1,4 +1,4 @@
-[submodule "lib/finary_api"]
-	path = lib/finary_api
+[submodule "submodules/finary_api"]
+	path = submodules/finary_api
 	url = https://github.com/lasconic/finary
 	ignore = dirty

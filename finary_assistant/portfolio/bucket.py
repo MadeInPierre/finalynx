@@ -69,9 +69,11 @@ class SharedFolder(Folder):
         parent=None,
         target=None,
         newline=False,
-        display=FolderDisplay.EXPANDED
+        display=FolderDisplay.EXPANDED,
     ):
-        super().__init__(name, parent, target, bucket.lines, newline=False, display=display)
+        super().__init__(
+            name, parent, target, bucket.lines, newline=False, display=display
+        )
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket

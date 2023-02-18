@@ -12,7 +12,15 @@ class FolderDisplay(Enum):
 
 
 class Folder(Node):
-    def __init__(self, name, parent=None, target=None, children=None, newline=False, display=FolderDisplay.EXPANDED):
+    def __init__(
+        self,
+        name,
+        parent=None,
+        target=None,
+        children=None,
+        newline=False,
+        display=FolderDisplay.EXPANDED,
+    ):
         super().__init__(name, parent, target, newline=False)
         self.children = [] if children is None else children
         self.display = display

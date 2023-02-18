@@ -1,5 +1,5 @@
 from ..console import console
-from .folder import Folder
+from .folder import Folder, FolderDisplay
 from .line import Line
 from .node import Node
 from .hierarchy import Hierarchy

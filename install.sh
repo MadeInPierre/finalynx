@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Clone submodules just in case the user forgot to clone recursively
 git submodule update --init --recursive
 

@@ -8,8 +8,15 @@ This module is maintained by MadeInPierre.
 You can always get the latest version of this module at:
 > https://github.com/madeinpierre/finary_assistant
 """
+# Enable rich's features
+from rich import print, inspect, pretty, traceback
+from rich.tree import Tree
+
+traceback.install()
+pretty.install()
+
 from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
-from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio
+from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio, FolderDisplay
 from finary_assistant import Copilot, Simulator
 from finary_assistant import Assistant
 

@@ -1,5 +1,5 @@
 import numpy as np
-from .folder import Folder
+from .folder import Folder, FolderDisplay
 from .line import Line
 from ..console import console
 import itertools
@@ -69,8 +69,9 @@ class SharedFolder(Folder):
         parent=None,
         target=None,
         newline=False,
+        display=FolderDisplay.EXPANDED
     ):
-        super().__init__(name, parent, target, bucket.lines, newline=False)
+        super().__init__(name, parent, target, bucket.lines, newline=False, display=display)
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket

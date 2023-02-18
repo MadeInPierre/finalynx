@@ -127,7 +127,8 @@ portfolio = Portfolio('My Portfolio', children=[
     # ...
   ]),
   Folder('Long term', children=[
-    Folder('Stocks', children=[
+    # Folders can be displayed as Expanded (default), Collapsed, or as a Line
+    Folder('Stocks', display=FolderDisplay.COLLAPSED, children=[
       SharedFolder('My Folder', bucket=my_bucket), # display what's left in the bucket
       # ...
     ]),

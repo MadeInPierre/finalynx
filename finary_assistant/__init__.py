@@ -22,7 +22,7 @@ modifications, that you make.
 
 # Portfolio
 from .portfolio import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
-from .portfolio import Line, Folder, Bucket, SharedFolder, Portfolio
+from .portfolio import Line, Folder, Bucket, SharedFolder, Portfolio, FolderDisplay
 from .portfolio import console
 
 # Fetch

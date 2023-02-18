@@ -66,8 +66,7 @@ class Assistant:
 
     def run(self):
         # Fill tree with current valuations fetched from Finary
-        with console.status("[bold green]Fetching data from Finary..."):
-            finary_tree = finary_fetch(self.portfolio, self.ignore_orphans)
+        finary_tree = finary_fetch(self.portfolio, self.ignore_orphans)
 
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()

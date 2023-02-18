@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/MadeInPierre/finary_assistant">
-    <img src="./doc/logo_assistant_transparent.png" width="400" />
+    <img src="https://github.com/MadeInPierre/finary_assistant/raw/main/doc/logo_assistant_transparent.png" width="400" />
   </a>
   <br>Finary Assistant<br>
 </h1>
@@ -23,7 +23,7 @@ This tool synchronizes with your [Finary](https://finary.com/) account to show r
 Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) :sparkles: (or through the [default](https://finary.com/signup) page).
 
 <p align="center">
-  <img src="./doc/screenshot.png" width="500" />
+  <img src="https://github.com/MadeInPierre/finary_assistant/raw/main/doc/screenshot.png" width="500" />
 </p>
 
 ## ✨ Features

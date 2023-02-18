@@ -6,7 +6,7 @@ with open("README.md", 'r') as f:
 
 setup(
     name='finary_assistant',
-    version='0.0.1',
+    version='0.0.2',
     description='A command line investment assistant to organize your portfolio and simulate its future to reach your life goals.',
     license='GNU General Public Version 3',
     long_description=long_description,

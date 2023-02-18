@@ -8,7 +8,7 @@ You can always get the latest version of this module at:
     https://github.com/madeinpierre/finary_assistant
 """
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __author__ = "MadeInPierre"
 __copyright__ = """
 Copyright (c) 2023, MadeInPierre

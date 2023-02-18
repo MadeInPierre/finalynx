@@ -8,7 +8,7 @@ You can always get the latest version of this module at:
     https://github.com/madeinpierre/finary_assistant
 """
 
-__version__ = "1.0.0"
+__version__ = "0.0.1"
 __author__ = "MadeInPierre"
 __copyright__ = """
 Copyright (c) 2023, MadeInPierre
@@ -19,6 +19,13 @@ and that both that copyright notice and this permission notice appear
 in supporting documentation or portions thereof, including
 modifications, that you make.
 """
+
+import os
+import sys
+
+# add finary_api submodule to path to allow imports to work
+parent_folder_path, _ = os.path.split(os.path.dirname(__file__))
+sys.path.append(os.path.join(parent_folder_path, "submodules", "finary_api"))
 
 # Portfolio
 from .portfolio import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio

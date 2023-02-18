@@ -13,6 +13,7 @@ Contributions and feature ideas are warmly welcome!
   - [X] Demo file with comments
   - [X] Create a central Assistant class instead of a main function
   - [X] Parse options in command line
+  - [X] Remove the need for the install script using syspath appends
   - [ ] Learn to do versioning, releases, PEP8, ...
   - [ ] Write detailed instructions to create your own config
   - [ ] Documentation? Wait to see if people are interested

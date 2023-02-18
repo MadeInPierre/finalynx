@@ -1,6 +1,10 @@
 # Define your own portfolio using this name if you plan to contribute
 assistant_config.py
 
+# Setup your finary credentials in this repo directly
+credentials.json
+localCookiesMozilla.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 **/__pycache__/

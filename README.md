@@ -38,29 +38,21 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 You can check the [current development status](./doc/TODO.md). Contributions are warmly welcome!
 
 ## 🚀 Installation
-1. Make sure you have python 3.8 or later and pip installed.
-
-2. Clone this repository using the `--recursive` option to include [`finary_api`](https://github.com/lasconic/finary):
+1. Clone this repository using the `--recursive` option to include [`finary_api`](https://github.com/lasconic/finary):
 ```sh
 git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
 ```
-3. Run the install script:
+2. _(Optional) If you forgot to clone recursively, run this command at the root folder:_
 ```sh
-./install.sh
+git submodule update --init --recursive
 ```
-4. Go inside the `submodules/finary_api` directory and follow the [setup instructions](https://github.com/lasconic/finary#quick-start) summarized here:
+3. Create and edit a `credentials.json` file using the template to provide your Finary username/password:
 ```sh
-cd submodules/finary_api                 # Go to the fianry_api project folder
-cp credentials.json.tpl credentials.json # Use the template to create credentials.json
-nano credentials.json                    # <- Enter your Finary account credentials
-python -m finary_api signin              # Sign in and make sure everything works
-cd ../..                                 # Go back to finary_assistant
+cp credentials.json.tpl credentials.json
+nano credentials.json # <- Enter your Finary account credentials
 ```
-5. Try the assistant with `python demo.py`. You should see a template portfolio tree and your investments detected from Finary.
-<!-- ```sh
-python assistant.py
-``` -->
-6. And you're done! Now create your own copy of the demo file and go customize it for your own needs 🚀 (the name `assistant_config` is recommended as it is ignored from git):
+4. Try the assistant with `python demo.py`. You should see a template portfolio tree and your investments detected from Finary.
+5. And you're done! Now create your own copy of the demo file and go customize it for your own needs 🚀 (the name `assistant_config` is recommended as it is ignored from git):
 ```sh
 cp demo.py assistant_config.py
 ```

@@ -1,4 +1,5 @@
 import finary_api.__main__ as ff
+import finary_api.constants
 from unidecode import unidecode
 from rich.tree import Tree
 from rich.prompt import Prompt, Confirm
@@ -6,6 +7,7 @@ from ..console import console
 from ..portfolio.line import Line
 import os
 import json
+
 
 def match_line(portfolio, key, amount, node, ignore_orphans, indent=0):
     key, amount = unidecode(key), round(amount)
@@ -16,52 +18,53 @@ def match_line(portfolio, key, amount, node, ignore_orphans, indent=0):
         )
         portfolio.add_child(Line(key, amount=amount))
 
-def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path management?
 
+def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
     tree = Tree("Finary API", highlight=True, hide_root=True)
 
-    local_directory_path = os.path.dirname(os.path.abspath(__file__))
-    credentials_path = os.path.join(local_directory_path, "credentials.json")
-    current_cookies_path = os.path.join(
-        os.path.abspath(os.getcwd()), "localCookiesMozilla.txt"
-    )
-    local_cookies_path = os.path.join(local_directory_path, "localCookiesMozilla.txt")
+    # Let the user reset its credentials and session
+    if force_signin:
+        if os.path.exists(finary_api.constants.COOKIE_FILENAME):
+            os.remove(finary_api.constants.COOKIE_FILENAME)
+        if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
+            os.remove(finary_api.constants.CREDENTIAL_FILE)
 
     # Manage the credentials file creation and signin
-    if not os.path.exists(local_cookies_path) and (
-        not os.environ.get("FINARY_EMAIL") or not os.environ.get("FINARY_PASSWORD")
-    ):
-        credentials = {}
-        if os.path.exists(credentials_path):
-            cred_file = open(credentials_path, "r")
-            credentials = json.load(cred_file)
-        else:
-            credentials["email"] = console.input("Your Finary [yellow bold]email[/]: ")
-            credentials["password"] = console.input(
-                "Your Finary [yellow bold]password[/]: ", password=True
-            )
+    if not os.path.exists(finary_api.constants.COOKIE_FILENAME):
+        if not os.environ.get("FINARY_EMAIL") or not os.environ.get("FINARY_PASSWORD"):
+            credentials = {}
+            if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
+                cred_file = open(finary_api.constants.CREDENTIAL_FILE, "r")
+                credentials = json.load(cred_file)
+            else:
+                credentials["email"] = console.input(
+                    "Your Finary [yellow bold]email[/]: "
+                )
+                credentials["password"] = console.input(
+                    "Your Finary [yellow bold]password[/]: ", password=True
+                )
 
-            if Confirm.ask(
-                f"Would like to save your credentials in '{credentials_path}'?"
-            ):
-                with open(credentials_path, "w") as f:
-                    f.write(json.dumps(credentials, indent=4))
+                if Confirm.ask(
+                    f"Would like to save your credentials in '{finary_api.constants.CREDENTIAL_FILE}'?"
+                ):
+                    with open(finary_api.constants.CREDENTIAL_FILE, "w") as f:
+                        f.write(json.dumps(credentials, indent=4))
 
-        os.environ["FINARY_EMAIL"] = credentials["email"]
-        os.environ["FINARY_PASSWORD"] = credentials["password"]
+            os.environ["FINARY_EMAIL"] = credentials["email"]
+            os.environ["FINARY_PASSWORD"] = credentials["password"]
 
     # Login to Finary
     with console.status("[bold green]Fetching data from Finary..."):
-        if os.path.exists(local_cookies_path):
-            os.rename(local_cookies_path, current_cookies_path)
-        else:
+        if not os.path.exists(finary_api.constants.COOKIE_FILENAME):
             console.log(f"Signing in to Finary...")
             result = ff.signin()
             if result is None or result["message"] != "Created":
                 console.log("[bold red]Signin to Finary failed! Skipping fetch.[/]")
-                os.remove(credentials_path)
+                os.remove(finary_api.constants.CREDENTIAL_FILE)
                 return tree
             console.log("Successfully signed in")
+        else:
+            console.log("Found existing cookies file, skipping signin")
         session = ff.prepare_session()
 
         # Comptes courants, Livrets et Fonds euro
@@ -84,7 +87,14 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
         f_other_total = round(other["timeseries"][-1][1])
         node = tree.add("[bold]" + str(round(f_other_total)) + " Autres")
         for item in other["data"]:
-            match_line(portfolio, item["name"], item["current_value"], node, ignore_orphans, indent=1)
+            match_line(
+                portfolio,
+                item["name"],
+                item["current_value"],
+                node,
+                ignore_orphans,
+                indent=1,
+            )
 
         # Investissements
         console.log(f"Fetching investments...")
@@ -112,7 +122,7 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
                         item["security"]["name"],
                         item["current_value"],
                         node_account,
-                        ignore_orphans, 
+                        ignore_orphans,
                         indent=2,
                     )
 
@@ -121,10 +131,6 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
         os.environ.pop("FINARY_EMAIL")
     if os.environ.get("FINARY_PASSWORD"):
         os.environ.pop("FINARY_PASSWORD")
-
-    # Move cookies to this folder to find it next time
-    if os.path.exists(current_cookies_path):
-        os.rename(current_cookies_path, local_cookies_path)
 
     console.log("Done fetching Finary data.")
     return tree

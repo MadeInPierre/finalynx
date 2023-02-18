@@ -1,16 +1,17 @@
 """
 Finary Assistant command line
 Usage:
-    your_config.py [-iar]
+    your_config.py [-iarf]
     your_config.py (-h | --help)
     your_config.py (-v | --version)
 
 Options:
-  -h --help           Show this help message.
-  -v --version        Display this module's current version.
-  -i --ignoreOrphans  Ignore fetched lines that you didn't reference in your portfolio.
-  -a --hideAmount     Display your portfolio with dots instead of the real values (easier to share).
-  -r --hideRoot       Display your portfolio without the root (cosmetic preference).
+  -h --help           Show this help message
+  -v --version        Display this module's current version
+  -i --ignoreOrphans  Ignore fetched lines that you didn't reference in your portfolio
+  -f --forceSignin    Sign in to Finary even if there is an existing cookies file
+  -a --hideAmount     Display your portfolio with dots instead of the real values (easier to share)
+  -r --hideRoot       Display your portfolio without the root (cosmetic preference)
 
 """
 from finary_assistant import Copilot, Simulator, finary_fetch, console, __version__
@@ -41,6 +42,7 @@ class Assistant:
         scenario=None,
         copilot=None,
         ignore_orphans=False,
+        force_signin=False,
         hide_amount=False,
         hide_root=False,
     ):
@@ -50,6 +52,7 @@ class Assistant:
 
         # Options
         self.ignore_orphans = ignore_orphans
+        self.force_signin = force_signin
         self.hide_amount = hide_amount
         self.hide_root = hide_root
 
@@ -59,6 +62,8 @@ class Assistant:
         args = docopt(__doc__, version=__version__)
         if args["--ignoreOrphans"]:
             self.ignore_orphans = True
+        if args["--forceSignin"]:
+            self.force_signin = True
         if args["--hideAmount"]:
             self.hide_amount = True
         if args["--hideRoot"]:
@@ -66,7 +71,7 @@ class Assistant:
 
     def run(self):
         # Fill tree with current valuations fetched from Finary
-        finary_tree = finary_fetch(self.portfolio, self.ignore_orphans)
+        finary_tree = finary_fetch(self.portfolio, self.force_signin, self.ignore_orphans)
 
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()

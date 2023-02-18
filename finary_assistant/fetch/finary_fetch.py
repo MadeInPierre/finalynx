@@ -28,22 +28,23 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
     local_cookies_path = os.path.join(local_directory_path, "localCookiesMozilla.txt")
 
     # Manage the credentials file creation and signin
-    credentials = {}
-    if os.path.exists(credentials_path):
-        cred_file = open(credentials_path, "r")
-        credentials = json.load(cred_file)
-    else:
-        credentials["email"] = console.input("Your Finary [yellow bold]email[/]: ")
-        credentials["password"] = console.input(
-            "Your Finary [yellow bold]password[/]: ", password=True
-        )
+    if not os.environ.get("FINARY_EMAIL") or not os.environ.get("FINARY_PASSWORD"):
+        credentials = {}
+        if os.path.exists(credentials_path):
+            cred_file = open(credentials_path, "r")
+            credentials = json.load(cred_file)
+        else:
+            credentials["email"] = console.input("Your Finary [yellow bold]email[/]: ")
+            credentials["password"] = console.input(
+                "Your Finary [yellow bold]password[/]: ", password=True
+            )
 
-        if Confirm.ask(f"Would like to save your credentials in '{credentials_path}'?"):
-            with open(credentials_path, "w") as f:
-                f.write(json.dumps(credentials, indent=4))
+            if Confirm.ask(f"Would like to save your credentials in '{credentials_path}'?"):
+                with open(credentials_path, "w") as f:
+                    f.write(json.dumps(credentials, indent=4))
 
-    os.environ["FINARY_EMAIL"] = credentials["email"]
-    os.environ["FINARY_PASSWORD"] = credentials["password"]
+        os.environ["FINARY_EMAIL"] = credentials["email"]
+        os.environ["FINARY_PASSWORD"] = credentials["password"]
 
     # Login to Finary
     with console.status("[bold green]Fetching data from Finary..."):
@@ -54,6 +55,7 @@ def finary_fetch(portfolio, ignore_orphans=False):  # TODO cleanup file path man
             result = ff.signin()
             if result is None or result["message"] != "Created":
                 console.log("[bold red]Signin to Finary failed! Skipping fetch.[/]")
+                os.remove(credentials_path)
                 return tree
             console.log("Successfully signed in")
         session = ff.prepare_session()

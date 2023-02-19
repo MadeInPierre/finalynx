@@ -14,7 +14,8 @@ Options:
   -r --hideRoot       Display your portfolio without the root (cosmetic preference)
 
 """
-from finary_assistant import Copilot, Simulator, finary_fetch, console, __version__
+from finary_assistant import Copilot, Simulator, finary_fetch, console
+from .__meta__ import __version__
 from docopt import docopt
 
 # Enable rich's features

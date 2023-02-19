@@ -10,7 +10,7 @@ You can always get the latest version of this module at:
 
 
 # Import meta information such as version, author, copyright, etc.
-from __meta__ import *
+from .__meta__ import *
 
 import os
 import sys

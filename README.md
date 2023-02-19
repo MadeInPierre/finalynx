@@ -121,7 +121,7 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
 ```
 
 ## 👨‍💻 Contributions
-This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Pull requests, [issues](https://github.com/MadeInPierre/finary_assistant/issues/new) and [open discussions](https://github.com/MadeInPierre/finary_assistant/discussions/new) are warmly welcome!
+This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Please use the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) guidelines for your commit messages. Pull requests, [issues](https://github.com/MadeInPierre/finary_assistant/issues/new) and [open discussions](https://github.com/MadeInPierre/finary_assistant/discussions/new) are warmly welcome!
 
 Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project yourself (or [hire me](https://www.buymeacoffee.com/MadeInPierre/commissions) if you can't develop it yourself). Pull requests are welcome to create a useful tool for everyone!
 

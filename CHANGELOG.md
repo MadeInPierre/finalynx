@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.0 (2023-02-19)
+### Feature
+* Forcing bump to 0.1 ([`a2fa623`](https://github.com/MadeInPierre/finary_assistant/commit/a2fa623d10a1ea20f236bf6784fa21599014de09))
+
 ## v0.0.1 (2023-02-19)
 ### Fix
 * Readme image urls ([`89e1d7b`](https://github.com/MadeInPierre/finary_assistant/commit/89e1d7b169ffa59e9c869f03da6e740c90acf854))

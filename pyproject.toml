@@ -29,6 +29,7 @@ version_variable = [
     "finary_assistant/__meta__.py:__version__",
     "pyproject.toml:version"
 ]
+version_source = "tag"
 branch = "main"
 upload_to_pypi = true
 upload_to_release = true

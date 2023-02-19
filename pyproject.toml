@@ -33,7 +33,6 @@ version_source = "tag"
 branch = "main"
 upload_to_pypi = true
 upload_to_release = true
-ignore_token_for_push = true
 commit_subject = "chore(release): auto bump to version {version}"
 build_command = "pip install poetry && poetry build"
 

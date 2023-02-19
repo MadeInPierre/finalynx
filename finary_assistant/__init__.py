@@ -8,17 +8,9 @@ You can always get the latest version of this module at:
     https://github.com/madeinpierre/finary_assistant
 """
 
-__version__ = "0.0.3"
-__author__ = "MadeInPierre"
-__copyright__ = """
-Copyright (c) 2023, MadeInPierre
-Permission to use, copy, modify, and distribute this software and its
-documentation for any purpose and without fee or royalty is hereby
-granted, provided that the above copyright notice appear in all copies
-and that both that copyright notice and this permission notice appear
-in supporting documentation or portions thereof, including
-modifications, that you make.
-"""
+
+# Import meta information such as version, author, copyright, etc.
+from __meta__ import *
 
 import os
 import sys

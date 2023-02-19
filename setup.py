@@ -1,12 +1,17 @@
 from setuptools import setup, find_packages
-from glob import glob
+import sys
 
+# Retrieve the version directly from the package
+sys.path[0:0] = ['finary_assistant']
+from __meta__ import __version__
+
+# Use the README file as the PyPI description
 with open("README.md", 'r') as f:
     long_description = f.read()
 
 setup(
     name='finary_assistant',
-    version='0.0.3',
+    version=__version__,
     description='A command line investment assistant to organize your portfolio and simulate its future to reach your life goals.',
     license='GNU General Public Version 3',
     long_description=long_description,

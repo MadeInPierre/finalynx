@@ -32,7 +32,6 @@ version_variable = [
 branch = "main"
 upload_to_pypi = true
 upload_to_release = true
-commit_subject = "chore(release): auto bump to version {version}"
 build_command = "pip install poetry && poetry build"
 
 [tool.commitizen]

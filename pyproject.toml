@@ -17,6 +17,8 @@ requests = "2.28.2"
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
 pdoc3 = "^0.10.0"
+commitizen = "^2.42.0"
+pre-commit = "^3.0.4"
 
 [build-system]
 requires = ["poetry-core"]
@@ -31,10 +33,11 @@ branch = "main"
 upload_to_pypi = true
 upload_to_release = true
 ignore_token_for_push = true
+commit_subject = "chore(release): auto bump to version {version}"
 build_command = "pip install poetry && poetry build"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
 version = "0.1.0"
-tag_format = "$version"
+tag_format = "v$version"
 

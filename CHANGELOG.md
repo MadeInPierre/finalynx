@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.3 (2023-02-19)
+### Fix
+* Trying to remove custom commit message ([`89bed31`](https://github.com/MadeInPierre/finary_assistant/commit/89bed317f66a4a27ac83e17586a9e8994abae632))
+* Manual set to version 0.1.2 ([`d8284d1`](https://github.com/MadeInPierre/finary_assistant/commit/d8284d13c02bf4a525b9204948968c37a673a7b2))
+
 ## v0.1.0 (2023-02-19)
 ### Feature
 * Forcing bump to 0.1 ([`a2fa623`](https://github.com/MadeInPierre/finary_assistant/commit/a2fa623d10a1ea20f236bf6784fa21599014de09))

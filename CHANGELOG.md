@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.4 (2023-02-19)
+### Fix
+* Relative import in module init ([`126fc6e`](https://github.com/MadeInPierre/finary_assistant/commit/126fc6eda9dbc75b9e1af66ac617e7e46062b6f3))
+
 ## v0.1.3 (2023-02-19)
 ### Fix
 * Trying to remove custom commit message ([`89bed31`](https://github.com/MadeInPierre/finary_assistant/commit/89bed317f66a4a27ac83e17586a9e8994abae632))

@@ -37,8 +37,8 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 cred_file = open(finary_api.constants.CREDENTIAL_FILE)
                 credentials = json.load(cred_file)
             else:
-                credentials["email"] = console.input("Your Finary [yellow bold]email[/]: ")
-                credentials["password"] = console.input("Your Finary [yellow bold]password[/]: ", password=True)
+                credentials["email"] = console.input("Enter your Finary [yellow bold]email[/]: ")
+                credentials["password"] = console.input("Enter your Finary [yellow bold]password[/]: ", password=True)
 
                 if Confirm.ask(f"Would like to save your credentials in '{finary_api.constants.CREDENTIAL_FILE}'?"):
                     with open(finary_api.constants.CREDENTIAL_FILE, "w") as f:

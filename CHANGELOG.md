@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.0 (2023-02-20)
+### Feature
+* **presentation:** Updated README&CONTRIBUTING, project looks good! ([`2267bd3`](https://github.com/MadeInPierre/finary_assistant/commit/2267bd333242145b55a6393deed6c41014aeaf9f))
+
+### Documentation
+* **readme:** Created CONTRIBUTING.md guidelines ([`75e2d75`](https://github.com/MadeInPierre/finary_assistant/commit/75e2d758328cce9e18ee02dc2f8d2580677d1bf4))
+
 ## v0.1.8 (2023-02-20)
 ### Fix
 * Static pypi badge ([`ed669ea`](https://github.com/MadeInPierre/finary_assistant/commit/ed669ea65bf946af2fa7bd8d53b762fa469260e2))

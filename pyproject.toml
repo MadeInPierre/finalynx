@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "finary-assistant"
-version = "0.1.8"
+version = "0.2.0"
 description = "A command line investment assistant to organize your portfolio and simulate its future to reach your life goals."
 authors = ["MadeInPierre <pielaclau@gmail.com>"]
 license = "GPLv3"
@@ -38,5 +38,5 @@ build_command = "pip install poetry && poetry build"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.8"
+version = "0.2.0"
 tag_format = "v$version"

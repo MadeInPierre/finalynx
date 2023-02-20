@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.5 (2023-02-20)
+### Fix
+* **ci:** Include finary_api to the PiPY package ([`6b058c7`](https://github.com/MadeInPierre/finary_assistant/commit/6b058c7abda05d78896389289f6280e7b7f8a5dc))
+
 ## v0.1.4 (2023-02-19)
 ### Fix
 * Relative import in module init ([`126fc6e`](https://github.com/MadeInPierre/finary_assistant/commit/126fc6eda9dbc75b9e1af66ac617e7e46062b6f3))

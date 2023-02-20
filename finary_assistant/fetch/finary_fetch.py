@@ -1,12 +1,14 @@
+import json
+import os
+
+from rich.prompt import Confirm
+from rich.tree import Tree
+from unidecode import unidecode
+
 import finary_api.__main__ as ff
 import finary_api.constants
-from unidecode import unidecode
-from rich.tree import Tree
-from rich.prompt import Prompt, Confirm
 from ..console import console
 from ..portfolio.line import Line
-import os
-import json
 
 
 def match_line(portfolio, key, amount, node, ignore_orphans, indent=0):
@@ -34,7 +36,7 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
         if not os.environ.get("FINARY_EMAIL") or not os.environ.get("FINARY_PASSWORD"):
             credentials = {}
             if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
-                cred_file = open(finary_api.constants.CREDENTIAL_FILE, "r")
+                cred_file = open(finary_api.constants.CREDENTIAL_FILE)
                 credentials = json.load(cred_file)
             else:
                 credentials["email"] = console.input(
@@ -56,7 +58,7 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
     # Login to Finary
     with console.status("[bold green]Fetching data from Finary..."):
         if not os.path.exists(finary_api.constants.COOKIE_FILENAME):
-            console.log(f"Signing in to Finary...")
+            console.log("Signing in to Finary...")
             result = ff.signin()
             if result is None or result["message"] != "Created":
                 console.log("[bold red]Signin to Finary failed! Skipping fetch.[/]")
@@ -82,7 +84,7 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 match_line(portfolio, k, e["amount"], node, ignore_orphans, indent=1)
 
         # Autres
-        console.log(f"Fetching other assets...")
+        console.log("Fetching other assets...")
         other = ff.get_other_assets(session, "1w")["result"]
         f_other_total = round(other["timeseries"][-1][1])
         node = tree.add("[bold]" + str(round(f_other_total)) + " Autres")
@@ -97,7 +99,7 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
             )
 
         # Investissements
-        console.log(f"Fetching investments...")
+        console.log("Fetching investments...")
         investments = ff.get_portfolio_investments(session)["result"]
         f_invest_total = round(investments["total"]["amount"])
         node = tree.add("[bold]" + str(round(f_invest_total)) + " Investissements")

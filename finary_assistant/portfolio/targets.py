@@ -1,4 +1,5 @@
 import numpy as np
+
 from .hierarchy import Hierarchy
 
 
@@ -35,8 +36,10 @@ class Target(Hierarchy):
     def render_amount(self, hide_amount=False, n_characters=0):
         result = self.check()
         result = (
-            result if result != True else Target.RESULT_START
-        )  # TODO weird bug??? Workaround for now
+            result
+            if result != True  # noqa: E712 TODO weird bug??? Workaround for now
+            else Target.RESULT_START
+        )
         number = (
             f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
         )

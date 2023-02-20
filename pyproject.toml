@@ -17,6 +17,7 @@ requests = "2.28.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
+flake8 = "6.0.0"
 pdoc3 = "^0.10.0"
 commitizen = "^2.42.0"
 pre-commit = "^3.0.4"

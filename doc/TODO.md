@@ -1,4 +1,4 @@
-# Development status 
+# Development status
 Contributions and feature ideas are warmly welcome!
 
 - [X] **Chapter 1: Portfolio**
@@ -40,5 +40,5 @@ Contributions and feature ideas are warmly welcome!
 - [ ] **Chapter 5: Optional**
   - [ ] Create a web dashboard? Open to contributions 🙂
   - [ ] Regular backup of the portfolio tree for archive?
-  - [ ] Monte Carlo simulation instead of probabilities? 
+  - [ ] Monte Carlo simulation instead of probabilities?
   - [ ] Customizable Monte Carlo with personal beliefs (e.g. climate crisis effects)?

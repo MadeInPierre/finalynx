@@ -14,15 +14,21 @@ Options:
   -r --hideRoot       Display your portfolio without the root (cosmetic preference)
 
 """
-from finary_assistant import Copilot, Simulator, finary_fetch, console
-from .__meta__ import __version__
 from docopt import docopt
+from finary_assistant import console
+from finary_assistant import Copilot
+from finary_assistant import finary_fetch
+from finary_assistant import Simulator
+from rich import inspect  # noqa F401
+from rich import pretty
+from rich import print  # noqa F401
+from rich import traceback
+from rich.columns import Columns
+from rich.panel import Panel
+
+from .__meta__ import __version__
 
 # Enable rich's features
-from rich import print, inspect, pretty, traceback
-from rich.columns import Columns
-from rich.text import Text
-from rich.panel import Panel
 
 traceback.install()
 pretty.install()
@@ -72,16 +78,18 @@ class Assistant:
 
     def run(self):
         # Fill tree with current valuations fetched from Finary
-        finary_tree = finary_fetch(self.portfolio, self.force_signin, self.ignore_orphans)
+        finary_tree = finary_fetch(
+            self.portfolio, self.force_signin, self.ignore_orphans
+        )
 
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()
 
         # Simulate the portolio's evolution through the years by auto-investing each month
-        simulation = self.scenario.rich_simulation(self.portfolio)
+        simulation = self.scenario.rich_simulation(self.portfolio)  # noqa TODO
 
         # Get recommendations for immediate investment operations
-        recommentations = self.copilot.rich_recommendations(self.portfolio)
+        recommentations = self.copilot.rich_recommendations(self.portfolio)  # noqa TODO
 
         # Final set of results to be displayed
         panels = [

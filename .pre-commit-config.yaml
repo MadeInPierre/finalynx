@@ -1,8 +1,53 @@
+# See https://pre-commit.com for more information
+
 repos:
-- hooks:
-  - id: commitizen
-  - id: commitizen-branch
-    stages:
-    - push
-  repo: https://github.com/commitizen-tools/commitizen
-  rev: v2.42.0
+  # Ensure the user commits a message that follows the Conventional Commits guidelines
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.42.0
+    hooks:
+      - id: commitizen
+      - id: commitizen-branch
+        stages:
+          - push
+
+  # General random but nice pre-hooks to have
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-toml
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-added-large-files # TODO add many others!
+
+  # Modernize syntax to the most Pythonic way
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
+    hooks:
+      - id: pyupgrade
+        args: [--py36-plus]
+
+  # Reorder imports to tidy them up
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v3.9.0
+    hooks:
+      - id: reorder-python-imports
+        args: [--application-directories=finary_assistant]
+
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+        exclude: ^(finary_assistant/finary_api/|examples/)
+        # It is recommended to specify the latest version of Python
+        # supported by your project here, or alternatively use
+        # pre-commit's default_language_version, see
+        # https://pre-commit.com/#top_level-default_language_version
+        language_version: python3.8
+
+  # Run a linter to check for static warnings and errors before commiting
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        language_version: python3
+        args: ["--ignore=E501"]

@@ -1,8 +1,10 @@
+from enum import Enum
+
 import numpy as np
 from rich.tree import Tree
-from .node import Node
+
 from .line import Line
-from enum import Enum
+from .node import Node
 
 
 class FolderDisplay(Enum):
@@ -63,10 +65,7 @@ class Folder(Node):
             if isinstance(child, Line) and child.key == key:
                 child.amount = amount
                 success = True
-            elif (
-                isinstance(child, Folder)
-                and child.set_child_amount(key, amount) == True
-            ):
+            elif isinstance(child, Folder) and child.set_child_amount(key, amount):
                 success = True
         return success
 

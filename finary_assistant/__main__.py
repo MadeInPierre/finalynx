@@ -1,4 +1,5 @@
 from docopt import docopt
+
 from .__init__ import __version__
 from .assistant import __doc__
 

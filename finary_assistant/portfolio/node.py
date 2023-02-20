@@ -1,7 +1,8 @@
 import numpy as np
 from rich.tree import Tree
-from .targets import Target
+
 from .hierarchy import Hierarchy
+from .targets import Target
 
 
 class Node(Hierarchy):
@@ -34,8 +35,8 @@ class Node(Hierarchy):
         )
         return (
             f"{self._render_amount(hide_amount)} {self._render_name()}"
-            + hint
-            + self._render_newline()
+            + hint  # noqa: W503
+            + self._render_newline()  # noqa: W503
         )
 
     def _render_amount(self, hide_amount=False):

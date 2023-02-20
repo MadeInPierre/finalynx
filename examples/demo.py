@@ -1,28 +1,27 @@
 #!/usr/bin/env python
 """
-Finary Assistant is a tool to organize your investments in a custom hierarchy, 
-fetch real-time values using the Finary API, set targets, and simulate your 
+Finary Assistant is a tool to organize your investments in a custom hierarchy,
+fetch real-time values using the Finary API, set targets, and simulate your
 portfolio evolution with optional life events and portfolio operations.
 
 This module is maintained by MadeInPierre.
 You can always get the latest version of this module at:
 > https://github.com/madeinpierre/finary_assistant
 """
-# Enable rich's features
-from rich import print, inspect, pretty, traceback
-from rich.tree import Tree
-
-traceback.install()
-pretty.install()
-
-from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
-from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio, FolderDisplay
+# noreorder
+from rich import inspect, print, pretty, traceback # noqa
+from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio # noqa
+from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio, FolderDisplay # noqa
 from finary_assistant import Copilot, Simulator
 from finary_assistant import Assistant
 
+# Enable rich's features
+traceback.install()
+pretty.install()
+
 if __name__ == '__main__':
     """
-    Define groups of Lines, called Buckets, that will be considered as 
+    Define groups of Lines, called Buckets, that will be considered as
     a single line in your portfolio.
     """
     bucket_garanti = Bucket([
@@ -33,8 +32,8 @@ if __name__ == '__main__':
     ])
 
     """
-    Define your complete portfolio structure with Lines, Folders (groups 
-    of Lines), and SharedFolders (Folder with one Bucket). See the 
+    Define your complete portfolio structure with Lines, Folders (groups
+    of Lines), and SharedFolders (Folder with one Bucket). See the
     README file or the documentation for complete usage instructions.
     """
     portfolio = Portfolio('Portfolio', children=[
@@ -78,20 +77,23 @@ if __name__ == '__main__':
     ])
 
     """
-    Define your life events and investment strategy on the long term 
+    Define your life events and investment strategy on the long term
     to simulate your portfolio's evolution.
     """
-    scenario = Simulator() # TODO Coming soon(ish)!
+    scenario = Simulator()  # TODO Coming soon(ish)!
 
     """
-    Define your monthly investment strategy to get automated investment 
+    Define your monthly investment strategy to get automated investment
     recommendations at each salary day.
     """
-    copilot = Copilot() # TODO Coming soon(ish-ish)!
+    copilot = Copilot()  # TODO Coming soon(ish-ish)!
 
     # Run all routines and display results in the terminal
-    Assistant(portfolio, scenario, copilot, 
-        ignore_orphans=True, # Ignore fetched lines that you didn't reference in your portfolio.
-        hide_amount=False,   # Display your portfolio with dots instead of the real values (easier to share).
-        hide_root=False,     # Display your portfolio without the root (cosmetic preference).
-    ).run()
+    Assistant(
+        portfolio,
+        scenario,
+        copilot,
+        ignore_orphans=True,  # Ignore fetched lines that you didn't reference in your portfolio.
+        hide_amount=False,    # Display your portfolio with dots instead of the real values (easier to share).
+        hide_root=False,      # Display your portfolio without the root (cosmetic preference).
+    ).run() # noqa

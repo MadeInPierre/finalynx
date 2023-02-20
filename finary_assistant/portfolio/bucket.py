@@ -1,9 +1,10 @@
-import numpy as np
-from .folder import Folder, FolderDisplay
-from .line import Line
-from ..console import console
-import itertools
 import copy
+import itertools
+
+import numpy as np
+
+from .folder import Folder
+from .folder import FolderDisplay
 
 
 class Bucket:
@@ -13,11 +14,11 @@ class Bucket:
         self.amount_used = 0
 
     def get_max_amount(self):
-        return np.sum([l.get_amount() for l in self.lines])
+        return np.sum([line.get_amount() for line in self.lines])
 
     def _get_cumulative_index(self, target):
         result = {"index": -1, "remainder": 0}
-        amounts = [l.get_amount() for l in self.lines]
+        amounts = [line.get_amount() for line in self.lines]
         cumulative_sum = list(itertools.accumulate(amounts))
         for i, item in enumerate(cumulative_sum):
             if item >= target:

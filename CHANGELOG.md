@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.7 (2023-02-20)
+### Fix
+* **ci:** Forgot to recursively clone the repo ([`3a89f8e`](https://github.com/MadeInPierre/finary_assistant/commit/3a89f8e015b422ae86a232377f55e97adaf3a2b1))
+
 ## v0.1.6 (2023-02-20)
 ### Fix
 * **ci:** Attempting new glob pattern to include finary_api ([`12d81ea`](https://github.com/MadeInPierre/finary_assistant/commit/12d81ea2c0bc2e7cdeacd4417e2e642cdf7a8d04))

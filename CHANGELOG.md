@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.8 (2023-02-20)
+### Fix
+* Static pypi badge ([`ed669ea`](https://github.com/MadeInPierre/finary_assistant/commit/ed669ea65bf946af2fa7bd8d53b762fa469260e2))
+
 ## v0.1.7 (2023-02-20)
 ### Fix
 * **ci:** Forgot to recursively clone the repo ([`3a89f8e`](https://github.com/MadeInPierre/finary_assistant/commit/3a89f8e015b422ae86a232377f55e97adaf3a2b1))

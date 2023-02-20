@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.6 (2023-02-20)
+### Fix
+* **ci:** Attempting new glob pattern to include finary_api ([`12d81ea`](https://github.com/MadeInPierre/finary_assistant/commit/12d81ea2c0bc2e7cdeacd4417e2e642cdf7a8d04))
+
 ## v0.1.5 (2023-02-20)
 ### Fix
 * **ci:** Include finary_api to the PiPY package ([`6b058c7`](https://github.com/MadeInPierre/finary_assistant/commit/6b058c7abda05d78896389289f6280e7b7f8a5dc))

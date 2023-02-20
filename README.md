@@ -39,34 +39,14 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 You can check the [current development status](./doc/TODO.md). Contributions are warmly welcome!
 
 ## 🚀 Installation
-### Users
 If you don't plan on touching the code, simply run (with python 3.8 and pip installed):
 ```sh
-pip install finary_assistant
+pip install finary_assistant # run again with --upgrade to update
 ```
 
 And you're done! Now create your own copy of the [`demo.py`](./examples/demo.py) example anywhere. You can try to run the demo first to make sure everything works. Now go customize it for your own needs 🚀
 
 **Pro Tip:** _Why not setup a script to autorun this project in a new terminal at startup? Could be a nice view_ 🤭
-
-### Contributors
-1. Clone this repository using the `--recursive` option to include [`finary_api`](https://github.com/lasconic/finary):
-```sh
-git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
-# If you forgot --recursive: git submodule update --init --recursive
-```
-2. Install the project in editable mode:
-```sh
-cd finary_assistant && pip install -e .
-```
-3. Try the assistant with:
-```sh
-python examples/demo.py
-```
-If you see a template portfolio tree and your investments detected from Finary, then welcome to the (small) team! 🎉 Now create your own copy of the demo file and go customize it for your own needs (the name `assistant_config` is recommended as it is ignored from git):
-```sh
-cp examples/demo.py assistant_config.py # <- Your own portfolio here
-```
 
 ## ⚙️ Usage
 The goal is to declare a tree structure of your entire portfolio investments independently from their host envelopes (e.g. PEA, AV, CTO, etc). Define your own asset-based global strategy without feeling constrainted by keeping similar assets in common envelopes. Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Assistant will fetch each line and display your full portfolio with real-time amounts.
@@ -119,9 +99,9 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
 ```
 
 ## 👨‍💻 Contributions
-This repository is at a very early stage. If you'd like to contribute, please open an issue and ask me to write a detailed documentation! For new features or bug fixes, please fork the repository and use a feature branch. Please use the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) guidelines for your commit messages. Pull requests, [issues](https://github.com/MadeInPierre/finary_assistant/issues/new) and [open discussions](https://github.com/MadeInPierre/finary_assistant/discussions/new) are warmly welcome!
+If you would like to contribute to this project, welcome on board and thanks for your interest! 🎉 Please read the [contribution guidelines](./CONTRIBUTING.md) to setup the project on your machine and agree on common conventions.
 
-Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project yourself (or [hire me](https://www.buymeacoffee.com/MadeInPierre/commissions) if you can't develop it yourself). Pull requests are welcome to create a useful tool for everyone!
+This repository is at a very early stage. Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project yourself (or [hire me](https://www.buymeacoffee.com/MadeInPierre/commissions) if you can't develop it yourself). Pull requests, [issues](https://github.com/MadeInPierre/finary_assistant/issues/new) and [open discussions](https://github.com/MadeInPierre/finary_assistant/discussions/new) are warmly welcome!
 
 ## 📄 License
 This project is under the [GPLv3 License](./LICENSE) meaning anyone can use, share, extend, and contribute to this project as long as their changes are integrated to this repo or also published using GPLv3. Please contact me for any specific licensing requests.

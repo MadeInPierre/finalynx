@@ -1,6 +1,8 @@
 # Development status
 Contributions and feature ideas are warmly welcome!
 
+**TODO** MOVE THIS LIST TO GITHUB ISSUES AND MILESTONES
+
 - [X] **Chapter 1: Portfolio**
   - [X] Create a tree structure with `Lines` and `Folders`
   - [X] Pretty command-line printing with [`rich`](https://pypi.org/project/rich/)

@@ -29,20 +29,12 @@ class Target(Hierarchy):
         return ""
 
     def hint(self):
-        return (
-            "- Gotta invest!" if self.check() == Target.RESULT_START else "- No target"
-        )
+        return "- Gotta invest!" if self.check() == Target.RESULT_START else "- No target"
 
     def render_amount(self, hide_amount=False, n_characters=0):
         result = self.check()
-        result = (
-            result
-            if result != True  # noqa: E712 TODO weird bug??? Workaround for now
-            else Target.RESULT_START
-        )
-        number = (
-            f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
-        )
+        result = result if result != True else Target.RESULT_START  # noqa: E712 TODO weird bug??? Workaround for now
+        number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
         return f'[{result["color"]}]{result["symbol"]} {number} €[/][dim white]{self.prehint()}[/]'
 
 

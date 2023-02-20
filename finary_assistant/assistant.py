@@ -78,9 +78,7 @@ class Assistant:
 
     def run(self):
         # Fill tree with current valuations fetched from Finary
-        finary_tree = finary_fetch(
-            self.portfolio, self.force_signin, self.ignore_orphans
-        )
+        finary_tree = finary_fetch(self.portfolio, self.force_signin, self.ignore_orphans)
 
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()
@@ -94,9 +92,7 @@ class Assistant:
         # Final set of results to be displayed
         panels = [
             Panel(
-                self.portfolio.rich_tree(
-                    hide_amount=self.hide_amount, hide_root=self.hide_root
-                ),
+                self.portfolio.rich_tree(hide_amount=self.hide_amount, hide_root=self.hide_root),
                 title=self.portfolio.name,
                 padding=(1, 4),
             ),

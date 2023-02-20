@@ -45,9 +45,7 @@ class Node(Hierarchy):
             if (self.parent and self.parent.children)
             else 0
         )
-        return self.target.render_amount(
-            n_characters=max_length, hide_amount=hide_amount
-        )
+        return self.target.render_amount(n_characters=max_length, hide_amount=hide_amount)
 
     def _render_name(self):
         return self.name

@@ -15,9 +15,7 @@ def match_line(portfolio, key, amount, node, ignore_orphans, indent=0):
     key, amount = unidecode(key), round(amount)
     node_child = node.add(f"{amount} {key}")
     if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
-        node_child.add(
-            "[yellow]WARNING: This line did not match with any envelope, attaching to root"
-        )
+        node_child.add("[yellow]WARNING: This line did not match with any envelope, attaching to root")
         portfolio.add_child(Line(key, amount=amount))
 
 
@@ -39,16 +37,10 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 cred_file = open(finary_api.constants.CREDENTIAL_FILE)
                 credentials = json.load(cred_file)
             else:
-                credentials["email"] = console.input(
-                    "Your Finary [yellow bold]email[/]: "
-                )
-                credentials["password"] = console.input(
-                    "Your Finary [yellow bold]password[/]: ", password=True
-                )
+                credentials["email"] = console.input("Your Finary [yellow bold]email[/]: ")
+                credentials["password"] = console.input("Your Finary [yellow bold]password[/]: ", password=True)
 
-                if Confirm.ask(
-                    f"Would like to save your credentials in '{finary_api.constants.CREDENTIAL_FILE}'?"
-                ):
+                if Confirm.ask(f"Would like to save your credentials in '{finary_api.constants.CREDENTIAL_FILE}'?"):
                     with open(finary_api.constants.CREDENTIAL_FILE, "w") as f:
                         f.write(json.dumps(credentials, indent=4))
 
@@ -73,13 +65,9 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
         checkings = ff.get_checking_accounts(session, "1w")["result"]
         savings = ff.get_savings_accounts(session, "1w")["result"]
         fonds = ff.get_fonds_euro(session, "1w")["result"]
-        for result, name in zip(
-            [checkings, savings, fonds], ["Comptes courants", "Livrets", "Fonds euro"]
-        ):
+        for result, name in zip([checkings, savings, fonds], ["Comptes courants", "Livrets", "Fonds euro"]):
             console.log(f"Fetching {name.lower()}...")
-            node = tree.add(
-                "[bold]" + str(round(result["timeseries"][-1][1])) + " " + name
-            )
+            node = tree.add("[bold]" + str(round(result["timeseries"][-1][1])) + " " + name)
             for k, e in result["distribution"].items():
                 match_line(portfolio, k, e["amount"], node, ignore_orphans, indent=1)
 

@@ -38,11 +38,7 @@ class Folder(Node):
         self.children.append(child)
 
     def get_amount(self):
-        return (
-            np.sum([child.get_amount() for child in self.children])
-            if self.children
-            else 0
-        )
+        return np.sum([child.get_amount() for child in self.children]) if self.children else 0
 
     def rich_tree(self, hide_amount=False, _tree=None, **args):
         node = (

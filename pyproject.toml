@@ -6,7 +6,7 @@ authors = ["MadeInPierre <pielaclau@gmail.com>"]
 license = "GPLv3"
 readme = "README.md"
 packages = [{include = "finary_assistant"}]
-include = [{ path = "finary_assistant/finary_api"}]
+include = [{ path = "finary_assistant/finary_api/**/*" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"

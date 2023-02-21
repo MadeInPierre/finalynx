@@ -2,11 +2,16 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: Semantic Release
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
+
+# Run a quality check for every commit.
+# Semantic-release will only run on the main branch to publish new versions
+on: [push, pull_request]
 
 jobs:
   pre-commit:
@@ -46,16 +51,6 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      # - name: Semantic Release
-      #   run: |
-      #     pip install python-semantic-release
-      #     git config user.name github-actions
-      #     git config user.email github-actions@github.com
-      #     semantic-release publish
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     repository_username: __token__
-      #     repository_password: ${{ secrets.PYPI_TOKEN }}
       - name: Python Semantic Release
         uses: relekang/python-semantic-release@master
         with:

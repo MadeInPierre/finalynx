@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.1 (2023-02-21)
+### Fix
+* **ci:** Better release message ([`f097aaf`](https://github.com/MadeInPierre/finary_assistant/commit/f097aaf52337ef2f456308c720d79746887bb1e3))
+
 ## v0.2.0 (2023-02-20)
 ### Feature
 * **presentation:** Updated README&CONTRIBUTING, project looks good! ([`2267bd3`](https://github.com/MadeInPierre/finary_assistant/commit/2267bd333242145b55a6393deed6c41014aeaf9f))

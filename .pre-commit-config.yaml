@@ -55,4 +55,4 @@ repos:
     hooks:
       - id: flake8
         language_version: python3
-        args: ["--ignore=E501"]
+        args: ["--ignore=E501"] # ignore lines too long

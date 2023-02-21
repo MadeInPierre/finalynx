@@ -30,14 +30,14 @@ If you want to propose something new (new feature, extension, bugfix, documentat
 9. **Open a pull-request** to our primary repo and target the `main` branch
 10. **Wait for review**: let's chat about it in the pull request comments and merge it 🎉
 
-For your next contributions, you can simply update your fork and start from step 3.
+For your next contributions, you can simply update your fork and start from step 3. Let me know if you plan on actively contributing to this project, I can give you direct access to this repo.
 
 ### ⚙️ Initial setup
 1. Clone this repository using the `--recursive` option to include the [`finary_api`](https://github.com/lasconic/finary) submodule:
 ```sh
 git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
-# If you forgot --recursive: git submodule update --init --recursive
 cd finary_assistant/
+# If you forgot --recursive: git submodule update --init --recursive
 ```
 2. Install [`poetry`](https://python-poetry.org/) which manages the project dependencies, and get all dependencies needed to work on this project:
 ```sh

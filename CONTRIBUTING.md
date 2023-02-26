@@ -6,7 +6,7 @@ Any contribution of any skill level is highly appreciated and welcome. Feel free
 ### 🤔 Philosophy
 The current goal of this project is to create a minimalistic but visual and informative tool to see our portfolios in new ways. While Finary provides nice graphs already, this project aims to freely explore other ideas.
 
-Currently, this project is a command-line tool but it may be extended to other output formats (Web dashboard, PDF report, Jupyter notebook, ...) depending on the features we'll want to add. Please feel free to open a [new discussion](https://github.com/MadeInPierre/finary_assistant/discussions/new/choose) to share your ideas and help shape this project! If you have any skill you would like to leverage here (e.g. web development), then let's use that 🍀
+Currently, this project is a command-line tool but it may be extended to other output formats (Web dashboard, PDF report, Jupyter notebook, ...) depending on the features we'll want to add. It may also remain as a pure command-line tool using plotting libraries such as [`uniplot`](https://github.com/olavolav/uniplot). Please feel free to open a [new discussion](https://github.com/MadeInPierre/finary_assistant/discussions/new/choose) to share your ideas and help shape this project! If you have any skill you would like to leverage here (e.g. web development), then let's use that 🍀
 
 ### 🔧 Architecture
 The project structure is pretty typical for Python projects, with `finary_assistant` being the source directory. The main entry point is `assistant.py` with the `Assistant` class, which orchestrates the fetching, processing, and printing steps. Each feature domain is separated in its own submodule:
@@ -24,8 +24,8 @@ If you want to propose something new (new feature, extension, bugfix, documentat
 3. **Create a separate branch** that will hold your contribution
 4. **Make your changes** 🪄
 5. **Stage your changes** to git using `git add .`
-6. **Check your changes** with `pre-commit run`. If some of your changes do not follow the conventions, they will automatically be fixed. Check the proposed changes and run `git add . && pre-commit run` again until all checks pass.
-7. **Commit** your contributions using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard
+6. **Check your changes** with `pre-commit run`. If some of your changes do not follow the conventions, they will automatically be fixed. Take a look at the proposed changes and run `git add . && pre-commit run` again until all checks pass.
+7. **Commit** your contributions using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard (e.g. `feat(readme): added something cool`)
 8. **Push** your changes to your remote fork
 9. **Open a pull-request** to our primary repo and target the `main` branch
 10. **Wait for review**: let's chat about it in the pull request comments and merge it 🎉
@@ -36,7 +36,6 @@ For your next contributions, you can simply update your fork and start from step
 1. Clone this repository using the `--recursive` option to include the [`finary_api`](https://github.com/lasconic/finary) submodule:
 ```sh
 git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
-cd finary_assistant/
 # If you forgot --recursive: git submodule update --init --recursive
 ```
 2. Install [`poetry`](https://python-poetry.org/) which manages the project dependencies, and get all dependencies needed to work on this project:
@@ -51,18 +50,17 @@ If you see a template portfolio tree and your investments detected from Finary, 
 ```sh
 cp examples/demo.py assistant_config.py  # <- Your own portfolio here
 ```
-4. When you're ready to make a contribution: this project uses [`pre-commit`](https://pre-commit.com) to make sure we all use the same code styling and formatting conventions. Make sure to activate it on this repo using:
+4. When you're ready to make a contribution, this project uses [`pre-commit`](https://pre-commit.com) to make sure we all use the same code styling and formatting conventions. Make sure to activate it on this repo using:
 ```sh
-pre-commit install
+pre-commit install  # activate regular code checks (e.g. linting)
+pre-commit install --hook-type commit-msg  # activate checks for commit messages
 ```
 5. Now, each time you commit, a list of checks will run on the files you changed. You can try it out before committing with:
 ```sh
 pre-commit run  # -a if you want to check all files in the repo
 ```
 
-When you commit, make sure to follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for your commit messages, which will be used to automatically change the release version.
-
-- ⚠️ **Note:** VSCode seems to bypass these checks if you commit from the GUI. Don't forget to run pre-commit in a terminal to make sure your commit is tidy, and then commit in the GUI.
+When you commit, make sure to follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard for your commit messages, which will be used to automatically change the release version.
 
 You can now push your changes to your fork (preferably in a separate branch if you plan on contributing again) and create a pull request on the original repo.
 

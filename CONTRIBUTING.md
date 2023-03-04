@@ -52,12 +52,11 @@ cp examples/demo.py assistant_config.py  # <- Your own portfolio here
 ```
 4. When you're ready to make a contribution, this project uses [`pre-commit`](https://pre-commit.com) to make sure we all use the same code styling and formatting conventions. Make sure to activate it on this repo using:
 ```sh
-pre-commit install  # activate regular code checks (e.g. linting)
-pre-commit install --hook-type commit-msg  # activate checks for commit messages
+pre-commit install --install-hooks
 ```
 5. Now, each time you commit, a list of checks will run on the files you changed. You can try it out before committing with:
 ```sh
-pre-commit run  # -a if you want to check all files in the repo
+pre-commit run  # optional: --all-files
 ```
 
 When you commit, make sure to follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard for your commit messages, which will be used to automatically change the release version.

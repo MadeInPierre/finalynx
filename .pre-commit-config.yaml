@@ -1,5 +1,6 @@
 # See https://pre-commit.com for more information
 
+default_install_hook_types: [pre-commit, commit-msg]
 repos:
   # Ensure the user commits a message that follows the Conventional Commits guidelines
   - repo: https://github.com/commitizen-tools/commitizen

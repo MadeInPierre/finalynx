@@ -1,4 +1,4 @@
-[submodule "finary_assistant/finary_api"]
-	path = finary_assistant/finary_api
+[submodule "finalynx/finary_api"]
+	path = finalynx/finary_api
 	url = https://github.com/lasconic/finary
 	ignore = dirty

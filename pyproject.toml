@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "finary-assistant"
+name = "finalynx"
 version = "0.2.1"
 description = "A command line investment assistant to organize your portfolio and simulate its future to reach your life goals."
 authors = ["MadeInPierre <pielaclau@gmail.com>"]
 license = "GPLv3"
 readme = "README.md"
-packages = [{include = "finary_assistant"}]
-include = [{ path = "finary_assistant/finary_api/**/*" }]
+packages = [{include = "finalynx"}]
+include = [{ path = "finalynx/finary_api/**/*" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -28,7 +28,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.semantic_release]
 version_variable = [
-    "finary_assistant/__meta__.py:__version__",
+    "finalynx/__meta__.py:__version__",
     "pyproject.toml:version"
 ]
 branch = "main"

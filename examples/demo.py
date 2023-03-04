@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 """
-Finary Assistant is a tool to organize your investments in a custom hierarchy,
+Finalynx is a tool to organize your investments in a custom hierarchy,
 fetch real-time values using the Finary API, set targets, and simulate your
 portfolio evolution with optional life events and portfolio operations.
 
 This module is maintained by MadeInPierre.
 You can always get the latest version of this module at:
-> https://github.com/madeinpierre/finary_assistant
+> https://github.com/madeinpierre/finalynx
 """
 # noreorder
 from rich import inspect, print, pretty, traceback # noqa
-from finary_assistant import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio # noqa
-from finary_assistant import Folder, Line, Bucket, SharedFolder, Portfolio, FolderDisplay # noqa
-from finary_assistant import Copilot, Simulator
-from finary_assistant import Assistant
+from finalynx import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio # noqa
+from finalynx import Folder, Line, Bucket, SharedFolder, Portfolio, FolderDisplay # noqa
+from finalynx import Copilot, Simulator
+from finalynx import Assistant
 
 # Enable rich's features
 traceback.install()

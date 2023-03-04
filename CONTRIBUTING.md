@@ -1,15 +1,15 @@
 # Contributors
 First, thank you for contributing! 💝
 
-Any contribution of any skill level is highly appreciated and welcome. Feel free to chat about what you would like to do in the [finary forum](TODO) or in this repo's [discussions](https://github.com/MadeInPierre/finary_assistant/discussions/new/choose) space.
+Any contribution of any skill level is highly appreciated and welcome. Feel free to chat about what you would like to do in the [finary forum](TODO) or in this repo's [discussions](https://github.com/MadeInPierre/finalynx/discussions/new/choose) space.
 
 ### 🤔 Philosophy
 The current goal of this project is to create a minimalistic but visual and informative tool to see our portfolios in new ways. While Finary provides nice graphs already, this project aims to freely explore other ideas.
 
-Currently, this project is a command-line tool but it may be extended to other output formats (Web dashboard, PDF report, Jupyter notebook, ...) depending on the features we'll want to add. It may also remain as a pure command-line tool using plotting libraries such as [`uniplot`](https://github.com/olavolav/uniplot). Please feel free to open a [new discussion](https://github.com/MadeInPierre/finary_assistant/discussions/new/choose) to share your ideas and help shape this project! If you have any skill you would like to leverage here (e.g. web development), then let's use that 🍀
+Currently, this project is a command-line tool but it may be extended to other output formats (Web dashboard, PDF report, Jupyter notebook, ...) depending on the features we'll want to add. It may also remain as a pure command-line tool using plotting libraries such as [`uniplot`](https://github.com/olavolav/uniplot). Please feel free to open a [new discussion](https://github.com/MadeInPierre/finalynx/discussions/new/choose) to share your ideas and help shape this project! If you have any skill you would like to leverage here (e.g. web development), then let's use that 🍀
 
 ### 🔧 Architecture
-The project structure is pretty typical for Python projects, with `finary_assistant` being the source directory. The main entry point is `assistant.py` with the `Assistant` class, which orchestrates the fetching, processing, and printing steps. Each feature domain is separated in its own submodule:
+The project structure is pretty typical for Python projects, with `finalynx` being the source directory. The main entry point is `assistant.py` with the `Assistant` class, which orchestrates the fetching, processing, and printing steps. Each feature domain is separated in its own submodule:
   - `portfolio/` is responsible for building and displaying the portfolio tree, with basic processing tools such as investment targets.
   - `fetch/` is reponsible of using `finary_api` to fetch the amounts into the `portfolio` tree.
   - `finary_api/` is a git submodule since finary_api is not available on PyPI (the repository for `pip`). Hence, we include its source code inside our own `pip` package.
@@ -35,7 +35,7 @@ For your next contributions, you can simply update your fork and start from step
 ### ⚙️ Initial setup
 1. Clone this repository using the `--recursive` option to include the [`finary_api`](https://github.com/lasconic/finary) submodule:
 ```sh
-git clone --recursive https://github.com/MadeInPierre/finary_assistant.git
+git clone --recursive https://github.com/MadeInPierre/finalynx.git
 # If you forgot --recursive: git submodule update --init --recursive
 ```
 2. Install [`poetry`](https://python-poetry.org/) which manages the project dependencies, and get all dependencies needed to work on this project:
@@ -67,7 +67,7 @@ You can now push your changes to your fork (preferably in a separate branch if y
 ### ♻️ Continuous Integration
 The original repo has an automated CI/CD pipeline setup for two tasks:
 1. Run the pre-commit checks on any new pull request or push to report if something was forgotten.
-2. When something is pushed to the `main` branch (e.g. a merge from your pull request), a job calculates the new version for `finary_assistant` based on the commit messages, updates the [changelog](https://github.com/MadeInPierre/finary_assistant/blob/main/CHANGELOG.md), creates a [release](https://github.com/MadeInPierre/finary_assistant/releases) on GitHub, and publishes the new package to [PyPI](https://pypi.org/project/finary-assistant/).
+2. When something is pushed to the `main` branch (e.g. a merge from your pull request), a job calculates the new version for `finalynx` based on the commit messages, updates the [changelog](https://github.com/MadeInPierre/finalynx/blob/main/CHANGELOG.md), creates a [release](https://github.com/MadeInPierre/finalynx/releases) on GitHub, and publishes the new package to [PyPI](https://pypi.org/project/finalynx/).
 
 ### ❓ Missing stuff for now
 There are no tests and published documentation for now. Ping me if you want me/us to set them up.

@@ -1,5 +1,5 @@
 """
-Finary Assistant command line
+Finalynx command line
 Usage:
     your_config.py [-iarf]
     your_config.py (-h | --help)
@@ -15,10 +15,10 @@ Options:
 
 """
 from docopt import docopt
-from finary_assistant import console
-from finary_assistant import Copilot
-from finary_assistant import finary_fetch
-from finary_assistant import Simulator
+from finalynx import console
+from finalynx import Copilot
+from finalynx import finary_fetch
+from finalynx import Simulator
 from rich import inspect  # noqa F401
 from rich import pretty
 from rich import print  # noqa F401

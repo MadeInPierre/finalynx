@@ -35,13 +35,13 @@ repos:
     rev: v3.9.0
     hooks:
       - id: reorder-python-imports
-        args: [--application-directories=finary_assistant]
+        args: [--application-directories=finalynx]
 
   - repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:
       - id: black
-        exclude: ^(finary_assistant/finary_api/|examples/)
+        exclude: ^(finalynx/finary_api/|examples/)
         # It is recommended to specify the latest version of Python
         # supported by your project here, or alternatively use
         # pre-commit's default_language_version, see

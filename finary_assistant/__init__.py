@@ -1,11 +1,11 @@
 """
-Finary Assistant is a tool to organize your investments in a custom hierarchy,
+Finalynx is a tool to organize your investments in a custom hierarchy,
 fetch real-time values using Finary API, set targets, and simulate your
 portfolio evolution with optional life events and portfolio operations.
 
 This module is maintained by MadeInPierre.
 You can always get the latest version of this module at:
-    https://github.com/madeinpierre/finary_assistant
+    https://github.com/madeinpierre/finalynx
 """
 # flake8: noqa
 # Import meta information such as version, author, copyright, etc.

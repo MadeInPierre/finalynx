@@ -2,7 +2,7 @@
   <a href="https://github.com/MadeInPierre/finary_assistant">
     <img src="https://github.com/MadeInPierre/finary_assistant/raw/main/doc/logo_assistant_transparent.png" width="400" />
   </a>
-  <br>Finary Assistant<br>
+  <br>Finalynx Assistant<br>
 </h1>
 
 <div align="center">
@@ -18,7 +18,7 @@
   <br>
 </div>
 
-Finary Assistant is a command-line tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals.
+Finalynx is your "Finary Assistant", a command-line tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals.
 This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values.
 
 Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) 🌹 (or through the [default](https://finary.com/signup) page).
@@ -41,9 +41,9 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 You can check the [current development status](https://github.com/users/MadeInPierre/projects/4). Contributions are warmly welcome!
 
 ## 🚀 Installation
-If you don't plan on touching the code, simply run (with python >=3.6 and pip installed):
+If you don't plan on touching the code, simply run (with python >=3.8 and pip installed):
 ```sh
-pip install finary_assistant  # run again with --upgrade to update
+pip install finalynx  # run again with --upgrade to update
 ```
 
 And you're done! Now create your own copy of the [`demo.py`](https://github.com/MadeInPierre/finary_assistant/blob/main/examples/demo.py) example anywhere and run it to make sure everything works. You can now customize it for your own needs 🚀
@@ -51,14 +51,14 @@ And you're done! Now create your own copy of the [`demo.py`](https://github.com/
 **Pro Tip 💡:** _Why not setup a script to autorun your config in a new terminal at startup? Could be a nice view_ 🤭
 
 ## ⚙️ Usage
-The goal is to declare a tree structure of your entire portfolio independently from their host envelopes (e.g. PEA, AV, CTO, etc). Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Assistant will fetch each line and display your full portfolio with real-time amounts.
+The goal is to declare a tree structure of your entire portfolio independently from their host envelopes (e.g. PEA, AV, CTO, etc). Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Finalynx will fetch each line and display your full portfolio with real-time amounts.
 
 #### Step 1: Portfolio
 
 To create your portfolio, start with a `Portfolio` object which holds a nested list of `Line`, `Folder`, and `SharedFolder` objects:
 - `Line` represents each individual investment. Set the `key` parameter as the name shown in your Finary account if different from the display name.
 - `Folder` holds a group of lines or subfolders to create a structure.
-- `SharedFolder` accepts a `Bucket` object which groups multiple lines as a single object. You can reference the same bucket multiple times in the tree and set different `bucket_amount` for each shared folder. Each folder will only take the provided amount and let the others below use the rest.
+- `SharedFolder` accepts a `Bucket` object which groups multiple lines as a single object. You can reference the same bucket multiple times in the tree and set different `bucket_amount` for each shared folder. Each folder will only take the specified amount and let the others below use the rest.
 
 Here is an example of a portfolio structure:
 ```python
@@ -101,8 +101,8 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
 #### Step 3: Run the Assistant
 Here is the bare minimum code accepted:
 ```python
-from finary_assistant import Portfolio, Assistant
-portfolio = Portfolio()  # optional children
+from finalynx import Portfolio, Assistant
+portfolio = Portfolio()  # your config here
 Assistant(portfolio).run()
 ```
 
@@ -119,7 +119,7 @@ Assistant(
 
 There are other small options here and there, let me know if you're interested (I should write a full documentation). However, you should be good to go with some inspiration taken from [`demo.py`](https://github.com/MadeInPierre/finary_assistant/blob/main/examples/demo.py).
 
-## 👨‍💻 Contributions
+## 👨‍💻 Feedback & Contributions
 This repository is at a very early stage. Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project (or [hire me](https://www.buymeacoffee.com/MadeInPierre/commissions) if you can't develop it yourself). Pull requests, [issues](https://github.com/MadeInPierre/finary_assistant/issues/new) (🇬🇧 preferably) and [open discussions](https://github.com/MadeInPierre/finary_assistant/discussions/new) (🇬🇧/🇫🇷) are warmly welcome!
 
 If you would like to contribute to this project, welcome on board and thanks for your interest! 🎉 Please read the [contribution guidelines](https://github.com/MadeInPierre/finary_assistant/blob/main/CONTRIBUTING.md) to setup the project on your machine and agree on common conventions.

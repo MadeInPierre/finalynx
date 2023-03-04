@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2023-03-04)
+### Feature
+* Renamed project to Finalynx ([`4753651`](https://github.com/MadeInPierre/finalynx/commit/4753651ceac0d51514effb0b5ac2723d7dc26d51))
+
+### Fix
+* **submodules:** Hopefully correctly moved finary_api ([`6b65d9c`](https://github.com/MadeInPierre/finalynx/commit/6b65d9c97365f325cd4aeb2649bcdd1f6f8a56a8))
+* Renamed source folder ([`f78318f`](https://github.com/MadeInPierre/finalynx/commit/f78318f5b6ddcc13d97e53586bc6592541817022))
+
+### Breaking
+* Renamed all references of finary_assistant to finalynx ([`4753651`](https://github.com/MadeInPierre/finalynx/commit/4753651ceac0d51514effb0b5ac2723d7dc26d51))
+
 ## v0.2.1 (2023-02-21)
 ### Fix
 * **ci:** Better release message ([`f097aaf`](https://github.com/MadeInPierre/finalynx/commit/f097aaf52337ef2f456308c720d79746887bb1e3))

@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.1 (2023-03-04)
+### Fix
+* **dependencies:** Added unidecode and numpy dependencies ([`7574eae`](https://github.com/MadeInPierre/finalynx/commit/7574eae6261a3fdd6650c28bd3f530ae1d2d2026))
+
 ## v1.0.0 (2023-03-04)
 ### Feature
 * Renamed project to Finalynx ([`4753651`](https://github.com/MadeInPierre/finalynx/commit/4753651ceac0d51514effb0b5ac2723d7dc26d51))

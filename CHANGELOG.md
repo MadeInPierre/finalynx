@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.0 (2023-03-05)
+### Feature
+* **fetch:** Add real estate support ([#24](https://github.com/MadeInPierre/finalynx/issues/24)) ([`d973fc0`](https://github.com/MadeInPierre/finalynx/commit/d973fc025eeeafc67b11089987b45d73272389b5))
+
 ## v1.0.1 (2023-03-04)
 ### Fix
 * **dependencies:** Added unidecode and numpy dependencies ([`7574eae`](https://github.com/MadeInPierre/finalynx/commit/7574eae6261a3fdd6650c28bd3f530ae1d2d2026))

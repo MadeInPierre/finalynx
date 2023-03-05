@@ -100,9 +100,7 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 "fonds_euro",
                 "startups",
                 "precious_metals",
-                "scpis",
                 "generic_assets",
-                "real_estates",
                 "loans",
                 "crowdlendings",
             ]:
@@ -115,6 +113,32 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                         ignore_orphans,
                         indent=2,
                     )
+
+        # Immobilier
+        console.log("Fetching real estate...")
+        real_estate = ff.get_real_estates(session, "1w")["result"]
+        f_re_total = round(real_estate["total"]["amount"])
+        node = tree.add("[bold]" + str(round(f_re_total)) + " Immobilier")
+
+        for item in real_estate["data"]["real_estates"]:
+            match_line(
+                portfolio,
+                item["description"],
+                item["current_value"],
+                node,
+                ignore_orphans,
+                indent=1,
+            )
+
+        for item in real_estate["data"]["scpis"]:
+            match_line(
+                portfolio,
+                item["scpi"]["name"],
+                item["current_value"],
+                node,
+                ignore_orphans,
+                indent=1,
+            )
 
     # Delete login variables just in case
     if os.environ.get("FINARY_EMAIL"):

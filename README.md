@@ -48,7 +48,7 @@ pip install finalynx  # run again with --upgrade to update
 
 And you're done! Now create your own copy of the [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) example anywhere and run it to make sure everything works. You can now customize it for your own needs 🚀
 
-**Pro Tip 💡:** _Why not setup a script to autorun your config in a new terminal at startup? Could be a nice view_ 🤭
+**Pro Tip 💡:** _Why not setup a script to autorun your config in a new terminal on startup? Could be a nice view_ 🤭
 
 ## ⚙️ Usage
 The goal is to declare a tree structure of your entire portfolio independently from their host envelopes (e.g. PEA, AV, CTO, etc). Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Finalynx will fetch each line and display your full portfolio with real-time amounts.
@@ -106,7 +106,7 @@ portfolio = Portfolio()  # your config here
 Assistant(portfolio).run()
 ```
 
-The `Assistant` class accepts a few options (which can also be set from the command line, see `python your_config.py --help`):
+The `Assistant` class accepts a few options:
 ```python
 Assistant(
     portfolio,
@@ -115,6 +115,11 @@ Assistant(
     hide_amount=False,     # Hide your portfolio amounts with dots (easier to share).
     hide_root=False,       # Display your portfolio without the root (cosmetic preference).
 ).run()
+```
+
+These options can also be set from the command line, see:
+```sh
+python your_config.py --help
 ```
 
 There are other small options here and there, let me know if you're interested (I should write a full documentation). However, you should be good to go with some inspiration taken from [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py).

@@ -29,9 +29,16 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
         if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
             os.remove(finary_api.constants.CREDENTIAL_FILE)
 
-    # Manage the credentials file creation and signin
+    # Get the user credentials if there's no session yet (through environment variables or manual input)
     if not os.path.exists(finary_api.constants.COOKIE_FILENAME):
-        if not os.environ.get("FINARY_EMAIL") or not os.environ.get("FINARY_PASSWORD"):
+        # Skip credential input if it was already set in environment variables
+        if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
+            console.log("Found credentials in environment variables, logging in.")
+
+        # Ask for manual input if credentials and session are missing
+        else:
+            console.log("Credentials in environment variables not set, asking for manual input.")
+
             credentials = {}
             if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
                 cred_file = open(finary_api.constants.CREDENTIAL_FILE)
@@ -40,25 +47,36 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 credentials["email"] = console.input("Enter your Finary [yellow bold]email[/]: ")
                 credentials["password"] = console.input("Enter your Finary [yellow bold]password[/]: ", password=True)
 
-                if Confirm.ask(f"Would like to save your credentials in '{finary_api.constants.CREDENTIAL_FILE}'?"):
+                if Confirm.ask(
+                    f"Would like to save your credentials in [green]'{finary_api.constants.CREDENTIAL_FILE}'[/]?",
+                    default=False,
+                    show_default=True,
+                ):
                     with open(finary_api.constants.CREDENTIAL_FILE, "w") as f:
                         f.write(json.dumps(credentials, indent=4))
 
             os.environ["FINARY_EMAIL"] = credentials["email"]
             os.environ["FINARY_PASSWORD"] = credentials["password"]
 
-    # Login to Finary
+    # Login to Finary with the existing cookies file or credentials in environment variables and retrieve data
     with console.status("[bold green]Fetching data from Finary..."):
-        if not os.path.exists(finary_api.constants.COOKIE_FILENAME):
+        if os.path.exists(finary_api.constants.COOKIE_FILENAME):
+            console.log("Found cookies file, retrieving session.")
+        else:
             console.log("Signing in to Finary...")
             result = ff.signin()
+
             if result is None or result["message"] != "Created":
-                console.log("[bold red]Signin to Finary failed! Skipping fetch.[/]")
-                os.remove(finary_api.constants.CREDENTIAL_FILE)
+                console.log(
+                    "[red][bold]Failed to signin to Finary![/] Deleting credentials and cookies, please try again.[/]"
+                )
+                if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
+                    os.remove(finary_api.constants.CREDENTIAL_FILE)
                 return tree
-            console.log("Successfully signed in")
-        else:
-            console.log("Found existing cookies file, skipping signin")
+
+            console.log(f"Successfully signed in, saving session in '{finary_api.constants.COOKIE_FILENAME}'")
+
+        # Get session stored in cookies file
         session = ff.prepare_session()
 
         # Comptes courants, Livrets et Fonds euro

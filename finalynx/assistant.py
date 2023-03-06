@@ -8,6 +8,7 @@ Usage:
 Options:
   -h --help           Show this help message
   -v --version        Display this module's current version
+
   -i --ignoreOrphans  Ignore fetched lines that you didn't reference in your portfolio
   -f --forceSignin    Sign in to Finary even if there is an existing cookies file
   -a --hideAmount     Display your portfolio with dots instead of the real values (easier to share)

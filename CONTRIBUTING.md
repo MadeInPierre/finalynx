@@ -33,9 +33,9 @@ If you want to propose something new (new feature, extension, bugfix, documentat
 For your next contributions, you can simply update your fork and start from step 3. Let me know if you plan on actively contributing to this project, I can give you direct access to this repo.
 
 ### ⚙️ Initial setup
-1. Clone this repository using the `--recursive` option to include the [`finary_api`](https://github.com/lasconic/finary) submodule:
+1. Clone your fork using the `--recursive` option to include the [`finary_api`](https://github.com/lasconic/finary) submodule:
 ```sh
-git clone --recursive https://github.com/MadeInPierre/finalynx.git
+git clone --recursive https://github.com/YOUR_GITHUB_USERNAME/finalynx.git
 # If you forgot --recursive: git submodule update --init --recursive
 ```
 2. Install [`poetry`](https://python-poetry.org/) which manages the project dependencies, and get all dependencies needed to work on this project:

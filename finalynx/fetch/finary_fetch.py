@@ -60,9 +60,7 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
 
     # Login to Finary with the existing cookies file or credentials in environment variables and retrieve data
     with console.status("[bold green]Fetching data from Finary..."):
-        if os.path.exists(finary_api.constants.COOKIE_FILENAME):
-            console.log("Found cookies file, retrieving session.")
-        else:
+        if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
             console.log("Signing in to Finary...")
             result = ff.signin()
 
@@ -75,6 +73,11 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 return tree
 
             console.log(f"Successfully signed in, saving session in '{finary_api.constants.COOKIE_FILENAME}'")
+        elif os.path.exists(finary_api.constants.COOKIE_FILENAME):
+            console.log("Found cookies file, retrieving session.")
+        else:
+            console.log("[bold red]No credentials file, environment variables, or cookies file. Skipping fetching.[/]")
+            return tree
 
         # Get session stored in cookies file
         session = ff.prepare_session()

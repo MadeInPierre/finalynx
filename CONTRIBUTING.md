@@ -27,7 +27,7 @@ If you want to propose something new (new feature, extension, bugfix, documentat
 6. **Check your changes** with `pre-commit run`. If some of your changes do not follow the conventions, they will automatically be fixed. Take a look at the proposed changes and run `git add . && pre-commit run` again until all checks pass.
 7. **Commit** your contributions using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard (e.g. `feat(readme): added something cool`)
 8. **Push** your changes to your remote fork
-9. **Open a pull-request** to our primary repo and target the `main` branch
+9. **Open a pull-request** to our primary repo and target the `main` branch (using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) again for your PR title)
 10. **Wait for review**: let's chat about it in the pull request comments and merge it 🎉
 
 For your next contributions, you can simply update your fork and start from step 3. Let me know if you plan on actively contributing to this project, I can give you direct access to this repo.

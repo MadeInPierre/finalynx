@@ -8,7 +8,6 @@ You can always get the latest version of this module at:
     https://github.com/madeinpierre/finalynx
 """
 # flake8: noqa
-# Import meta information such as version, author, copyright, etc.
 import os
 import sys
 

@@ -131,6 +131,12 @@ This project is under the [GPLv3 License](https://github.com/MadeInPierre/finaly
 [<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="161" />](https://www.buymeacoffee.com/MadeInPierre)
 This is a personal project I have fun with on my free time. If you found it useful and wish to support my work, you can [buy me a coffee](https://www.buymeacoffee.com/MadeInPierre)! It would give me the motivation to keep improving it further :smile: Thank you!
 
+Also, big thanks to all contributors 🌹 don't forget to check them out:
+
+<a href="https://github.com/MadeInPierre/finalynx/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=MadeInPierre/finalynx" />
+</a>
+
 <!-- Breaking: :boom:
 
 Minor: :sparkles::children_crossing::lipstick::iphone::egg::chart_with_upwards_trend:

@@ -42,7 +42,11 @@ git clone --recursive https://github.com/YOUR_GITHUB_USERNAME/finalynx.git
 ```sh
 pip3 install poetry && poetry check && poetry install
 ```
-3. Try the assistant with:
+3. Install this project in editable mode so that you don't need to reinstall it on each change:
+```sh
+pip install -e .
+```
+4. Try the assistant with:
 ```sh
 python examples/demo.py
 ```
@@ -50,11 +54,11 @@ If you see a template portfolio tree and your investments detected from Finary, 
 ```sh
 cp examples/demo.py assistant_config.py  # <- Your own portfolio here
 ```
-4. When you're ready to make a contribution, this project uses [`pre-commit`](https://pre-commit.com) to make sure we all use the same code styling and formatting conventions. Make sure to activate it on this repo using:
+5. When you're ready to make a contribution, this project uses [`pre-commit`](https://pre-commit.com) to make sure we all use the same code styling and formatting conventions. Make sure to activate it on this repo using:
 ```sh
 pre-commit install --install-hooks
 ```
-5. Now, each time you commit, a list of checks will run on the files you changed. You can try it out before committing with:
+6. Now, each time you commit, a list of checks will run on the files you changed. You can try it out before committing with:
 ```sh
 pre-commit run  # optional: --all-files
 ```

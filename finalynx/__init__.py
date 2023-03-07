@@ -4,8 +4,7 @@ fetch real-time values using Finary API, set targets, and simulate your
 portfolio evolution with optional life events and portfolio operations.
 
 This module is maintained by MadeInPierre.
-You can always get the latest version of this module at:
-    https://github.com/madeinpierre/finalynx
+You can always get the latest version of this module at https://github.com/madeinpierre/finalynx
 """
 # flake8: noqa
 import os

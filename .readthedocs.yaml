@@ -11,6 +11,12 @@ build:
       - poetry config virtualenvs.create false
     post_install:
       # Install dependencies
-      - poetry install --with docs
+      - poetry install
 sphinx:
   configuration: docs/conf.py
+
+# You can include or exclude git submodules from the Read the Docs
+# documentation build.
+# https://docs.readthedocs.io/en/stable/config-file/v2.html#submodules
+submodules:
+  include: all

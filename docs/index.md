@@ -5,13 +5,13 @@
 
 # Welcome to Finalynx's documentation!
 
+```{warning}
+This project is under heavy development. Contributions are warmly welcome! :tada:
+```
+
 For further information, see {doc}`modules`.
 
 ```{include} ../README.md
-```
-
-```{warning}
-This project is under heavy development. Contributions are warmly welcome! :tada:
 ```
 
 ```{toctree}

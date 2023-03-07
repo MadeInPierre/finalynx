@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.1 (2023-03-07)
+### Fix
+* **fetch:** Env vars get priority over cookies file ([`f664ed8`](https://github.com/MadeInPierre/finalynx/commit/f664ed876ab35ee3c348b8168994dfbd5f5dd3d6))
+
 ## v1.1.0 (2023-03-05)
 ### Feature
 * **fetch:** Add real estate support ([#24](https://github.com/MadeInPierre/finalynx/issues/24)) ([`d973fc0`](https://github.com/MadeInPierre/finalynx/commit/d973fc025eeeafc67b11089987b45d73272389b5))

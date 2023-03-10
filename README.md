@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/MadeInPierre/finalynx">
-    <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/readthedocs/docs/logo_assistant_transparent.png" width="400" />
+    <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/logo_assistant_transparent.png" width="400" />
   </a>
   <br>Finalynx Assistant<br>
 </h1>
@@ -26,7 +26,7 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 🇫🇷🥖 Vous pouvez traduire cette page en Français avec votre navigateur (_clic droit > traduire_).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/readthedocs/docs/screenshot.png" width="500" />
+  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/screenshot.png" width="500" />
 </p>
 
 ## ✨ Features

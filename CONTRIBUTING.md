@@ -1,14 +1,14 @@
-# Contributors
+# Contribution Guidelines
 First, thank you for contributing! 💝
 
-Any contribution of any skill level is highly appreciated and welcome. Feel free to chat about what you would like to do in the [finary forum](TODO) or in this repo's [discussions](https://github.com/MadeInPierre/finalynx/discussions/new/choose) space.
+Any contribution of any skill level is highly appreciated and welcome. Feel free to chat about what you would like to do in the [finary forum](https://community.finary.com/t/finary-assistant-aka-finalynx-projet-communautaire-open-source/6498) or in this repo's [discussions](https://github.com/MadeInPierre/finalynx/discussions/new/choose) space.
 
-### 🤔 Philosophy
+## 🤔 Philosophy
 The current goal of this project is to create a minimalistic but visual and informative tool to see our portfolios in new ways. While Finary provides nice graphs already, this project aims to freely explore other ideas.
 
 Currently, this project is a command-line tool but it may be extended to other output formats (Web dashboard, PDF report, Jupyter notebook, ...) depending on the features we'll want to add. It may also remain as a pure command-line tool using plotting libraries such as [`uniplot`](https://github.com/olavolav/uniplot). Please feel free to open a [new discussion](https://github.com/MadeInPierre/finalynx/discussions/new/choose) to share your ideas and help shape this project! If you have any skill you would like to leverage here (e.g. web development), then let's use that 🍀
 
-### 🔧 Architecture
+## 🔧 Architecture
 The project structure is pretty typical for Python projects, with `finalynx` being the source directory. The main entry point is `assistant.py` with the `Assistant` class, which orchestrates the fetching, processing, and printing steps. Each feature domain is separated in its own submodule:
   - `portfolio/` is responsible for building and displaying the portfolio tree, with basic processing tools such as investment targets.
   - `fetch/` is reponsible of using `finary_api` to fetch the amounts into the `portfolio` tree.
@@ -17,8 +17,18 @@ The project structure is pretty typical for Python projects, with `finalynx` bei
 
 Feel free to suggest additions or changes!
 
-### 🌊 Contribution workflow
+## 💬 Project management & Discussions
+
+The most important panel is the 👉 [**Project View**](https://github.com/users/MadeInPierre/projects/4) 👈 to see the current development status. Here is how you can participate:
+1. Checkout [**The Plan™**](https://github.com/MadeInPierre/finalynx/discussions/27) to see what's planned for Finalynx in general.
+2. Checkout the [**Project View**](https://github.com/users/MadeInPierre/projects/4) to see the current status (which follows the plan's [milestones](https://github.com/MadeInPierre/finalynx/milestones).
+3. Open an issue for each of your ideas, even those you don't think you'd develop yourself. Once discussed and assigned to someone in the project view, the development can start.
+   - Remember: one issue = one pull request = one feature/bugfix.
+4. When you finish a contribution, create a pull request and mention which issue your PR would close. See more details in the next section.
+
+## 🌊 Contribution workflow
 If you want to propose something new (new feature, extension, bugfix, documentation help, ...), please follow these steps:
+1. **Open an issue** and chat with everyone to make sure your contribution would fit nicely with the project.
 1. **Fork** this repo (click the _fork_ button on GitHub)
 2. **Follow the initial setup** described in the section below
 3. **Create a separate branch** that will hold your contribution
@@ -36,7 +46,7 @@ For your next contributions, you can simply update your fork and start from step
 1. Clone your fork using the `--recursive` option to include the [`finary_api`](https://github.com/lasconic/finary) submodule:
 ```sh
 git clone --recursive https://github.com/YOUR_GITHUB_USERNAME/finalynx.git
-# If you forgot --recursive: git submodule update --init --recursive
+# If you forgot --recursive, run: git submodule update --init --recursive
 ```
 2. Install [`poetry`](https://python-poetry.org/) which manages the project dependencies, and get all dependencies needed to work on this project:
 ```sh
@@ -68,9 +78,10 @@ When you commit, make sure to follow the [conventional commits](https://www.conv
 You can now push your changes to your fork (preferably in a separate branch if you plan on contributing again) and create a pull request on the original repo.
 
 ### ♻️ Continuous Integration
-The original repo has an automated CI/CD pipeline setup for two tasks:
-1. Run the pre-commit checks on any new pull request or push to report if something was forgotten.
+The original repo has an automated CI/CD pipeline setup for a few tasks:
+1. Run the pre-commit checks on any new pull request or push to report if something was forgotten. Also run tests in CI.
 2. When something is pushed to the `main` branch (e.g. a merge from your pull request), a job calculates the new version for `finalynx` based on the commit messages, updates the [changelog](https://github.com/MadeInPierre/finalynx/blob/main/CHANGELOG.md), creates a [release](https://github.com/MadeInPierre/finalynx/releases) on GitHub, and publishes the new package to [PyPI](https://pypi.org/project/finalynx/).
+3. When a PR is opened or edited, make sure the title and commit messages following the naming convention.
 
-### ❓ Missing stuff for now
-There are no tests and published documentation for now. Ping me if you want me/us to set them up.
+## ❓ Missing stuff for now
+Tests and published documentation are limited for now. Ping me if you want me/us to improve them.

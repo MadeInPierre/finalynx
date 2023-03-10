@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/MadeInPierre/finalynx">
-    <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/logo_assistant_transparent.png" width="400" />
+    <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/logo_assistant_transparent.png" width="400" />
   </a>
   <br>Finalynx Assistant<br>
 </h1>
@@ -26,7 +26,7 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 🇫🇷🥖 Vous pouvez traduire cette page en Français avec votre navigateur (_clic droit > traduire_).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/screenshot.png" width="500" />
+  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot.png" width="500" />
 </p>
 
 ## ✨ Features
@@ -53,7 +53,7 @@ And you're done! Now create your own copy of the [`demo.py`](https://github.com/
 ## ⚙️ Usage
 The goal is to declare a tree structure of your entire portfolio independently from their host envelopes (e.g. PEA, AV, CTO, etc). Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Finalynx will fetch each line and display your full portfolio with real-time amounts.
 
-#### Step 1: Portfolio
+### Step 1: Portfolio
 
 To create your portfolio, start with a `Portfolio` object which holds a nested list of `Line`, `Folder`, and `SharedFolder` objects:
 - `Line` represents each individual investment. Set the `key` parameter as the name shown in your Finary account if different from the display name.
@@ -88,7 +88,7 @@ portfolio = Portfolio('My Portfolio', children=[
 ])
 ```
 
-#### Step 2: Targets
+### Step 2: Targets
 Any node in the tree accepts an optional `target` parameter. See the full list of available targets [here](https://github.com/MadeInPierre/finalynx/blob/main/finalynx/portfolio/targets.py):
 
 ```python
@@ -98,7 +98,7 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
 ])
 ```
 
-#### Step 3: Run the Assistant
+### Step 3: Run the Assistant
 Here is the bare minimum code accepted:
 ```python
 from finalynx import Portfolio, Assistant

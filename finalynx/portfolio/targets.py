@@ -13,6 +13,7 @@ class Target(Hierarchy):
     RESULT_NONE = {"name": "No target", "symbol": "‣", "color": "blue"}
 
     def __init__(self, parent=None):
+        """Abstract Target class."""
         super().__init__(parent)
 
     def get_amount(self):

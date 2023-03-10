@@ -39,7 +39,19 @@ extensions = [
     "myst_parser",
     # "sphinx_material",
     "sphinx_rtd_theme",
+    "autodoc2",  # documentation: https://sphinx-autodoc2.readthedocs.io/en/latest/quickstart.html#using-markdown-myst-docstrings
 ]
+
+# Parse docstrings with the MyST format, and generate Markdown documentation files.
+autodoc2_packages = [
+    "../finalynx",
+]
+autodoc2_docstring_parser_regexes = [
+    (r".*", "myst"),  # this will render all docstrings as Markdown
+    # (r"autodoc2\..*", "myst"), # this will render select docstrings as Markdown
+]
+autodoc2_render_plugin = "myst"
+myst_enable_extensions = ["fieldlist"]
 
 # Add support for Markdown files
 source_suffix = [".rst", ".md"]

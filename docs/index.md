@@ -1,27 +1,39 @@
-% Finalynx documentation master file, created by
-% sphinx-quickstart on Tue Mar  7 11:28:30 2023.
-% You can adapt this file completely to your liking, but it should at least
-% contain the root `toctree` directive.
-
 # Welcome to Finalynx's documentation!
 
-```{warning}
-This project is under heavy development. Contributions are warmly welcome! :tada:
-```
+```{toctree}
+:caption: '🚀 Tutorials'
+:hidden:
+:maxdepth: 3
 
-For further information, see {doc}`modules`.
-
-```{include} ../README.md
+tutorials/getting_started
+tutorials/installation
 ```
 
 ```{toctree}
-:caption: 'Contents:'
-:maxdepth: 2
+:caption: '📚 API Reference'
+:hidden:
+:maxdepth: 3
 
-modules
-
-TODO
-
-contributing
+apidocs/index
 ```
-- {ref}`modindex`
+
+```{toctree}
+:caption: '💬 Project Management'
+:hidden:
+:maxdepth: 3
+
+Development status <https://github.com/users/MadeInPierre/projects/4>
+
+Discussions <https://github.com/MadeInPierre/finalynx/discussions>
+
+project/contributing
+
+Deprecated <project/TODO>
+```
+
+```{warning}
+This documentation is under heavy development. Contributions are warmly welcome! 👼
+```
+
+```{include} ../README.md
+```

@@ -1,7 +1,7 @@
 # Welcome to Finalynx's documentation!
 
 ```{toctree}
-:caption: '🚀 Tutorials'
+:caption: '🚀 Quick Start'
 :hidden:
 :maxdepth: 3
 
@@ -19,15 +19,16 @@ API Reference <apidocs/finalynx/finalynx.md>
 ```
 
 ```{toctree}
-:caption: '💬 Project Management'
+:caption: '💬 Contributing'
 :hidden:
 :maxdepth: 3
+
+project/contributing
 
 Development status <https://github.com/users/MadeInPierre/projects/4>
 
 Discussions <https://github.com/MadeInPierre/finalynx/discussions>
 
-project/contributing
 
 Deprecated <project/TODO>
 ```

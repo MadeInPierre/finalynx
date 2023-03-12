@@ -71,4 +71,6 @@ These options can also be set from the command line, see:
 python your_config.py --help
 ```
 
+```{tip}
 There are other small options here and there, let me know if you're interested (I should write a full documentation). However, you should be good to go with some inspiration taken from [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py).
+```

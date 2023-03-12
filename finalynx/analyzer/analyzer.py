@@ -8,7 +8,7 @@ from ..portfolio.portfolio import Portfolio
 
 class Analyzer:
     """
-    Main class for generating modular graphs and statistics about yout your portfolio.
+    Main class for generating modular graphs and statistics about your portfolio.
 
     This module has not started development yet. Check back soon!
     """

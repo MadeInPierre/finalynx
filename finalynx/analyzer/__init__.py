@@ -1,4 +1,9 @@
-"""Finalynx Analyzer: generate all kinds of statistics and visualization graphs for your portfolio.
+"""
+```{tip}
+This subpackage has a [dedicated milestone](https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open) in the development steps.
+```
+
+Finalynx Analyzer: generate all kinds of statistics and visualization graphs for your portfolio.
 
 This subpackage provides "attachments" that you can add to any node in your Portfolio tree.
 Each attachement provides a different graph, such as:
@@ -9,4 +14,5 @@ state instead of blocked, ...). This graph would show how much money would be av
 - And many more, please share your ideas in the [Discussions](https://github.com/MadeInPierre/finalynx/discussions) space :)
 
 This subpackage has not started development yet, check back later or help us build it by contributing!
+
 """

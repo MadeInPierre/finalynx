@@ -13,7 +13,7 @@
   <br><a href="https://pypi.org/project/finalynx/"><img alt="PyPI" src="https://img.shields.io/pypi/v/finalynx?style=flat-square"></a>
   <a href="https://github.com/MadeInPierre/finalynx/actions/workflows/semantic-release.yml"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/madeinpierre/finalynx/semantic-release.yml?branch=main&style=flat-square"></a>
   <a href="https://github.com/MadeInPierre/finalynx/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/madeinpierre/finalynx?style=flat-square"></a>
-  <a href="https://github.com/MadeInPierre/finalynx/milestones"><img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/madeinpierre/finalynx?color=green&label=milestones&style=flat-square&color=brightgreen"></a>
+  <a href="https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open"><img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/madeinpierre/finalynx?color=green&label=milestones&style=flat-square&color=brightgreen"></a>
 
   <br>
 </div>

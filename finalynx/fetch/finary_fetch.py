@@ -16,15 +16,39 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
     """Wrapper function for the `finary_api` package.
 
     This function manages all interactions with your Finary account, namely:
-    - **Authentication**: Hi (TODO explain priority order of environment vars, cookies, ...)
-    - **Fetching**: Hi (TODO explain fetching process)
+    1. **Authentication**: The function starts by signing you in with the following sequence of attempts:
+        - First, the function looks for environment variables named `FINARY_EMAIL` and `FINARY_PASSWORD`
+          containing your credentials. If those are set, they will take priority over all other signin methods.
+        - Second, if a file named `localCookiesMozilla.txt` already exists in this same directory (which
+          contains the session of a previous signin), it will skip the login step and retrieve the saved sessions.
+        - Third, if neither the environment variables nor the cookies file exist, the function will manually ask
+          for the credentials in the console.
+    2. **Fetching**: Once the session is active, all investments declared in Finary are fetched.
+    3. **Populating the tree:** Finally, each fetched investment is matched against either the `name` or `key`
+    value of each `Line` object defined in your `Portfolio` and updated in the tree.
+
+    ```{note}
+    Finalynx will ask you if you want to save two files:
+    - `credentials.json`: This file would store your credentials in a plain text file, which might be used by
+      `finary_api` to refresh your session (to be confirmed). However, this is not recommended since only storing
+      the session is more secure and you can always enter your credentials again from occasionally.
+    - `localCookiesMozilla.txt`: This file stores the session created after a successful login (without your
+    plain credentials). It is recommended to save it if you don't want to enter your credentials on each run.
+
+    You can run Finalynx with the `-f` or `--force-signin` option to delete all files and start over:
+    {code}`python your_config.py --force-signin`
+    ```
 
     :param portfolio: Your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>` tree (must be already fully defined).
+    :type portfolio: Portfolio
     :param force_signin: Delete all saved credentials and cookies before logging in again, defaults to False
     :type force_signin: bool
     :param ignore_orphans: If a line in your account is not referenced in your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>`
     then don't attach it to the root (used as a reminder), defaults to False
     :type ignore_orphans: bool
+    :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
+    everything was correctly found.
+    :rtype: Tree
     """
 
     def match_line(portfolio: Portfolio, key: str, amount: float, node: Tree, ignore_orphans: bool) -> None:

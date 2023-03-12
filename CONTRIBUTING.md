@@ -21,7 +21,7 @@ Feel free to suggest additions or changes!
 
 The most important panel is the 👉 [**Project View**](https://github.com/users/MadeInPierre/projects/4) 👈 to see the current development status. Here is how you can participate:
 1. Checkout [**The Plan™**](https://github.com/MadeInPierre/finalynx/discussions/27) to see what's planned for Finalynx in general.
-2. Checkout the [**Project View**](https://github.com/users/MadeInPierre/projects/4) to see the current status (which follows the plan's [milestones](https://github.com/MadeInPierre/finalynx/milestones)).
+2. Checkout the [**Project View**](https://github.com/users/MadeInPierre/projects/4) to see the current status (which follows the plan's [milestones](https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open)).
 3. Open an issue for each of your ideas, even those you don't think you'd develop yourself. Once discussed and assigned to someone in the project view, the development can start.
    - Remember: one issue = one pull request = one feature/bugfix.
 4. When you finish a contribution, create a pull request and mention which issue your PR would close. See more details in the next section.

@@ -1,3 +1,8 @@
+"""
+```{tip}
+TODO Dummy class for now, check back later or help us by contributing!
+```
+"""
 from ..portfolio.portfolio import Portfolio
 
 

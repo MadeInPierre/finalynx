@@ -15,7 +15,7 @@ tutorials/getting_started
 :maxdepth: 1
 :titlesonly:
 
-apidocs/index
+API Reference <apidocs/finalynx/finalynx.md>
 ```
 
 ```{toctree}

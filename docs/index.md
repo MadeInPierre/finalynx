@@ -5,14 +5,15 @@
 :hidden:
 :maxdepth: 3
 
-tutorials/getting_started
 tutorials/installation
+tutorials/getting_started
 ```
 
 ```{toctree}
 :caption: '📚 API Reference'
 :hidden:
-:maxdepth: 3
+:maxdepth: 1
+:titlesonly:
 
 apidocs/index
 ```
@@ -32,7 +33,7 @@ Deprecated <project/TODO>
 ```
 
 ```{warning}
-This documentation is under heavy development. Contributions are warmly welcome! 👼
+This documentation is under heavy development. Contributions are warmly welcome! 🎉
 ```
 
 ```{include} ../README.md

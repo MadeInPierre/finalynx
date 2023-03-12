@@ -50,6 +50,9 @@ autodoc2_docstring_parser_regexes = [
     (r".*", "myst"),  # this will render all docstrings as Markdown
     # (r"autodoc2\..*", "myst"), # this will render select docstrings as Markdown
 ]
+autodoc2_skip_module_regexes = [
+    # List of modules and objects to skip, e.g. "finary.__meta__"
+]
 autodoc2_render_plugin = "myst"
 myst_enable_extensions = ["fieldlist"]
 

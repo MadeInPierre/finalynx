@@ -46,7 +46,9 @@ jobs:
         run: python -m poetry run pytest
 
       - name: Run mypy for type hint checks
-        run: python -m mypy finalynx
+        run: |
+          pip install mypy
+          python -m mypy finalynx
 
       - uses: pre-commit-ci/lite-action@v1.0.1
         if: always()

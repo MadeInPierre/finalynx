@@ -45,6 +45,9 @@ jobs:
       - name: Test with pytest
         run: python -m poetry run pytest
 
+      - name: Run mypy for type hint checks
+        run: mypy finalynx
+
       - uses: pre-commit-ci/lite-action@v1.0.1
         if: always()
 

@@ -6,19 +6,22 @@ Usage:
     your_config.py (-v | --version)
 
 Options:
-  -h --help           Show this help message
-  -v --version        Display this module's current version
+  -h --help            Show this help message
+  -v --version         Display this module's current version
 
-  -i --ignoreOrphans  Ignore fetched lines that you didn't reference in your portfolio
-  -f --forceSignin    Sign in to Finary even if there is an existing cookies file
-  -a --hideAmount     Display your portfolio with dots instead of the real values (easier to share)
-  -r --hideRoot       Display your portfolio without the root (cosmetic preference)
+  -i --ignore-orphans  Ignore fetched lines that you didn't reference in your portfolio
+  -f --force-signin    Sign in to Finary even if there is an existing cookies file
+  -a --hide-amounts    Display your portfolio with dots instead of the real values (easier to share)
+  -r --hide-root       Display your portfolio without the root (cosmetic preference)
 
 """
+from typing import Optional
+
 from docopt import docopt
-from finalynx import console
+from finalynx import console  # type: ignore
 from finalynx import Copilot
 from finalynx import finary_fetch
+from finalynx import Portfolio
 from finalynx import Simulator
 from rich import inspect  # noqa F401
 from rich import pretty
@@ -36,23 +39,31 @@ pretty.install()
 
 
 class Assistant:
-    """
-    Main entry class. Declare your portfolio config (and other extensions
-    such as scenario and copilot) in a separate file and create an instance
-    of this Assistant class.
+    """Main entry class that orchestrates the generation of your selected outputs.
 
-    TODO Full code documentation! Ping me if I still didn't write it :)
+    Declare your portfolio configuration (and other extensions
+    such as scenario and copilot) in a separate file and create an instance
+    of this `Assistant` class with your configuration as input.
+
+    :param portfolio: Your fully defined portfolio structure (with `Target`, `Folder` and `Line` objects).
+    :param scenario: Your simulation configuration including `Event` objects and so on _(TODO coming soon)_.
+    :param copilot: Your investment strategy configuration _(TODO coming soon)_.
+
+    :param ignore_orphans: Ignore fetched lines that you didn't reference in your portfolio, defaults to False.
+    :param force_signin: Sign in to Finary even if there is an existing cookies file, defaults to False.
+    :param hide_amount: Display your portfolio with dots instead of the real values (easier to share), defaults to False.
+    :param hide_root: Display your portfolio without the root (cosmetic preference), defaults to False.
     """
 
     def __init__(
         self,
-        portfolio,
-        scenario=None,
-        copilot=None,
-        ignore_orphans=False,
-        force_signin=False,
-        hide_amount=False,
-        hide_root=False,
+        portfolio: Portfolio,
+        scenario: Optional[Simulator] = None,
+        copilot: Optional[Copilot] = None,
+        ignore_orphans: bool = False,
+        force_signin: bool = False,
+        hide_amount: bool = False,
+        hide_root: bool = False,
     ):
         self.portfolio = portfolio
         self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
@@ -61,23 +72,33 @@ class Assistant:
         # Options
         self.ignore_orphans = ignore_orphans
         self.force_signin = force_signin
-        self.hide_amount = hide_amount
+        self.hide_amounts = hide_amount
         self.hide_root = hide_root
 
-        self.parse_args()
+        self._parse_args()
 
-    def parse_args(self):
+    def _parse_args(self) -> None:
+        """Internal method that parses the command-line options and activates the options
+        in the corresponding modules.
+        """
+
         args = docopt(__doc__, version=__version__)
-        if args["--ignoreOrphans"]:
+        if args["--ignore-orphans"]:
             self.ignore_orphans = True
-        if args["--forceSignin"]:
+        if args["--force-signin"]:
             self.force_signin = True
-        if args["--hideAmount"]:
-            self.hide_amount = True
-        if args["--hideRoot"]:
+        if args["--hide-amounts"]:
+            self.hide_amounts = True
+        if args["--hide-root"]:
             self.hide_root = True
 
-    def run(self):
+    def run(self) -> None:
+        """Main function to run once your configuration is fully defined.
+
+        This function will fetch the data from your Finary account, process the thr targets in the portfolio tree,
+        run your simulation, generate recommendations, and format the output nicely to the console.
+        """
+
         # Fill tree with current valuations fetched from Finary
         finary_tree = finary_fetch(self.portfolio, self.force_signin, self.ignore_orphans)
 
@@ -93,7 +114,7 @@ class Assistant:
         # Final set of results to be displayed
         panels = [
             Panel(
-                self.portfolio.rich_tree(hide_amount=self.hide_amount, hide_root=self.hide_root),
+                self.portfolio.rich_tree(hide_amount=self.hide_amounts, hide_root=self.hide_root),
                 title=self.portfolio.name,
                 padding=(1, 4),
             ),
@@ -103,4 +124,4 @@ class Assistant:
         ]
 
         # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(panels, padding=(2, 10)))
+        console.print("\n", Columns(panels, padding=(2, 10)))  # type: ignore

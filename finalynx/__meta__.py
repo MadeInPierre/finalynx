@@ -1,3 +1,11 @@
+"""
+Metadata information about Finalynx. This file is used by Fynalinx and updated by the CI/CD pipeline.
+
+```{warning}
+Do not manually change this information.
+```
+"""
+
 __version__ = "1.1.1"
 
 __author__ = "Pierre Laclau (MadeInPierre)"

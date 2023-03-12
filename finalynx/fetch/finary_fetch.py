@@ -5,21 +5,35 @@ from rich.prompt import Confirm
 from rich.tree import Tree
 from unidecode import unidecode
 
-import finary_api.__main__ as ff
-import finary_api.constants
+import finary_api.__main__ as ff  # type: ignore
+import finary_api.constants  # type: ignore
 from ..console import console
 from ..portfolio.line import Line
+from ..portfolio.portfolio import Portfolio
 
 
-def match_line(portfolio, key, amount, node, ignore_orphans, indent=0):
-    key, amount = unidecode(key), round(amount)
-    node_child = node.add(f"{amount} {key}")
-    if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
-        node_child.add("[yellow]WARNING: This line did not match with any envelope, attaching to root")
-        portfolio.add_child(Line(key, amount=amount))
+def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphans: bool = False) -> Tree:
+    """Wrapper function for the `finary_api` package.
 
+    This function manages all interactions with your Finary account, namely:
+    - **Authentication**: Hi (TODO explain priority order of environment vars, cookies, ...)
+    - **Fetching**: Hi (TODO explain fetching process)
 
-def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
+    :param portfolio: Your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>` tree (must be already fully defined).
+    :param force_signin: Delete all saved credentials and cookies before logging in again, defaults to False
+    :type force_signin: bool
+    :param ignore_orphans: If a line in your account is not referenced in your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>`
+    then don't attach it to the root (used as a reminder), defaults to False
+    :type ignore_orphans: bool
+    """
+
+    def match_line(portfolio: Portfolio, key: str, amount: float, node: Tree, ignore_orphans: bool) -> None:
+        key, amount = unidecode(key), round(amount)
+        node_child = node.add(f"{amount} {key}")
+        if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
+            node_child.add("[yellow]WARNING: This line did not match with any envelope, attaching to root")
+            portfolio.add_child(Line(key, amount=amount))
+
     tree = Tree("Finary API", highlight=True, hide_root=True)
 
     # Let the user reset its credentials and session
@@ -90,7 +104,7 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
             console.log(f"Fetching {name.lower()}...")
             node = tree.add("[bold]" + str(round(result["timeseries"][-1][1])) + " " + name)
             for k, e in result["distribution"].items():
-                match_line(portfolio, k, e["amount"], node, ignore_orphans, indent=1)
+                match_line(portfolio, k, e["amount"], node, ignore_orphans)
 
         # Autres
         console.log("Fetching other assets...")
@@ -104,7 +118,6 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 item["current_value"],
                 node,
                 ignore_orphans,
-                indent=1,
             )
 
         # Investissements
@@ -132,7 +145,6 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                         item["current_value"],
                         node_account,
                         ignore_orphans,
-                        indent=2,
                     )
 
         # Immobilier
@@ -148,7 +160,6 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 item["current_value"],
                 node,
                 ignore_orphans,
-                indent=1,
             )
 
         for item in real_estate["data"]["scpis"]:
@@ -158,7 +169,6 @@ def finary_fetch(portfolio, force_signin=False, ignore_orphans=False):
                 item["current_value"],
                 node,
                 ignore_orphans,
-                indent=1,
             )
 
     # Delete login variables just in case

@@ -1,23 +1,32 @@
 import copy
 import itertools
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from .folder import Folder
 from .folder import FolderDisplay
 
+if TYPE_CHECKING:
+    from .targets import Target
+    from .line import Line
+
 
 class Bucket:
-    def __init__(self, lines=None):
+    def __init__(self, lines: List["Line"]):
         self.lines = [] if lines is None else lines
-        self._prev_amount_used = 0
-        self.amount_used = 0
+        self._prev_amount_used: float = 0
+        self.amount_used: float = 0
 
-    def get_max_amount(self):
-        return np.sum([line.get_amount() for line in self.lines])
+    def get_max_amount(self) -> float:
+        return float(np.sum([line.get_amount() for line in self.lines]))
 
-    def _get_cumulative_index(self, target):
-        result = {"index": -1, "remainder": 0}
+    def _get_cumulative_index(self, target: float) -> Dict[str, Any]:
+        result = {"index": -1, "remainder": 0.0}
         amounts = [line.get_amount() for line in self.lines]
         cumulative_sum = list(itertools.accumulate(amounts))
         for i, item in enumerate(cumulative_sum):
@@ -25,8 +34,9 @@ class Bucket:
                 result["index"] = i
                 result["remainder"] = target - (cumulative_sum[i - 1] if i != 0 else 0)
                 return result
+        return result
 
-    def get_lines(self):
+    def get_lines(self) -> List["Line"]:
         result_prev = self._get_cumulative_index(self._prev_amount_used)
         result = self._get_cumulative_index(self.amount_used)
         sublines = []
@@ -49,37 +59,34 @@ class Bucket:
 
         return sublines
 
-    def use_amount(self, amount):
+    def use_amount(self, amount: float) -> List["Line"]:
         self._prev_amount_used = self.amount_used
         self.amount_used = min(self.get_max_amount(), self.amount_used + amount)
         return self.get_lines()
 
-    def get_used_amount(self):
+    def get_used_amount(self) -> float:
         return self.amount_used
-
-    def get_free_amount(self):
-        return self.get_amount() - self.get_used_amount()
 
 
 class SharedFolder(Folder):
     def __init__(
         self,
-        name,
-        bucket,
-        target_amount=np.inf,
-        parent=None,
-        target=None,
-        newline=False,
-        display=FolderDisplay.EXPANDED,
+        name: str,
+        bucket: Bucket,
+        target_amount: float = np.inf,
+        parent: Optional["Folder"] = None,
+        target: Optional["Target"] = None,
+        newline: bool = False,
+        display: FolderDisplay = FolderDisplay.EXPANDED,
     ):
-        super().__init__(name, parent, target, bucket.lines, newline=False, display=display)
+        super().__init__(name, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket
 
-    def process(self):
+    def process(self) -> None:
         super().process()  # Process children
-        self.children = self.bucket.use_amount(self.target_amount)
+        self.children = self.bucket.use_amount(self.target_amount)  # type: ignore # TODO couldn't fix the mypy error
 
         for child in self.children:
             child.set_parent(self)

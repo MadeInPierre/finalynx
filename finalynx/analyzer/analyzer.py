@@ -1,9 +1,9 @@
 from ..portfolio.portfolio import Portfolio
 
 
-class Copilot:
+class Analyzer:
     """
-    Main class for generating recommendations from your portfolio and simulation goals.
+    Main class for generating modular graphs and statistics about yout your portfolio.
 
     This module has not started development yet. Check back soon!
     """
@@ -12,6 +12,6 @@ class Copilot:
         """Empty initialization for now."""
         pass
 
-    def rich_recommendations(self, portfolio: Portfolio) -> str:
+    def rich_graphs(self, portfolio: Portfolio) -> str:
         """Dummy output for now, will return formatted recommendations in the future."""
         return "Advice"

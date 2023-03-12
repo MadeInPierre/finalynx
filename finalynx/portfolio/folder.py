@@ -1,10 +1,17 @@
 from enum import Enum
+from typing import Any
+from typing import List
+from typing import Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 from rich.tree import Tree
 
 from .line import Line
 from .node import Node
+
+if TYPE_CHECKING:
+    from .targets import Target
 
 
 class FolderDisplay(Enum):
@@ -16,12 +23,12 @@ class FolderDisplay(Enum):
 class Folder(Node):
     def __init__(
         self,
-        name,
-        parent=None,
-        target=None,
-        children=None,
-        newline=False,
-        display=FolderDisplay.EXPANDED,
+        name: str,
+        parent: Optional["Folder"] = None,
+        target: Optional["Target"] = None,
+        children: Optional[List["Node"]] = None,
+        newline: bool = False,
+        display: FolderDisplay = FolderDisplay.EXPANDED,
     ):
         super().__init__(name, parent, target, newline=False)
         self.children = [] if children is None else children
@@ -33,14 +40,14 @@ class Folder(Node):
         if self.children:
             child.newline = newline
 
-    def add_child(self, child):
+    def add_child(self, child: Node) -> None:
         child.set_parent(self)
         self.children.append(child)
 
-    def get_amount(self):
-        return np.sum([child.get_amount() for child in self.children]) if self.children else 0
+    def get_amount(self) -> float:
+        return float(np.sum([child.get_amount() for child in self.children]) if self.children else 0)
 
-    def rich_tree(self, hide_amount=False, _tree=None, **args):
+    def rich_tree(self, hide_amount: bool = False, _tree: Optional[Tree] = None, **args: Any) -> Tree:
         node = (
             Tree(self._render(hide_amount=hide_amount), guide_style="grey42", **args)
             if _tree is None
@@ -51,11 +58,11 @@ class Folder(Node):
                 child.rich_tree(hide_amount=hide_amount, _tree=node)
         return node
 
-    def process(self):
+    def process(self) -> None:
         for child in self.children:
             child.process()
 
-    def set_child_amount(self, key, amount):
+    def set_child_amount(self, key: str, amount: float) -> bool:
         success = False
         for child in self.children:
             if isinstance(child, Line) and child.key == key:
@@ -65,10 +72,10 @@ class Folder(Node):
                 success = True
         return success
 
-    def _render_name(self):
+    def _render_name(self) -> str:
         if self.display == FolderDisplay.LINE:
             return self.name
         return f"[blue bold]{self.name}[/]"
 
-    def _render_newline(self):
+    def _render_newline(self) -> str:
         return ""

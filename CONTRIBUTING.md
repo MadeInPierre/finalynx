@@ -17,11 +17,11 @@ The project structure is pretty typical for Python projects, with `finalynx` bei
 
 Feel free to suggest additions or changes!
 
-## 💬 Project management & Discussions
+## 💬 Project management
 
 The most important panel is the 👉 [**Project View**](https://github.com/users/MadeInPierre/projects/4) 👈 to see the current development status. Here is how you can participate:
 1. Checkout [**The Plan™**](https://github.com/MadeInPierre/finalynx/discussions/27) to see what's planned for Finalynx in general.
-2. Checkout the [**Project View**](https://github.com/users/MadeInPierre/projects/4) to see the current status (which follows the plan's [milestones](https://github.com/MadeInPierre/finalynx/milestones).
+2. Checkout the [**Project View**](https://github.com/users/MadeInPierre/projects/4) to see the current status (which follows the plan's [milestones](https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open)).
 3. Open an issue for each of your ideas, even those you don't think you'd develop yourself. Once discussed and assigned to someone in the project view, the development can start.
    - Remember: one issue = one pull request = one feature/bugfix.
 4. When you finish a contribution, create a pull request and mention which issue your PR would close. See more details in the next section.
@@ -32,13 +32,12 @@ If you want to propose something new (new feature, extension, bugfix, documentat
 1. **Fork** this repo (click the _fork_ button on GitHub)
 2. **Follow the initial setup** described in the section below
 3. **Create a separate branch** that will hold your contribution
-4. **Make your changes** 🪄
-5. **Stage your changes** to git using `git add .`
-6. **Check your changes** with `pre-commit run`. If some of your changes do not follow the conventions, they will automatically be fixed. Take a look at the proposed changes and run `git add . && pre-commit run` again until all checks pass.
-7. **Commit** your contributions using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard (e.g. `feat(readme): added something cool`)
-8. **Push** your changes to your remote fork
-9. **Open a pull-request** to our primary repo and target the `main` branch (using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) again for your PR title)
-10. **Wait for review**: let's chat about it in the pull request comments and merge it 🎉
+4. **Make your changes** 🪄 and stage them with `git add .`
+5. **Check your changes** with `pre-commit run`. If some of your changes do not follow the conventions, they will automatically be fixed. Take a look at the proposed changes and run `git add . && pre-commit run` again until all checks pass.
+6. **Commit** your contributions using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard (e.g. `feat(readme): added something cool`)
+7. **Push** your changes to your remote fork
+8. **Open a pull-request** to our primary repo and target the `main` branch (using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) again for your PR title)
+9.  **Wait for review**: let's chat about it in the pull request comments and merge it 🎉
 
 For your next contributions, you can simply update your fork and start from step 3. Let me know if you plan on actively contributing to this project, I can give you direct access to this repo.
 

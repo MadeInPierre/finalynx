@@ -6,9 +6,11 @@ TODO Dummy class for now, check back later or help us by contributing!
 from ..portfolio.portfolio import Portfolio
 
 
-class Copilot:
+class Dashboard:
     """
-    Main class for generating recommendations from your portfolio and simulation goals.
+    Main class for hosting an interactive web-based dashboard.
+
+    It will soon show your portfolio and simulation results in all its glory!
 
     This module has not started development yet. Check back soon!
     """
@@ -17,6 +19,6 @@ class Copilot:
         """Empty initialization for now."""
         pass
 
-    def rich_recommendations(self, portfolio: Portfolio) -> str:
-        """Dummy output for now, will return formatted recommendations in the future."""
+    def run(self, portfolio: Portfolio) -> str:
+        """Dummy output for now, will host a local web server in the future."""
         return "Advice"

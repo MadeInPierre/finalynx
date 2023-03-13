@@ -17,8 +17,9 @@ Contributions and feature ideas are warmly welcome!
   - [X] Parse options in command line
   - [X] Remove the need for the install script using syspath appends
   - [X] Auto-login using environment variables (bypass relative loads from finary_api)
-  - [ ] Learn to do versioning, releases, PEP8, ...
-  - [ ] Write detailed instructions to create your own config
+  - [X] Learn to do versioning, releases, PEP8, ...
+  - [X] Write a simple dry-run test to make sure dependencies are present
+  - [X] Write detailed instructions to create your own config
   - [ ] Documentation? Wait to see if people are interested
 - [ ] **Chapter 2: Analyzer**
   - [ ] Print a table with asset classes, types, envelopes, amounts, ...

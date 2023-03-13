@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/MadeInPierre/finalynx">
-    <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/logo_assistant_transparent.png" width="400" />
+    <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/logo_assistant_transparent.png" width="400" />
   </a>
   <br>Finalynx Assistant<br>
 </h1>
@@ -13,7 +13,7 @@
   <br><a href="https://pypi.org/project/finalynx/"><img alt="PyPI" src="https://img.shields.io/pypi/v/finalynx?style=flat-square"></a>
   <a href="https://github.com/MadeInPierre/finalynx/actions/workflows/semantic-release.yml"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/madeinpierre/finalynx/semantic-release.yml?branch=main&style=flat-square"></a>
   <a href="https://github.com/MadeInPierre/finalynx/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/madeinpierre/finalynx?style=flat-square"></a>
-  <a href="https://github.com/MadeInPierre/finalynx/milestones"><img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/madeinpierre/finalynx?color=green&label=milestones&style=flat-square&color=brightgreen"></a>
+  <a href="https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open"><img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/madeinpierre/finalynx?color=green&label=milestones&style=flat-square&color=brightgreen"></a>
 
   <br>
 </div>
@@ -26,7 +26,7 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 🇫🇷🥖 Vous pouvez traduire cette page en Français avec votre navigateur (_clic droit > traduire_).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/screenshot.png" width="500" />
+  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot.png" width="500" />
 </p>
 
 ## ✨ Features
@@ -50,79 +50,18 @@ And you're done! Now create your own copy of the [`demo.py`](https://github.com/
 
 **Pro Tip 💡:** _Why not setup a script to autorun your config in a new terminal on startup? Could be a nice view_ 🤭
 
-## ⚙️ Usage
+## ⚙️ Usage & Documentation
 The goal is to declare a tree structure of your entire portfolio independently from their host envelopes (e.g. PEA, AV, CTO, etc). Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Finalynx will fetch each line and display your full portfolio with real-time amounts.
 
-#### Step 1: Portfolio
-
-To create your portfolio, start with a `Portfolio` object which holds a nested list of `Line`, `Folder`, and `SharedFolder` objects:
-- `Line` represents each individual investment. Set the `key` parameter as the name shown in your Finary account if different from the display name.
-- `Folder` holds a group of lines or subfolders to create a structure.
-- `SharedFolder` accepts a `Bucket` object which groups multiple lines as a single object. You can reference the same bucket multiple times in the tree and set different `bucket_amount` for each shared folder. Each folder will only take the specified amount and let the others below use the rest.
-
-Here is an example of a portfolio structure:
-```python
-# Create a list of Lines that will be considered as a single Line.
-my_bucket = Bucket([
-  Line('name_in_finary'),
-  Line('My Asset 2', key='name_in_finary'),  # change the display name
-  # ...
-])
-
-# Define your entire portfolio structure
-portfolio = Portfolio('My Portfolio', children=[
-  # Add a list of `Line`, `Folder`, and `SharedFolder` objects
-  Folder('Short term', children=[
-    Line('My Asset 3', key='name_in_finary'),
-    SharedFolder('My Folder', bucket=my_bucket, bucket_amount=1000),
-    # ...
-  ]),
-  Folder('Long term', children=[
-    # `(Shared)Folders` can be displayed as Expanded (default), Collapsed, or as a Line
-    Folder('Stocks', display=FolderDisplay.COLLAPSED, children=[
-      SharedFolder('My Folder', bucket=my_bucket),  # display what's left in the bucket
-      # ...
-    ]),
-    # ...
-  ])
-])
-```
-
-#### Step 2: Targets
-Any node in the tree accepts an optional `target` parameter. See the full list of available targets [here](https://github.com/MadeInPierre/finalynx/blob/main/finalynx/portfolio/targets.py):
-
-```python
-Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
-  Line('ETF World', key='Amundi ETF ...', target=TargetRatio(80, tolerance=5)),
-  # ... Add other lines with the remaining 20% of the Stocks folder.
-])
-```
-
-#### Step 3: Run the Assistant
 Here is the bare minimum code accepted:
+
 ```python
 from finalynx import Portfolio, Assistant
-portfolio = Portfolio()  # your config here
-Assistant(portfolio).run()
+portfolio = Portfolio()  # <- your custom configuration here
+Assistant(Portfolio()).run()
 ```
 
-The `Assistant` class accepts a few options:
-```python
-Assistant(
-    portfolio,
-    ignore_orphans=False,  # Ignore fetched lines that you didn't reference in your portfolio.
-    force_signin=False,    # Delete your saved credentials and/or cookies session.
-    hide_amount=False,     # Hide your portfolio amounts with dots (easier to share).
-    hide_root=False,       # Display your portfolio without the root (cosmetic preference).
-).run()
-```
-
-These options can also be set from the command line, see:
-```sh
-python your_config.py --help
-```
-
-There are other small options here and there, let me know if you're interested (I should write a full documentation). However, you should be good to go with some inspiration taken from [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py).
+You can now populate the `Portfolio` class with your own custom hierarchy by taking inspiration from the [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) example or by reading the [Getting Started](https://finalynx.readthedocs.io/en/latest/tutorials/getting_started.html) guide in the documentation. For additional details, checkout the full [API Reference](https://finalynx.readthedocs.io/en/latest/apidocs/index.html).
 
 ## 👨‍💻 Feedback & Contributions
 This repository is at a very early stage. Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project (or [hire me](https://www.buymeacoffee.com/MadeInPierre/commissions) if you can't develop it yourself). Pull requests, [issues](https://github.com/MadeInPierre/finalynx/issues/new) (🇬🇧 preferably) and [open discussions](https://github.com/MadeInPierre/finalynx/discussions/new) (🇬🇧/🇫🇷) are warmly welcome!

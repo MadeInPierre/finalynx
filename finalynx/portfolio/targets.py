@@ -1,9 +1,17 @@
+from typing import Dict
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from .hierarchy import Hierarchy
 
+if TYPE_CHECKING:
+    from .node import Node
+
 
 class Target(Hierarchy):
+    """Abstract class that defines an objective for a `Node` in the Portfolio tree."""
+
     RESULT_NOK = {"name": "Not OK", "symbol": "×", "color": "red"}
     RESULT_OK = {"name": "OK", "symbol": "✓", "color": "green"}
     RESULT_TOLERATED = {"name": "Tolerated", "symbol": "≈", "color": "yellow"}
@@ -12,41 +20,67 @@ class Target(Hierarchy):
     RESULT_START = {"name": "Start", "symbol": "↯", "color": "cyan"}
     RESULT_NONE = {"name": "No target", "symbol": "‣", "color": "blue"}
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self) -> None:
+        """Abstract Target class that holds the Node parent using this instance and provides
+        a common logic for rendering the amounts."""
+        super().__init__(parent=None)
+        self.parent: Node = self.parent  # Tell mypy this class only has Nodes as parents.
 
-    def get_amount(self):
+    def get_amount(self) -> float:
+        """:returns: The amount stored in the target's parent."""
         if self.parent is None:
             raise ValueError("[red]Target has no parent, not allowed.[/]")
         return self.parent.get_amount()
 
-    def check(self):
+    def check(self) -> Dict[str, str]:
+        """Default behavior to check if the parent's amount respects the target objective.
+        This method should be overriden by all subclasses to define custom-tailored logic.
+        :returns: A `Target.RESULT_*` object depending on the recommendation to be rendered
+        in the output console.
+        """
         if self.get_amount() == 0:
             return Target.RESULT_START
         return Target.RESULT_NONE
 
-    def prehint(self):
+    def prehint(self) -> str:
+        """Virtual method for information to be printed between the amoutn and the name."""
         return ""
 
-    def hint(self):
+    def hint(self) -> str:
+        """Virtual method for information to be printed at the end of the parent's description."""
         return "- Gotta invest!" if self.check() == Target.RESULT_START else "- No target"
 
-    def render_amount(self, hide_amount=False, n_characters=0):
+    def render_amount(self, hide_amount: bool = False, n_characters: int = 0) -> str:
+        """Check for the parent's amount against the target logic and format the amount based on the target recommendation.
+        :param hide_amount: Replace the amounts by simple dots (easier to share the result), defaults to False.
+        :param n_characters: Used by `Node` objects to align the amount with other nodes' renders.
+        :returns: A string with a righ-formatted render of the parent's amount based on the target recommendation.
+        """
         result = self.check()
-        result = result if result != True else Target.RESULT_START  # noqa: E712 TODO weird bug??? Workaround for now
+        result = result if result != True else Target.RESULT_START  # type: ignore # noqa: E712 TODO weird bug??? Workaround for now
         number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
         return f'[{result["color"]}]{result["symbol"]} {number} €[/][dim white]{self.prehint()}[/]'
 
 
 class TargetRange(Target):
-    def __init__(self, target_min, target_max, tolerance=0, parent=None):
-        super().__init__(parent)
+    """Target to make sure your node stays within a specified range."""
+
+    def __init__(self, target_min: float, target_max: float, tolerance: float = 0):
+        """This target checks if the amount is between two values (with an optional tolerance).
+        :param target_min: Minimum threshold to get a `RESULT_OK`.
+        :param target_max: Maximum threshold to get a `RESULT_OK`.
+        :param tolerance: If the amount is between `target_min - tolerance` and `target_max + tolerance`,
+        the check will return a `RESULT_TOLERATED`.
+        """
+        super().__init__()
         self.target_min = target_min
         self.target_max = target_max
         self.tolerance = tolerance
 
-    def check(self):
-        if super_result := super().check() != Target.RESULT_NONE:
+    def check(self) -> Dict[str, str]:
+        """This function checks the conditions described in the init method."""
+        super_result = super().check()
+        if super_result != Target.RESULT_NONE:
             return super_result
         elif self._get_variable() < self.target_min - self.tolerance:
             return Target.RESULT_INVEST
@@ -58,62 +92,104 @@ class TargetRange(Target):
             return Target.RESULT_TOLERATED
         return Target.RESULT_DEVEST
 
-    def _get_variable(self):
+    def _get_variable(self) -> float:
+        """Internal method that gives the value to be checked (overriden by subclasses)."""
         return self.get_amount()
 
-    def hint(self):
+    def hint(self) -> str:
+        """:returns: A formatted description of the target."""
         return f"- Range {self.target_min}-{self.target_max} €"
 
 
 class TargetMax(TargetRange):
-    def __init__(self, target_max, tolerance=0, parent=None):
-        super().__init__(0, target_max, tolerance, parent)
+    """Target to make sure your node does not exceed a specified value."""
 
-    def hint(self):
+    def __init__(self, target_max: float, tolerance: float = 0):
+        """This target checks if the amount is below a specified threshold (with an optional tolerance).
+        :param target_max: Maximum threshold to get a `RESULT_OK`.
+        :param tolerance: If the amount is at most `target_max + tolerance`, the check will return a `RESULT_TOLERATED`.
+        """
+        super().__init__(0, target_max, tolerance)
+
+    def hint(self) -> str:
+        """:returns: A formatted description of the target."""
         return f"- Maximum {self.target_max} €"
 
 
 class TargetMin(TargetRange):
-    def __init__(self, target_min, tolerance=0, parent=None):
-        super().__init__(target_min, np.inf, tolerance, parent)
+    """Target to make sure your node does not go under a specified value."""
 
-    def hint(self):
+    def __init__(self, target_min: float, tolerance: float = 0):
+        """This target checks if the amount is above a specified threshold (with an optional tolerance).
+        :param target_min: Minimum threshold to get a `RESULT_OK`.
+        :param tolerance: If the amount is at least `target_min - tolerance`, the check will return a `RESULT_TOLERATED`.
+        """
+        super().__init__(target_min, np.inf, tolerance)
+
+    def hint(self) -> str:
+        """:returns: A formatted description of the target."""
         return f"- Minimum {self.target_min} €"
 
 
 class TargetRatio(TargetRange):
-    def __init__(self, target_ratio, zone=4, tolerance=2, parent=None):
+    """Target to make sure your node represents a specified ratio in a folder."""
+
+    def __init__(self, target_ratio: float, zone: float = 4, tolerance: float = 2):
+        """This target checks if the amount represents a specified ratio of the total amounf of the parent node
+        (with an optional tolerance).
+        :param target_ratio: Target to get a `RESULT_OK`.
+        :param zone: Accepted tolerance to still return a `RESULT_OK`.
+        :param tolerance: If the amount is between `target_ratio - (zone + tolerance) / 2` and `target_ratio + (zone + tolerance) / 2`,
+        the check will return a `RESULT_TOLERATED`.
+        """
         target_min = max(target_ratio - zone, 0)
         target_max = min(target_ratio + zone, 100)
-        super().__init__(target_min, target_max, tolerance, parent)
+        super().__init__(target_min, target_max, tolerance)
         self.target_ratio = target_ratio
 
-    def get_ratio(self):
+    def get_ratio(self) -> float:
+        """:returns: How much this amoutn represents agains the reference in percentage (0-100%)."""
         total = self._get_reference_amount()
         return 100 * self.get_amount() / total if total > 0 else 0
 
-    def _get_variable(self):
+    def _get_variable(self) -> float:
+        """:returns: The value to be checked."""
         return self.get_ratio()
 
-    def _get_reference_amount(self):
-        return self.parent.parent.get_amount()
+    def _get_reference_amount(self) -> float:
+        """:returns: The value to be checked against (parent's amount)."""
+        if not self.parent.parent:
+            raise ValueError("Target's parent's parent must not be None.")
+        return self.parent.parent.get_amount()  # typing: ignore union-attr
 
-    def prehint(self):
+    def prehint(self) -> str:
+        """:returns: A rich-formatted view of the calculated percentage."""
         return f" ({round(self.get_ratio()):>2}%)"
 
-    def hint(self):
+    def hint(self) -> str:
+        """:returns: A formatted description of the target."""
         return f"→ {self.target_ratio}%"
 
 
 class TargetGlobalRatio(TargetRatio):
-    def __init__(self, target_ratio, tolerance=0, parent=None):
-        super().__init__(target_ratio, tolerance, parent)
+    """Target to make sure your node represents a specified ratio in your portfolio."""
 
-    def _get_reference_amount(self):
+    def __init__(self, target_ratio: float, zone: float = 4, tolerance: float = 0):
+        """This target checks if the amount represents a specified ratio of the total amount of your entire portfolio.
+        :param target_ratio: Target to get a `RESULT_OK`.
+        :param zone: Accepted tolerance to still return a `RESULT_OK`.
+        :param tolerance: If the amount is between `target_ratio - (zone + tolerance) / 2` and `target_ratio + (zone + tolerance) / 2`,
+        the check will return a `RESULT_TOLERATED`.
+        """
+        super().__init__(target_ratio, zone, tolerance)
+
+    def _get_reference_amount(self) -> float:
+        """:returns: The value to be checked against (portfolio amount)."""
         root = self.parent
         while root.parent is not None:
             root = root.parent
         return root.get_amount()
 
-    def hint(self):
+    def hint(self) -> str:
+        """:returns: A formatted description of the target."""
         return f"→ Global {self.target_ratio}%"

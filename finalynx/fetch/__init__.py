@@ -1,12 +1,22 @@
+"""
+```{tip}
+This subpackage corresponds to the [portfolio milestone](https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open) in the development steps.
+```
+
+Dedicated subpackage that retrieves your investments from any external source.
+
+Finalynx currently supports Finary as the primary source to obtain real-time portfolio values.
+However, any other source might be added in the future by creating a new source option in this
+subpackage.
+"""
 # flake8: noqa
 import os
 import sys
 
-import finary_api.constants  # Set the credentials and cookies constants to a full path
+import finary_api.constants  # type: ignore # Set the credentials and cookies constants to a full path
 
-current_path = os.path.dirname(__file__)
-finary_api.constants.CREDENTIAL_FILE = os.path.join(current_path, "credentials.json")
-finary_api.constants.COOKIE_FILENAME = os.path.join(current_path, "localCookiesMozilla.txt")
+finary_api.constants.CREDENTIAL_FILE = os.path.join(os.path.dirname(__file__), "credentials.json")
+finary_api.constants.COOKIE_FILENAME = os.path.join(os.path.dirname(__file__), "localCookiesMozilla.txt")
 
 from .finary_fetch import finary_fetch
 from ..console import console

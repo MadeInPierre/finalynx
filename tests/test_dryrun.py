@@ -14,5 +14,5 @@ def set_credentials_env():
 
 
 # Simply run the demo and pass if there was no error (e.g. missing dependencies)
-def test_dryrun():
+def test_dryrun() -> None:
     assert os.system("python3 examples/demo.py") == 0

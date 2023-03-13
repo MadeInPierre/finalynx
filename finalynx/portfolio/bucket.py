@@ -17,6 +17,16 @@ if TYPE_CHECKING:
 
 
 class Bucket:
+    """
+    Holds a list of `Line` objects to represent a group of investments that hold the same purpose.
+
+    Once defined with a list of lines, there is nothing else to do from a user perspective.
+    The user can reference this bucket instance in as many `SharedFolder` instances in the
+    portfolio tree as desired. Each folder will only user the specified `target_amount` in
+    each folder instance, and the bucket will generate a new list of liens for this folder
+    with only the specified amount, while keeping track of what has been already used.
+    """
+
     def __init__(self, lines: List["Line"]):
         self.lines = [] if lines is None else lines
         self._prev_amount_used: float = 0

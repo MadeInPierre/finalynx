@@ -40,15 +40,11 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
     ```
 
     :param portfolio: Your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>` tree (must be already fully defined).
-    :type portfolio: Portfolio
     :param force_signin: Delete all saved credentials and cookies before logging in again, defaults to False
-    :type force_signin: bool
     :param ignore_orphans: If a line in your account is not referenced in your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>`
     then don't attach it to the root (used as a reminder), defaults to False
-    :type ignore_orphans: bool
     :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
     everything was correctly found.
-    :rtype: Tree
     """
 
     def match_line(portfolio: Portfolio, key: str, amount: float, node: Tree, ignore_orphans: bool) -> None:

@@ -1,6 +1,6 @@
 """
 ```{tip}
-This subpackage is corresponds to the [portfolio milestone](https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open) in the development steps.
+This subpackage corresponds to the [portfolio milestone](https://github.com/MadeInPierre/finalynx/milestones?direction=asc&sort=title&state=open) in the development steps.
 ```
 
 Dedicated subpackage that retrieves your investments from any external source.

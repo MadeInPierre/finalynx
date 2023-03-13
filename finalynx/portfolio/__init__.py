@@ -17,8 +17,9 @@ Here is a quick help to navigate this subpackage:
 - `Target` is an abstract class that defines a common logic and console rendering for all subclasses. Checkout the submodule to see which targets
 are available.
 
+% TODO
 ```{note}
-TODO `constants` is not used for now, but may soon be the basis of `Envelope` objects.
+`constants` is not used for now, but may soon be the basis of future `Envelope` objects.
 ```
 """
 # flake8: noqa

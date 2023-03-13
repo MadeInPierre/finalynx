@@ -53,7 +53,10 @@ autodoc2_docstring_parser_regexes = [
 ]
 
 # List of modules and objects to skip, e.g. "finary.__meta__"
-autodoc2_skip_module_regexes = []
+autodoc2_skip_module_regexes = [
+    "finalynx.__meta__",
+    "finalynx.__main__",
+]
 autodoc2_render_plugin = "myst"
 myst_enable_extensions = ["fieldlist"]
 

@@ -56,6 +56,8 @@ autodoc2_docstring_parser_regexes = [
 autodoc2_skip_module_regexes = [
     "finalynx.__meta__",
     "finalynx.__main__",
+    "finalynx.__usage__",
+    "finalynx.console",
 ]
 autodoc2_render_plugin = "myst"
 myst_enable_extensions = ["fieldlist"]

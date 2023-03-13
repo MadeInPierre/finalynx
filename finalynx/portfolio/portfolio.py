@@ -22,10 +22,8 @@ class Portfolio(Folder):
         start with a `Folder` object.
 
         :param name: The name that will be displayed in the rendered tree, defaults to _Portfolio_.
-
         :param target: optional `TargetSomething` instance to render the total portfolio amount with
          certain conditions, defaults to None.
-
         :param children: List of `Line`, `Folder`, and `SharedFolder` objects to recursively define the
         entire structure, defaults to an empty list.
         """

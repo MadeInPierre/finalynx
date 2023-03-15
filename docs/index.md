@@ -33,9 +33,9 @@ Discussions <https://github.com/MadeInPierre/finalynx/discussions>
 Deprecated <project/TODO>
 ```
 
-```{warning}
+<!-- ```{warning}
 This documentation is under heavy development. Contributions are warmly welcome! 🎉
-```
+``` -->
 
 ```{include} ../README.md
 ```

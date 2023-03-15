@@ -3,10 +3,11 @@ from ..console import console
 
 
 class Parser:
-    """Abstract class that defines a unified interface to all parser subclasses to remain file type independent."""
+    """Abstract class that defines a unified interface to all parser subclasses."""
 
     def __init__(self, filename: str):
-        """:param filename: Relative path to your input file."""
+        """Abstract class that defines a unified interface to all parser subclasses to remain file type independent.
+        :param filename: Relative path to your input file."""
         try:
             self.data = open(filename).read()
         except FileNotFoundError:

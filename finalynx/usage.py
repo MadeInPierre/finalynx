@@ -3,7 +3,7 @@ import sys
 from .__meta__ import __version__
 
 # When using finalynx from `python -m finalynx ...`, add additional usage requirements
-main_usage = "--json=input-file"
+main_usage = "--json=input-file "
 
 main_options = """
   --json=input-file    When calling Finalynx in standalone mode, a JSON configuration file is mandatory
@@ -12,7 +12,7 @@ main_options = """
 
 # Add standalone usage only when finalynx is not called through a custom python script
 def main_filter(message: str) -> str:
-    return f"{message} " if ".py" not in sys.argv[0] else ""
+    return message if ".py" not in sys.argv[0] else ""
 
 
 # Define the finalynx command-line usage which varies depending on how it's called.

@@ -1,5 +1,7 @@
+import datetime
 import json
 import os
+from typing import Dict
 
 from rich.prompt import Confirm
 from rich.tree import Tree
@@ -11,7 +13,11 @@ from ..console import console
 from ..portfolio.line import Line
 from ..portfolio.portfolio import Portfolio
 
+CACHE_FILENAME = os.path.join(os.path.dirname(__file__), "finary_data.json")
+MAX_CACHE_HOURS = 1
 
+
+# TODO Refactor in a class
 def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphans: bool = False) -> Tree:
     """Wrapper function for the `finary_api` package.
 
@@ -47,14 +53,23 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
     everything was correctly found.
     """
 
-    def match_line(portfolio: Portfolio, key: str, amount: float, node: Tree, ignore_orphans: bool) -> None:
+    def match_line(
+        portfolio: Portfolio, key: str, amount: float, node: Tree, lines_dict: Dict[str, int], ignore_orphans: bool
+    ) -> None:
         key, amount = unidecode(key), round(amount)
         node_child = node.add(f"{amount} {key}")
+        lines_dict[key] = amount
         if not portfolio.set_child_amount(key, amount) and not ignore_orphans:
             node_child.add("[yellow]WARNING: This line did not match with any envelope, attaching to root")
             portfolio.add_child(Line(key, amount=amount))
 
     tree = Tree("Finary API", highlight=True, hide_root=True)
+    lines_dict: Dict[str, int] = _get_cache()
+
+    if lines_dict:
+        for key, value in lines_dict.items():
+            match_line(portfolio, key, value, tree, lines_dict, ignore_orphans)
+        return tree
 
     # Let the user reset its credentials and session
     if force_signin:
@@ -124,7 +139,7 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
             console.log(f"Fetching {name.lower()}...")
             node = tree.add("[bold]" + str(round(result["timeseries"][-1][1])) + " " + name)
             for k, e in result["distribution"].items():
-                match_line(portfolio, k, e["amount"], node, ignore_orphans)
+                match_line(portfolio, k, e["amount"], node, lines_dict, ignore_orphans)
 
         # Autres
         console.log("Fetching other assets...")
@@ -137,6 +152,7 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
                 item["name"],
                 item["current_value"],
                 node,
+                lines_dict,
                 ignore_orphans,
             )
 
@@ -164,6 +180,7 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
                         item["security"]["name"],
                         item["current_value"],
                         node_account,
+                        lines_dict,
                         ignore_orphans,
                     )
 
@@ -179,6 +196,7 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
                 item["description"],
                 item["current_value"],
                 node,
+                lines_dict,
                 ignore_orphans,
             )
 
@@ -188,6 +206,7 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
                 item["scpi"]["name"],
                 item["current_value"],
                 node,
+                lines_dict,
                 ignore_orphans,
             )
 
@@ -197,5 +216,47 @@ def finary_fetch(portfolio: Portfolio, force_signin: bool = False, ignore_orphan
     if os.environ.get("FINARY_PASSWORD"):
         os.environ.pop("FINARY_PASSWORD")
 
+    # Save
+    console.log("Saving fetched data in '{CACHE_FILENAME}'")
+    _save_cache(lines_dict)
+
     console.log("Done fetching Finary data.")
     return tree
+
+
+def _save_cache(lines_dict: Dict[str, int]) -> None:
+    """Save the fetched data locally to work offline and reduce the amoutn of calls to the API.
+    :param tree: Generated tree object containing all information
+    """
+    # Save current date and time to a JSON file with the fetched data
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    data = {"last_updated": current_time, "lines": lines_dict}
+    with open(CACHE_FILENAME, "w") as f:
+        json.dump(data, f, indent=4)
+
+
+def _get_cache() -> Dict[str, int]:
+    """Attempt to retrieve the cached data. Check if more than an hour has passed since the last update.
+    :returns: A key:amount dictionary if the cache file is less than an hour old, None otherwise.
+    """
+
+    # Abort retrieving cache if the file doesn't exist
+    if not os.path.exists(CACHE_FILENAME):
+        console.log("No cache file found, fetching data.")
+        return {}
+
+    # Parse the JSON content
+    with open(CACHE_FILENAME) as f:
+        data = json.load(f)
+
+    # Return the cached content if the cache file is less than the maximum age
+    last_updated = datetime.datetime.strptime(data["last_updated"], "%Y-%m-%d %H:%M:%S")
+    time_diff = datetime.datetime.now() - last_updated
+    hours_passed = int(time_diff.total_seconds() // 3600)
+
+    if hours_passed < MAX_CACHE_HOURS:
+        console.log(f"Using recently cached data ({hours_passed}h old < {MAX_CACHE_HOURS}h max)")
+        lines: Dict[str, int] = data["lines"]
+        return lines
+    console.log("Fetching data (cache file is {hours_passed}h old > {MAX_CACHE_HOURS}h max)")
+    return {}

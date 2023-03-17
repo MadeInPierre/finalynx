@@ -126,14 +126,17 @@ class Folder(Node):
                 success = True
         return success
 
-    def _render_name(self) -> str:
+    def _render_name(self, format: str = "rich") -> str:
         """Internal method that overrides the superclass' render method to display
         the folder name with a bold font of different color.
         :returns: The formatted name of this folder with a blue and bold style.
         """
-        if self.display == FolderDisplay.LINE:
+        if format == "rich":
+            if self.display == FolderDisplay.LINE:
+                return self.name
+            return f"[blue bold]{self.name}[/]"
+        elif format == "plain":
             return self.name
-        return f"[blue bold]{self.name}[/]"
 
     def _render_newline(self) -> str:
         """Internal method that overrides the superclass' render method to display

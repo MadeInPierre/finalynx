@@ -4,7 +4,6 @@ TODO Dummy class for now, check back later or help us by contributing!
 ```
 """
 import datetime
-import json
 from typing import Any
 from typing import Dict
 from typing import Set
@@ -12,6 +11,7 @@ from typing import Set
 from nicegui import ui
 from rich.tree import Tree
 
+from ..console import console
 from ..portfolio.portfolio import Portfolio
 
 
@@ -28,6 +28,25 @@ class Dashboard:
         "https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/logo_assistant_transparent.png"
     )
 
+    _logo_colors = ["000000", "E0AE80", "885540", "EEDFBC", "6F988D"]
+    _attempts = ["F8333C", "7D8491"]
+    _greys = [
+        "FFFFFF",
+        "F4F5F6",
+        "DDE0E3",
+        "C7CCD1",
+        "B0B8BF",
+        "9AA4AC",
+        "84909A",
+        "6E7C87",
+        "5C6770",
+        "49525A",
+        "373E43",
+        "25292D",
+        "121416",
+        "000000",
+    ]
+
     def __init__(self) -> None:
         """Empty initialization for now."""
         pass
@@ -35,53 +54,76 @@ class Dashboard:
     def run(self, portfolio: Portfolio) -> None:
         """Dummy output for now, will host a local web server in the future."""
 
-        with ui.header(elevated=True).style("background-color: #3874c8").classes("items-center justify-between"):
-            ui.label(f"Finalynx Dashboard - {self._get_today_str()}")
-            ui.button("Export PDF", on_click=lambda: ui.notify("Coming soon!")).props("icon=file_download disabled")
-            # ui.button(on_click=lambda: right_drawer.toggle()).props('flat color=white icon=menu')
+        ui.colors(primary="#6F988D", accent="#F8333C")
 
-        with ui.left_drawer(top_corner=True, bottom_corner=True).style("background-color: #d7e3f4"):
+        with ui.header(elevated=True).style(f"background-color: #{self._logo_colors[-1]}").classes(
+            "items-center justify-between"
+        ):
+            with ui.row().classes("items-center"):
+                ui.button(on_click=lambda: left_drawer.toggle()).props("flat color=white icon=menu")
+                ui.label("Finalynx Dashboard").classes("text-bold").style("font-size: 20px")
+            ui.label(self._get_today_str()).style("font-size: 18px")
+            ui.button("Export PDF", on_click=lambda: ui.notify("Coming soon!")).props("icon=file_download color=accent")
+
+        with ui.left_drawer(bottom_corner=True, elevated=True).style(
+            f"background-color: #{self._greys[2]}"
+        ) as left_drawer:
             ui.image(self._url_logo)
             with ui.card_section():
+                ui.markdown("#### Welcome to Finalynx!").classes("text-center")
                 ui.label("Lorem ipsum dolor sit amet, consectetur adipiscing elit, ...")
+                ui.badge("Hello", color="accent").props("rounded")
 
         # with ui.right_drawer(fixed=False).style('background-color: #ebf1fa').props('bordered') as right_drawer:
         #     ui.label('RIGHT DRAWER')
-
-        # with ui.footer().style('background-color: #3874c8'):
+        # with ui.footer(value=True).style('background-color: #3874c8'):
         #     ui.label('FOOTER')
 
         with ui.row():
             with ui.card().tight():
                 portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio.tree(format="name"))
-                self._add_ids(portfolio_dict)
-                print(json.dumps(portfolio_dict, indent=4))
-                with ui.card_section():
-                    ui.tree(
-                        [portfolio_dict],
-                    ).props("default-expand-all tick-strategy=leaf")
+                max_id = self._add_ids_to_tree(portfolio_dict)
 
-        ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=False)
+                with ui.card_section():
+                    ui.markdown("#### **Your Portfolio**").classes("text-center")
+                    tree = ui.tree(
+                        [portfolio_dict], on_expand=self._on_expand, on_select=self._on_select, on_tick=self._on_tick
+                    ).props("selected-color=accent")
+                    tree._props["expanded"] = list(range(max_id))
+
+            with ui.card():
+                self.hey = ui.label("Hello")
+
+        ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=False)
+
+    def _on_expand(self, event: Any) -> None:
+        console.log(event)
+
+    def _on_select(self, event: Any) -> None:
+        console.log(event)
+        self.hey.set_text(f"Selected node: {event.value}")
+
+    def _on_tick(self, event: Any) -> None:
+        console.log(event)
 
     def _convert_rich_tree_to_nicegui(self, rich_tree: Tree) -> Dict[str, Any]:
         name = str(rich_tree.label)
-        result = {"label": name, "icon": "photo"}
+        result = {"label": name, "icon": "trending_up", "classes": "text-weight-bold text-primary"}
         if rich_tree.children:
             result["children"] = [self._convert_rich_tree_to_nicegui(c) for c in rich_tree.children]  # type: ignore
         return result
 
-    def _add_ids(self, node: Dict[str, Any], used_ids: Set[int] = set(), id_counter: int = 1) -> int:
+    def _add_ids_to_tree(self, node: Dict[str, Any], used_ids: Set[int] = set(), id_counter: int = 1) -> int:
         while id_counter in used_ids:
             id_counter += 1
         node["id"] = id_counter
         used_ids.add(id_counter)
         if "children" in node:
             for child in node["children"]:
-                id_counter = self._add_ids(child, used_ids, id_counter + 1)
+                id_counter = self._add_ids_to_tree(child, used_ids, id_counter + 1)
         return id_counter
 
     def _get_today_str(self) -> str:
         today = datetime.date.today()
-        return today.strftime("%B %d") + (
-            "th" if 11 <= today.day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(today.day % 10, "th")
-        )
+        letter = "th" if 11 <= today.day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(today.day % 10, "th")
+        return today.strftime(f"%B %d{letter}, %Y")

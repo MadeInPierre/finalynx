@@ -81,7 +81,7 @@ class Node(Hierarchy):
                 + self._render_newline()  # noqa: W503
             )
         elif format == "name":
-            return self._render_name()
+            return self._render_name(format="plain")
         else:
             raise ValueError("Render type '{format}' is unrecognized.")
 
@@ -96,7 +96,7 @@ class Node(Hierarchy):
 
         return self.target.render_amount(n_characters=max_length, hide_amount=hide_amount)
 
-    def _render_name(self) -> str:
+    def _render_name(self, format: str = "rich") -> str:
         """:returns: A formatted rendering of this node's name."""
         return self.name
 

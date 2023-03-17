@@ -78,7 +78,7 @@ class Folder(Node):
         """
         return float(np.sum([child.get_amount() for child in self.children]) if self.children else 0)
 
-    def rich_tree(self, hide_amount: bool = False, _tree: Optional[Tree] = None, **args: Any) -> Tree:
+    def tree(self, format: str = "rich", hide_amount: bool = False, _tree: Optional[Tree] = None, **args: Any) -> Tree:
         """Generate a fully rendered `Tree` object from the `rich` package using the
 
         This `Tree` can either be manipulated for further operations or directly printed
@@ -87,16 +87,17 @@ class Folder(Node):
         :param hide_amount: Replace the amoutns by simple dots (easier to share the result), defaults to False.
         :param _tree: Internal method to pass the folder's root tree object to the children.
         :param args: Provide any list of arguments supported by the `Tree` class if this is the root folder in the hierarchy.
+        :param format: `rich` for console output, `name` for only names, defaults to `rich`
         :returns: A `Tree` instance containing the rendered titles for each `Node` object.
         """
         node = (
-            Tree(self._render(hide_amount=hide_amount), guide_style="grey42", **args)
+            Tree(self._render(format=format, hide_amount=hide_amount), guide_style="grey42", **args)
             if _tree is None
-            else _tree.add(self._render(hide_amount=hide_amount))
+            else _tree.add(self._render(format=format, hide_amount=hide_amount))
         )
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
-                child.rich_tree(hide_amount=hide_amount, _tree=node)
+                child.tree(format=format, hide_amount=hide_amount, _tree=node)
         return node
 
     def process(self) -> None:

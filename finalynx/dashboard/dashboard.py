@@ -5,7 +5,9 @@ TODO Dummy class for now, check back later or help us by contributing!
 """
 import datetime
 import json
+from typing import Any
 from typing import Dict
+from typing import Set
 
 from nicegui import ui
 from rich.tree import Tree
@@ -51,25 +53,32 @@ class Dashboard:
 
         with ui.row():
             with ui.card().tight():
-                print(json.dumps(self._convert_rich_tree_to_nicegui(portfolio.rich_tree()), indent=4))
+                portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio.tree(format="name"))
+                self._add_ids(portfolio_dict)
+                print(json.dumps(portfolio_dict, indent=4))
                 with ui.card_section():
                     ui.tree(
-                        [self._convert_rich_tree_to_nicegui(portfolio.rich_tree())],
-                        node_key="label",
-                        on_expand=self._on_tree_expand,
+                        [portfolio_dict],
                     ).props("default-expand-all tick-strategy=leaf")
 
         ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=False)
 
-    def _on_tree_expand(self, sender, client, value):
-        print(sender, client, value)
-
-    def _convert_rich_tree_to_nicegui(self, rich_tree: Tree) -> Dict:
+    def _convert_rich_tree_to_nicegui(self, rich_tree: Tree) -> Dict[str, Any]:
         name = str(rich_tree.label)
-        result = {"label": name, "icon": "dollar", "expanded": "true"}
+        result = {"label": name, "icon": "photo"}
         if rich_tree.children:
-            result["children"] = [self._convert_rich_tree_to_nicegui(c) for c in rich_tree.children]
+            result["children"] = [self._convert_rich_tree_to_nicegui(c) for c in rich_tree.children]  # type: ignore
         return result
+
+    def _add_ids(self, node: Dict[str, Any], used_ids: Set[int] = set(), id_counter: int = 1) -> int:
+        while id_counter in used_ids:
+            id_counter += 1
+        node["id"] = id_counter
+        used_ids.add(id_counter)
+        if "children" in node:
+            for child in node["children"]:
+                id_counter = self._add_ids(child, used_ids, id_counter + 1)
+        return id_counter
 
     def _get_today_str(self) -> str:
         today = datetime.date.today()

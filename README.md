@@ -58,7 +58,7 @@ Here is the bare minimum code accepted:
 ```python
 from finalynx import Portfolio, Assistant
 portfolio = Portfolio()  # <- your custom configuration here
-Assistant(Portfolio()).run()
+Assistant(portfolio).run()
 ```
 
 You can now populate the `Portfolio` class with your own custom hierarchy by taking inspiration from the [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) example or by reading the [Getting Started](https://finalynx.readthedocs.io/en/latest/tutorials/getting_started.html) guide in the documentation. For additional details, checkout the full [API Reference](https://finalynx.readthedocs.io/en/latest/apidocs/index.html) or [ask a question](https://github.com/MadeInPierre/finalynx/discussions/new?category=q-a).

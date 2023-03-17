@@ -39,7 +39,7 @@ class Node(Hierarchy):
         """Virtual method that must be implemented by all subclasses."""
         raise NotImplementedError("Must be implemented by children classes")
 
-    def rich_tree(self, hide_amount: bool = False, _tree: Optional[Tree] = None, **args: Any) -> Tree:
+    def tree(self, format: str = "rich", hide_amount: bool = False, _tree: Optional[Tree] = None, **args: Any) -> Tree:
         """Generate a fully rendered `Tree` object from the `rich` package using the
 
         This `Tree` can either be manipulated for further operations or directly printed
@@ -52,8 +52,8 @@ class Node(Hierarchy):
         Otherwise, it adds this node's render as a child node and returns the `_tree`.
         """
         if _tree is None:
-            return Tree(self._render(hide_amount=hide_amount), **args)
-        return _tree.add(self._render(hide_amount=hide_amount))
+            return Tree(self._render(format=format, hide_amount=hide_amount), **args)
+        return _tree.add(self._render(format=format, hide_amount=hide_amount))
 
     def process(self) -> None:
         """Some `Node` or `Target` objects might need to process some data once the investment
@@ -62,21 +62,28 @@ class Node(Hierarchy):
         """
         return  # Optional method for subclasses to process after fetch
 
-    def _render(self, hide_amount: bool = False) -> str:
+    def _render(
+        self, format: str = "rich", hide_amount: bool = False
+    ) -> str:  # TODO rename without underscore? create modular format?
         """Generate a rich-formatted output to the console about this node.
         :param hide_amount: Replace the amounts by simple dots (easier to share the result), defaults to False.
         :returns: A rich-formatted string with every element in the node (e.g. target, name, objective, and so on).
         """
-        hint = (
-            f"[dim white] {self.target.hint()}[/]"
-            if self.target.check() not in [Target.RESULT_NONE, Target.RESULT_START]
-            else ""
-        )
-        return (
-            f"{self._render_amount(hide_amount)} {self._render_name()}"
-            + hint  # noqa: W503
-            + self._render_newline()  # noqa: W503
-        )
+        if format == "rich":
+            hint = (
+                f"[dim white] {self.target.hint()}[/]"
+                if self.target.check() not in [Target.RESULT_NONE, Target.RESULT_START]
+                else ""
+            )
+            return (
+                f"{self._render_amount(hide_amount)} {self._render_name()}"
+                + hint  # noqa: W503
+                + self._render_newline()  # noqa: W503
+            )
+        elif format == "name":
+            return self._render_name()
+        else:
+            raise ValueError("Render type '{format}' is unrecognized.")
 
     def _render_amount(self, hide_amount: bool = False) -> str:
         """:returns: A rendering of the amoutn invested in this node. This function aligns the units

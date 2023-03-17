@@ -21,7 +21,7 @@ def main_filter(message: str) -> str:
 __doc__ = f"""
 Finalynx command line v{__version__}
 Usage:
-  finalynx {main_filter(main_usage)}[options]
+  finalynx {main_filter(main_usage)}[dashboard] [options]
   finalynx (-h | --help)
   finalynx (-v | --version)
 

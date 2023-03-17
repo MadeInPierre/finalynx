@@ -1,8 +1,9 @@
 from typing import Optional
 
 from docopt import docopt
-from finalynx import console  # type: ignore
+from finalynx import console
 from finalynx import Copilot
+from finalynx import Dashboard
 from finalynx import finary_fetch
 from finalynx import Portfolio
 from finalynx import Simulator
@@ -49,6 +50,7 @@ class Assistant:
         hide_amount: bool = False,
         hide_root: bool = False,
         hide_data: bool = False,
+        launch_dashboard: bool = False,
     ):
         self.portfolio = portfolio
         self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
@@ -60,6 +62,7 @@ class Assistant:
         self.hide_amounts = hide_amount
         self.hide_root = hide_root
         self.hide_data = hide_data
+        self.launch_dashboard = launch_dashboard
 
         self._parse_args()
 
@@ -79,6 +82,8 @@ class Assistant:
             self.hide_root = True
         if args["--hide-data"]:
             self.hide_data = True
+        if args["dashboard"]:
+            self.launch_dashboard = True
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -116,3 +121,8 @@ class Assistant:
 
         # Display the entire portfolio and associated recommendations
         console.print("\n", Columns(panels, padding=(2, 10)))
+
+        # Host a local webserver with the running dashboard
+        if self.launch_dashboard:
+            console.log("Launching dashboard.")
+            Dashboard().run(portfolio=self.portfolio)

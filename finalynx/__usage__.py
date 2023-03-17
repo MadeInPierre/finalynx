@@ -1,7 +1,7 @@
 """
 Finalynx command line
 Usage:
-    your_config.py [options]
+    your_config.py [dashboard] [options]
     your_config.py (-h | --help)
     your_config.py (-v | --version)
 

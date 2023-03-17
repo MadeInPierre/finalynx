@@ -15,17 +15,7 @@ import finary_api.constants  # type: ignore
 from ..console import console
 from ..portfolio.line import Line
 from ..portfolio.portfolio import Portfolio
-
-
-class Fetch:
-    MAX_CACHE_HOURS = 1
-
-    def __init__(self, portfolio: Portfolio, cache_filename: str):
-        self.cache_fullpath = os.path.join(os.path.dirname(__file__), cache_filename)
-        self.portfolio = portfolio
-
-    def fetch(self) -> Tree:
-        raise NotImplementedError("This abstract method must be overriden by all subclasses")
+from .fetch import Fetch
 
 
 class FetchFinary(Fetch):  # TODO update docstrings
@@ -44,9 +34,11 @@ class FetchFinary(Fetch):  # TODO update docstrings
             contains the session of a previous signin), it will skip the login step and retrieve the saved sessions.
             - Third, if neither the environment variables nor the cookies file exist, the function will manually ask
             for the credentials in the console.
-        2. **Fetching**: Once the session is active, all investments declared in Finary are fetched.
-        3. **Populating the tree:** Finally, each fetched investment is matched against either the `name` or `key`
+        2. **Fetch the data**: Once the session is active, all investments declared in Finary are fetched.
+        3. **Populate the portfolio:** Finally, each fetched investment is matched against either the `name` or `key`
         value of each `Line` object defined in your `Portfolio` and updated in the tree.
+        4. **Cache the data:** Once the data has been fetched, all data is saved to a local file to reduce the frequency
+        of calls to Finary API and enable the usage of this module offline temporarily.
 
         ```{note}
         Finalynx will ask you if you want to save two files:
@@ -56,12 +48,12 @@ class FetchFinary(Fetch):  # TODO update docstrings
         - `localCookiesMozilla.txt`: This file stores the session created after a successful login (without your
         plain credentials). It is recommended to save it if you don't want to enter your credentials on each run.
 
-        You can run Finalynx with the `-f` or `--force-signin` option to delete all files and start over:
-        {code}`python your_config.py --force-signin`
+        You can run Finalynx with the `-f` or `--force-signin` option to delete all files and start over.
         ```
 
         :param portfolio: Your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>` tree (must be already fully defined).
-        :param force_signin: Delete all saved credentials and cookies before logging in again, defaults to False
+        :param clear_cache: Delete cached data to immediately fetch data online, defaults to False
+        :param force_signin: Delete all saved credentials, cookies and cache files before logging in again, defaults to False
         :param ignore_orphans: If a line in your account is not referenced in your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>`
         then don't attach it to the root (used as a reminder), defaults to False
         :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
@@ -73,6 +65,8 @@ class FetchFinary(Fetch):  # TODO update docstrings
         self.ignore_orphans = ignore_orphans
 
     def fetch(self) -> Tree:
+        """:returns: A `Tree` object from the `rich` package used to display what has been fetched."""
+
         # Remove the cached Finary data if asked by the user
         if self.clear_cache and os.path.exists(self.cache_fullpath):
             os.remove(self.cache_fullpath)
@@ -99,64 +93,11 @@ class FetchFinary(Fetch):  # TODO update docstrings
         console.log("Done fetching Finary data.")
         return tree
 
-    def _fetch_data(self, session: Session, tree: Tree) -> Tuple[Dict[str, int], Tree]:
-        # Create a rich Tree to display the fetched data nicely
-        lines_dict: Dict[str, int] = {}
-
-        # Comptes courants, Livrets et Fonds euro
-        checkings = ff.get_checking_accounts(session, "1w")["result"]
-        savings = ff.get_savings_accounts(session, "1w")["result"]
-        fonds = ff.get_fonds_euro(session, "1w")["result"]
-        for result, name in zip([checkings, savings, fonds], ["Comptes courants", "Livrets", "Fonds euro"]):
-            console.log(f"Fetching {name.lower()}...")
-            node = tree.add("[bold]" + str(round(result["timeseries"][-1][1])) + " " + name)
-            for k, e in result["distribution"].items():
-                self._match_line(lines_dict, node, k, e["amount"])
-
-        # Autres
-        console.log("Fetching other assets...")
-        other = ff.get_other_assets(session, "1w")["result"]
-        f_other_total = round(other["timeseries"][-1][1])
-        node = tree.add("[bold]" + str(round(f_other_total)) + " Autres")
-        for item in other["data"]:
-            self._match_line(lines_dict, node, item["name"], item["current_value"])
-
-        # Investissements
-        console.log("Fetching investments...")
-        investments = ff.get_portfolio_investments(session)["result"]
-        f_invest_total = round(investments["total"]["amount"])
-        node = tree.add("[bold]" + str(round(f_invest_total)) + " Investissements")
-        for account in investments["accounts"]:
-            node_account = node.add("[bold]Account: " + account["name"])
-            for category in [
-                "fiats",
-                "securities",
-                "cryptos",
-                "fonds_euro",
-                "startups",
-                "precious_metals",
-                "generic_assets",
-                "loans",
-                "crowdlendings",
-            ]:
-                for item in account[category]:
-                    self._match_line(lines_dict, node_account, item["security"]["name"], item["current_value"])
-
-        # Immobilier
-        console.log("Fetching real estate...")
-        real_estate = ff.get_real_estates(session, "1w")["result"]
-        f_re_total = round(real_estate["total"]["amount"])
-        node = tree.add("[bold]" + str(round(f_re_total)) + " Immobilier")
-
-        for item in real_estate["data"]["real_estates"]:
-            self._match_line(lines_dict, node, item["description"], item["current_value"])
-
-        for item in real_estate["data"]["scpis"]:
-            self._match_line(lines_dict, node, item["scpi"]["name"], item["current_value"])
-
-        return lines_dict, tree
-
     def _authenticate(self) -> Optional[Session]:
+        """Internal method used to signin and retrieve a session from Finary.
+        :returns: A session for fetching data if everything worked, None otherwise.
+        """
+
         # Let the user reset its credentials and session
         if self.force_signin:
             if os.path.exists(finary_api.constants.COOKIE_FILENAME):
@@ -229,7 +170,70 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
             return session
 
+    def _fetch_data(self, session: Session, tree: Tree) -> Tuple[Dict[str, int], Tree]:
+        """Internal method used to fetch every investment in your Finary account.
+        :returns: A dictionary of all fetched investments (name:amount format), and a `Tree`
+        instance which can be displayed in the console to make sure everything was retrieved.
+        """
+        # Create a rich Tree to display the fetched data nicely
+        lines_dict: Dict[str, int] = {}
+
+        # Comptes courants, Livrets et Fonds euro
+        checkings = ff.get_checking_accounts(session, "1w")["result"]
+        savings = ff.get_savings_accounts(session, "1w")["result"]
+        fonds = ff.get_fonds_euro(session, "1w")["result"]
+        for result, name in zip([checkings, savings, fonds], ["Comptes courants", "Livrets", "Fonds euro"]):
+            console.log(f"Fetching {name.lower()}...")
+            node = tree.add("[bold]" + str(round(result["timeseries"][-1][1])) + " " + name)
+            for k, e in result["distribution"].items():
+                self._match_line(lines_dict, node, k, e["amount"])
+
+        # Autres
+        console.log("Fetching other assets...")
+        other = ff.get_other_assets(session, "1w")["result"]
+        f_other_total = round(other["timeseries"][-1][1])
+        node = tree.add("[bold]" + str(round(f_other_total)) + " Autres")
+        for item in other["data"]:
+            self._match_line(lines_dict, node, item["name"], item["current_value"])
+
+        # Investissements
+        console.log("Fetching investments...")
+        investments = ff.get_portfolio_investments(session)["result"]
+        f_invest_total = round(investments["total"]["amount"])
+        node = tree.add("[bold]" + str(round(f_invest_total)) + " Investissements")
+        for account in investments["accounts"]:
+            node_account = node.add("[bold]Account: " + account["name"])
+            for category in [
+                "fiats",
+                "securities",
+                "cryptos",
+                "fonds_euro",
+                "startups",
+                "precious_metals",
+                "generic_assets",
+                "loans",
+                "crowdlendings",
+            ]:
+                for item in account[category]:
+                    self._match_line(lines_dict, node_account, item["security"]["name"], item["current_value"])
+
+        # Immobilier
+        console.log("Fetching real estate...")
+        real_estate = ff.get_real_estates(session, "1w")["result"]
+        f_re_total = round(real_estate["total"]["amount"])
+        node = tree.add("[bold]" + str(round(f_re_total)) + " Immobilier")
+
+        for item in real_estate["data"]["real_estates"]:
+            self._match_line(lines_dict, node, item["description"], item["current_value"])
+
+        for item in real_estate["data"]["scpis"]:
+            self._match_line(lines_dict, node, item["scpi"]["name"], item["current_value"])
+
+        return lines_dict, tree
+
     def _match_line(self, lines_dict: Dict[str, int], node: Tree, key: str, amount: int) -> None:
+        """Internal method used to register a new investment found from Finary."""
+
         # Add the line to the dictionary of fetched items
         lines_dict[unidecode(key)] = round(amount)
 
@@ -261,7 +265,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
         hours_passed = int(time_diff.total_seconds() // 3600)
 
         if hours_passed < self.MAX_CACHE_HOURS:
-            console.log(f"Using recently cached data ({hours_passed}h old < {self.MAX_CACHE_HOURS}h max)")
+            console.log(f"Using recently cached data (<{self.MAX_CACHE_HOURS}h max)")
             lines: Dict[str, int] = data["lines"]
             return lines
         console.log(f"Fetching data (cache file is {hours_passed}h old > {self.MAX_CACHE_HOURS}h max)")
@@ -271,6 +275,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
         """Save the fetched data locally to work offline and reduce the amoutn of calls to the API.
         :param tree: Generated tree object containing all information
         """
+
         # Save current date and time to a JSON file with the fetched data
         console.log(f"Saving fetched data in '{self.cache_fullpath}'")
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

@@ -18,5 +18,5 @@ import finary_api.constants  # type: ignore # Set the credentials and cookies co
 finary_api.constants.CREDENTIAL_FILE = os.path.join(os.path.dirname(__file__), "credentials.json")
 finary_api.constants.COOKIE_FILENAME = os.path.join(os.path.dirname(__file__), "localCookiesMozilla.txt")
 
-from .finary_fetch import FetchFinary
+from .fetch_finary import FetchFinary
 from ..console import console

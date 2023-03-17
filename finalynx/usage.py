@@ -22,6 +22,8 @@ __doc__ = f"""
 Finalynx command line v{__version__}
 Usage:
   finalynx {main_filter(main_usage)}[options]
+  finalynx (-h | --help)
+  finalynx (-v | --version)
 
 Options:
   -h --help            Show this help message and exit

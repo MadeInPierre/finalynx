@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.0 (2023-03-17)
+### Feature
+* **fetch:** Can now cache data locally, defaults to 1h ([#36](https://github.com/MadeInPierre/finalynx/issues/36)) ([`86036e2`](https://github.com/MadeInPierre/finalynx/commit/86036e2002a28653ceaba6798815ac641c24aef3))
+
+### Documentation
+* Remove documentation warning ([`5185495`](https://github.com/MadeInPierre/finalynx/commit/51854955e77c28c3b2c67d5dbed7e15979cd101d))
+* Write full documentation ([#32](https://github.com/MadeInPierre/finalynx/issues/32)) ([`835262c`](https://github.com/MadeInPierre/finalynx/commit/835262cac2b44fd6a72be653f2da26ad9f04a882))
+* Autobuild documentation and upload to Read The Docs ([#29](https://github.com/MadeInPierre/finalynx/issues/29)) ([`9c2d2d4`](https://github.com/MadeInPierre/finalynx/commit/9c2d2d4533bbfabf81549a56f65ee6a5dacb3f55))
+
 ## v1.1.1 (2023-03-07)
 ### Fix
 * **fetch:** Env vars get priority over cookies file ([`f664ed8`](https://github.com/MadeInPierre/finalynx/commit/f664ed876ab35ee3c348b8168994dfbd5f5dd3d6))

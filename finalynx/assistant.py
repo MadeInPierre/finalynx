@@ -4,7 +4,7 @@ from docopt import docopt
 from finalynx import console
 from finalynx import Copilot
 from finalynx import Dashboard
-from finalynx import finary_fetch
+from finalynx import FetchFinary
 from finalynx import Portfolio
 from finalynx import Simulator
 from rich import inspect  # noqa F401
@@ -46,6 +46,7 @@ class Assistant:
         scenario: Optional[Simulator] = None,
         copilot: Optional[Copilot] = None,
         ignore_orphans: bool = False,
+        clear_cache: bool = False,
         force_signin: bool = False,
         hide_amount: bool = False,
         hide_root: bool = False,
@@ -56,8 +57,9 @@ class Assistant:
         self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
         self.copilot = copilot if copilot else Copilot()  # TODO Coming soon
 
-        # Options
+        # Options that can either be set in the constructor or from the command line
         self.ignore_orphans = ignore_orphans
+        self.clear_cache = clear_cache
         self.force_signin = force_signin
         self.hide_amounts = hide_amount
         self.hide_root = hide_root
@@ -74,7 +76,10 @@ class Assistant:
         args = docopt(__doc__, version=__version__)
         if args["--ignore-orphans"]:
             self.ignore_orphans = True
+        if args["--clear-cache"]:
+            self.clear_cache = True
         if args["--force-signin"]:
+            self.clear_cache = True
             self.force_signin = True
         if args["--hide-amounts"]:
             self.hide_amounts = True
@@ -93,7 +98,7 @@ class Assistant:
         """
 
         # Fill tree with current valuations fetched from Finary
-        finary_tree = finary_fetch(self.portfolio, self.force_signin, self.ignore_orphans)
+        finary_tree = FetchFinary(self.portfolio, self.clear_cache, self.force_signin, self.ignore_orphans).fetch()
 
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()

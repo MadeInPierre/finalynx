@@ -1,6 +1,9 @@
 # Define your own portfolio using this name if you plan to contribute
 assistant_config.py
 
+# Ignore the cached files used for fetching
+finary_data.json
+
 # Setup your finary credentials in this repo directly
 credentials.json
 localCookiesMozilla.txt

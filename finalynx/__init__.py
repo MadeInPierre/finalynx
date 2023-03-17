@@ -24,7 +24,7 @@ from .portfolio import Line, Folder, Bucket, SharedFolder, Portfolio, FolderDisp
 from .portfolio import console
 
 # Fetch
-from .fetch import finary_fetch
+from .fetch import FetchFinary
 
 # Advisor
 from .copilot import Copilot

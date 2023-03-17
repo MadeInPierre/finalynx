@@ -15,7 +15,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 
 from .__meta__ import __version__
-from .__usage__ import __doc__
+from .usage import __doc__
 
 # Enable rich's features
 

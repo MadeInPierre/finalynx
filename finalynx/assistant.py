@@ -48,6 +48,7 @@ class Assistant:
         force_signin: bool = False,
         hide_amount: bool = False,
         hide_root: bool = False,
+        hide_data: bool = False,
     ):
         self.portfolio = portfolio
         self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
@@ -58,6 +59,7 @@ class Assistant:
         self.force_signin = force_signin
         self.hide_amounts = hide_amount
         self.hide_root = hide_root
+        self.hide_data = hide_data
 
         self._parse_args()
 
@@ -75,6 +77,8 @@ class Assistant:
             self.hide_amounts = True
         if args["--hide-root"]:
             self.hide_root = True
+        if args["--hide-data"]:
+            self.hide_data = True
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -102,10 +106,13 @@ class Assistant:
                 title=self.portfolio.name,
                 padding=(1, 4),
             ),
-            Panel(finary_tree, title="Finary data"),
             # Panel(simulation, title='Simulation'),   # TODO Coming soon
             # Panel(recommendations, title='Advisor'), # TODO Coming soon
         ]
 
+        # Show the data fetched from Finary if specified
+        if not self.hide_data:
+            panels.append(Panel(finary_tree, title="Finary data"))
+
         # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(panels, padding=(2, 10)))  # type: ignore
+        console.print("\n", Columns(panels, padding=(2, 10)))

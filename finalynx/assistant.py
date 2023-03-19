@@ -49,6 +49,7 @@ class Assistant:
         force_signin: bool = False,
         hide_amount: bool = False,
         hide_root: bool = False,
+        output_format: str = "[console]",
     ):
         self.portfolio = portfolio
         self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
@@ -60,7 +61,7 @@ class Assistant:
         self.force_signin = force_signin
         self.hide_amounts = hide_amount
         self.hide_root = hide_root
-        self.output_format = "[console]"
+        self.output_format = output_format
 
         self._parse_args()
 

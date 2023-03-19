@@ -78,7 +78,13 @@ class Folder(Node):
         """
         return float(np.sum([child.get_amount() for child in self.children]) if self.children else 0)
 
-    def tree(self, format: str = "rich", hide_amount: bool = False, _tree: Optional[Tree] = None, **args: Any) -> Tree:
+    def tree(
+        self,
+        output_format: str = "[console]",
+        _tree: Optional[Tree] = None,
+        hide_root: bool = False,
+        **render_args: Any
+    ) -> Tree:
         """Generate a fully rendered `Tree` object from the `rich` package using the
 
         This `Tree` can either be manipulated for further operations or directly printed
@@ -90,14 +96,11 @@ class Folder(Node):
         :param format: `rich` for console output, `name` for only names, defaults to `rich`
         :returns: A `Tree` instance containing the rendered titles for each `Node` object.
         """
-        node = (
-            Tree(self._render(format=format, hide_amount=hide_amount), guide_style="grey42", **args)
-            if _tree is None
-            else _tree.add(self._render(format=format, hide_amount=hide_amount))
-        )
+        render = self.render(output_format, **render_args)
+        node = _tree.add(render) if _tree else Tree(render, guide_style="grey42", hide_root=hide_root)
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
-                child.tree(format=format, hide_amount=hide_amount, _tree=node)
+                child.tree(output_format=output_format, _tree=node, **render_args)
         return node
 
     def process(self) -> None:
@@ -126,22 +129,15 @@ class Folder(Node):
                 success = True
         return success
 
-    def _render_name(self, format: str = "rich") -> str:
+    def _render_name_color(self) -> str:
         """Internal method that overrides the superclass' render method to display
         the folder name with a bold font of different color.
-        :returns: The formatted name of this folder with a blue and bold style.
         """
-        if format == "rich":
-            if self.display == FolderDisplay.LINE:
-                return self.name
-            return f"[blue bold]{self.name}[/]"
-        elif format == "plain":
-            return self.name
+        return "[blue bold]" if self.display != FolderDisplay.LINE else "[white]"
 
     def _render_newline(self) -> str:
         """Internal method that overrides the superclass' render method to display
         a new line after the folder has rendered.
-        % TODO why no new line here already?
         :returns: The newline character depending on the user configuration.
         """
         return ""

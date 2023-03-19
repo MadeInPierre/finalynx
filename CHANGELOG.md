@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.0 (2023-03-19)
+### Feature
+* **render:** Ability to customize the output format ([#38](https://github.com/MadeInPierre/finalynx/issues/38)) ([`97a2462`](https://github.com/MadeInPierre/finalynx/commit/97a24622ee18fa7f1ecf4ad673e57ae69fbd0631))
+
 ## v1.2.0 (2023-03-17)
 ### Feature
 * **fetch:** Can now cache data locally, defaults to 1h ([#36](https://github.com/MadeInPierre/finalynx/issues/36)) ([`86036e2`](https://github.com/MadeInPierre/finalynx/commit/86036e2002a28653ceaba6798815ac641c24aef3))

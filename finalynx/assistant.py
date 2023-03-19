@@ -52,6 +52,7 @@ class Assistant:
         hide_root: bool = False,
         hide_data: bool = False,
         launch_dashboard: bool = False,
+        output_format: str = "[console]",
     ):
         self.portfolio = portfolio
         self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
@@ -65,6 +66,7 @@ class Assistant:
         self.hide_root = hide_root
         self.hide_data = hide_data
         self.launch_dashboard = launch_dashboard
+        self.output_format = output_format
 
         self._parse_args()
 
@@ -89,6 +91,8 @@ class Assistant:
             self.hide_data = True
         if args["dashboard"]:
             self.launch_dashboard = True
+        if args["--format"]:
+            self.output_format = args["--format"]
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -112,7 +116,9 @@ class Assistant:
         # Final set of results to be displayed
         panels = [
             Panel(
-                self.portfolio.tree(hide_amount=self.hide_amounts, hide_root=self.hide_root),
+                self.portfolio.tree(
+                    output_format=self.output_format, hide_root=self.hide_root, hide_amount=self.hide_amounts
+                ),
                 title=self.portfolio.name,
                 padding=(1, 4),
             ),

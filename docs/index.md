@@ -7,6 +7,7 @@
 
 tutorials/installation
 tutorials/getting_started
+tutorials/customization
 ```
 
 ```{toctree}

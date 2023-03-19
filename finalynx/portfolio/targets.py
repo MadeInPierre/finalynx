@@ -61,6 +61,18 @@ class Target(Hierarchy):
         number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
         return f'[{result["color"]}]{result["symbol"]} {number} €[/][dim white]{self.prehint()}[/]'
 
+    def _render_target_name(self) -> str:
+        """:returns: The name of the target recommentation."""
+        return self.check()["name"]
+
+    def _render_target_symbol(self) -> str:
+        """:returns: The UFT-8 symbol associated to the target recommentation."""
+        return self.check()["symbol"]
+
+    def _render_target_color(self) -> str:
+        """:returns: The color associated to the target recommentation."""
+        return self.check()["color"]
+
 
 class TargetRange(Target):
     """Target to make sure your node stays within a specified range."""

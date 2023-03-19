@@ -1,3 +1,5 @@
+import inspect
+from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import Optional
@@ -10,7 +12,7 @@ class Render:
     """Maximum recursion depth when replacing aliases to prevent infinite loops."""
 
     def __init__(
-        self, aliases: Optional[Dict[str, str]] = None, agents: Optional[Dict[str, Callable[[str], str]]] = None
+        self, aliases: Optional[Dict[str, str]] = None, agents: Optional[Dict[str, Callable[..., str]]] = None
     ) -> None:
         """Abstract class used by subclasses to render themselves as string with a customizable format.
         This class offers a `render` method which takes a format as input and outputs the corresponding string.
@@ -22,24 +24,33 @@ class Render:
         given as value will output.
         """
         self._render_aliases: Dict[str, str] = aliases if aliases else {}
-        self._render_agents: Dict[str, Callable[[str], str]] = agents if agents else {}
+        self._render_agents: Dict[str, Callable[..., str]] = agents if agents else {}
 
-    def render(self, output_format: str = "console") -> str:
+    def render(self, output_format: str = "[console]", **args: Dict[str, Any]) -> str:
         """Render the instance as a string by following the output format. See
         [formatting guidelines](https://finalynx.readthedocs.io/en/latest/tutorials/customization.html)
         for more information.
         :returns: A string representation of the instance based on the output format.
         """
 
+        # Utility method used below
+        def safe_len(obj: Any) -> int:
+            return len(obj) if obj else 0
+
         # Recursively replace alias keywords by their correspoding values
         output_format = self._apply_aliases(output_format)
 
         # Call the corresponding methods called "agents" for each keyword
-        rendered_str = output_format
-        for keyword, renderer in self._render_agents.items():
-            rendered_str = rendered_str.replace("{" + keyword + "}", renderer(rendered_str))
+        for keyword, agent in self._render_agents.items():
+            # Filter the arguments to what this agent takes as input parameters
+            argspec = inspect.getfullargspec(agent)
+            kwargs = argspec.args[safe_len(argspec.args) - safe_len(argspec.defaults) :] if argspec else []  # noqa
+            filtered_args = {k: v for k, v in args.items() if k in kwargs}
 
-        return rendered_str
+            # Call the method with the arguments provided by the user (filtered for this method above)
+            output_format = output_format.replace(f"[{keyword}]", agent(**filtered_args))
+
+        return output_format
 
     def _apply_aliases(self, output_format: str) -> str:
         """Internal method that recursively replaces alias keywords into their values specified
@@ -60,6 +71,6 @@ class Render:
             iterations += 1
 
         if iterations == Render.MAX_ALIAS_DEPTH:
-            raise ValueError("Stopped infinite loop while applying render aliases.")
+            raise ValueError(f"Stopped infinite loop while applying render aliases, {output_format=}")
 
         return output_format

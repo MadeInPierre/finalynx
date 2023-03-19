@@ -54,25 +54,26 @@ class Dashboard:
     def run(self, portfolio: Portfolio) -> None:
         """Dummy output for now, will host a local web server in the future."""
 
-        ui.colors(primary="#6F988D", accent="#F8333C")
+        ui.colors(primary="#2E3440", secondary="#F5A623", accent="#F8333C")
 
-        with ui.header(elevated=True).style(f"background-color: #{self._logo_colors[-1]}").classes(
-            "items-center justify-between"
-        ):
+        with ui.header(elevated=True).classes("items-center justify-between"):
             with ui.row().classes("items-center"):
                 ui.button(on_click=lambda: left_drawer.toggle()).props("flat color=white icon=menu")
                 ui.label("Finalynx Dashboard").classes("text-bold").style("font-size: 20px")
             ui.label(self._get_today_str()).style("font-size: 18px")
-            ui.button("Export PDF", on_click=lambda: ui.notify("Coming soon!")).props("icon=file_download color=accent")
+            ui.button("Export", on_click=lambda: ui.notify("Coming soon!")).props("icon=file_download color=accent")
 
-        with ui.left_drawer(bottom_corner=True, elevated=True).style(
-            f"background-color: #{self._greys[2]}"
-        ) as left_drawer:
+        with ui.left_drawer(bottom_corner=True, elevated=True).style("background-color: #ECEFF4") as left_drawer:
             ui.image(self._url_logo)
-            with ui.card_section():
-                ui.markdown("#### Welcome to Finalynx!").classes("text-center")
-                ui.label("Lorem ipsum dolor sit amet, consectetur adipiscing elit, ...")
-                ui.badge("Hello", color="accent").props("rounded")
+            ui.markdown("#### Welcome to Finalynx!").classes("text-center")
+            ui.label("Lorem ipsum dolor sit amet, consectetur adipiscing elit, ...")
+            # ui.badge("Hello", color="accent").props("rounded")
+            ui.button(
+                "Dense",
+                on_click=lambda: tree.props("dense")
+                if "dense" not in tree._props.keys()
+                else tree.props(remove="dense"),
+            ).props("color=secondary")
 
         # with ui.right_drawer(fixed=False).style('background-color: #ebf1fa').props('bordered') as right_drawer:
         #     ui.label('RIGHT DRAWER')
@@ -84,10 +85,15 @@ class Dashboard:
                 portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio.tree(format="name"))
                 max_id = self._add_ids_to_tree(portfolio_dict)
 
-                with ui.card_section():
-                    ui.markdown("#### **Your Portfolio**").classes("text-center")
+                with ui.card_section().style("padding: 20px 40px"):
+                    ui.markdown(f"#### **{portfolio_dict['label']}**").classes("text-center").style(
+                        "padding: 0 0 10px 0"
+                    )
                     tree = ui.tree(
-                        [portfolio_dict], on_expand=self._on_expand, on_select=self._on_select, on_tick=self._on_tick
+                        portfolio_dict["children"],
+                        on_expand=self._on_expand,
+                        on_select=self._on_select,
+                        on_tick=self._on_tick,
                     ).props("selected-color=accent")
                     tree._props["expanded"] = list(range(max_id))
 

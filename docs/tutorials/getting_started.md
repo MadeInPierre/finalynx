@@ -2,7 +2,7 @@
 
 The goal is to declare a tree structure of your entire portfolio independently from their host envelopes (e.g. PEA, AV, CTO, etc). Once your entire portfolio strategy is defined here, find the best envelope for each line and add them to your Finary account (manual or automatic sync). Finalynx will fetch each line and display your full portfolio with real-time amounts.
 
-## 1. Define your portfolio
+## 🌳 Define your portfolio
 
 To create your portfolio, start with a `Portfolio` object which holds a nested list of `Line`, `Folder`, and `SharedFolder` objects:
 - `Line` represents each individual investment. Set the `key` parameter as the name shown in your Finary account if different from the display name.
@@ -37,7 +37,7 @@ portfolio = Portfolio('My Portfolio', children=[
 ])
 ```
 
-## 2. Set Targets for each level
+## 🎯 Set Targets for each level
 Any node in the tree accepts an optional `target` parameter. See the full list of available targets [here](https://github.com/MadeInPierre/finalynx/blob/main/finalynx/portfolio/targets.py):
 
 ```python
@@ -47,7 +47,7 @@ Folder('Stocks', target=TargetMin(2000, tolerance=500), children=[
 ])
 ```
 
-## 3. Run the assistant
+## 🚀 Run the assistant
 Here is the bare minimum code accepted:
 ```python
 from finalynx import Portfolio, Assistant

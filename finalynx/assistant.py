@@ -1,7 +1,7 @@
 from typing import Optional
 
 from docopt import docopt
-from finalynx import console  # type: ignore
+from finalynx import console
 from finalynx import Copilot
 from finalynx import FetchFinary
 from finalynx import Portfolio
@@ -49,6 +49,7 @@ class Assistant:
         force_signin: bool = False,
         hide_amount: bool = False,
         hide_root: bool = False,
+        output_format: str = "[console]",
     ):
         self.portfolio = portfolio
         self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
@@ -60,6 +61,7 @@ class Assistant:
         self.force_signin = force_signin
         self.hide_amounts = hide_amount
         self.hide_root = hide_root
+        self.output_format = output_format
 
         self._parse_args()
 
@@ -80,6 +82,8 @@ class Assistant:
             self.hide_amounts = True
         if args["--hide-root"]:
             self.hide_root = True
+        if args["--format"]:
+            self.output_format = args["--format"]
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -103,7 +107,9 @@ class Assistant:
         # Final set of results to be displayed
         panels = [
             Panel(
-                self.portfolio.rich_tree(hide_amount=self.hide_amounts, hide_root=self.hide_root),
+                self.portfolio.tree(
+                    output_format=self.output_format, hide_root=self.hide_root, hide_amount=self.hide_amounts
+                ),
                 title=self.portfolio.name,
                 padding=(1, 4),
             ),
@@ -113,4 +119,4 @@ class Assistant:
         ]
 
         # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(panels, padding=(2, 10)))  # type: ignore
+        console.print("\n", Columns(panels, padding=(2, 10)))

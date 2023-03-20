@@ -36,7 +36,7 @@ Options:
   -c --clear-cache     Delete any data from Finary that was cached locally
   -f --force-signin    Clear cache, cookies and credentials files to sign in again
   -a --hide-amounts    Display your portfolio with dots instead of the real values (easier to share)
-  -d --hide-data       Don't show what has been fetched online (e.g. from your Finary account)
+  -d --show-data       Show what has been fetched online (e.g. from your Finary account)
   -r --hide-root       Display your portfolio without the root (cosmetic preference)
 
 """

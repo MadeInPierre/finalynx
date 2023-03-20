@@ -94,6 +94,7 @@ if __name__ == '__main__':
         scenario,
         copilot,
         ignore_orphans=True,  # Ignore fetched lines that you didn't reference in your portfolio.
-        hide_amount=False,    # Display your portfolio with dots instead of the real values (easier to share).
+        hide_amounts=False,   # Display your portfolio with dots instead of the real values (easier to share).
         hide_root=False,      # Display your portfolio without the root (cosmetic preference).
+        show_data=True,       # Show what has been fetched online (e.g. from your Finary account)
     ).run() # noqa

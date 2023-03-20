@@ -48,9 +48,9 @@ class Assistant:
         ignore_orphans: bool = False,
         clear_cache: bool = False,
         force_signin: bool = False,
-        hide_amount: bool = False,
+        hide_amounts: bool = False,
         hide_root: bool = False,
-        hide_data: bool = False,
+        show_data: bool = False,
         launch_dashboard: bool = False,
         output_format: str = "[console]",
     ):
@@ -62,9 +62,9 @@ class Assistant:
         self.ignore_orphans = ignore_orphans
         self.clear_cache = clear_cache
         self.force_signin = force_signin
-        self.hide_amounts = hide_amount
+        self.hide_amounts = hide_amounts
         self.hide_root = hide_root
-        self.hide_data = hide_data
+        self.show_data = show_data
         self.launch_dashboard = launch_dashboard
         self.output_format = output_format
 
@@ -87,8 +87,8 @@ class Assistant:
             self.hide_amounts = True
         if args["--hide-root"]:
             self.hide_root = True
-        if args["--hide-data"]:
-            self.hide_data = True
+        if args["--show-data"]:
+            self.show_data = True
         if args["dashboard"]:
             self.launch_dashboard = True
         if args["--format"]:
@@ -127,7 +127,7 @@ class Assistant:
         ]
 
         # Show the data fetched from Finary if specified
-        if not self.hide_data:
+        if self.show_data:
             panels.append(Panel(finary_tree, title="Finary data"))
 
         # Display the entire portfolio and associated recommendations

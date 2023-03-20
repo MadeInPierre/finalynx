@@ -15,7 +15,7 @@ class ImportJSON(Parser):
         json_dict = json.loads(self.data)
 
         # TODO Create Python objects from the JSON data
-        console.log(f"TODO parse input, dictionary created from the JSON file is {json_dict}")
+        console.log(f"[yellow bold]Warning: JSON parsing not implemented yet, {json_dict=}")
         portfolio = Portfolio(name="Portfolio Name", children=[])
 
         # TODO Add simulation parameters, copilot, etc once developed

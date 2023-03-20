@@ -82,19 +82,17 @@ class Dashboard:
 
         with ui.row():
             with ui.card().tight():
-                portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio.tree(format="name"))
+                portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio.tree(output_format="[dashboard]"))
                 max_id = self._add_ids_to_tree(portfolio_dict)
 
                 with ui.card_section().style("padding: 20px 40px"):
-                    ui.markdown(f"#### **{portfolio_dict['label']}**").classes("text-center").style(
-                        "padding: 0 0 10px 0"
-                    )
+                    ui.markdown(f"#### {portfolio_dict['label']}").classes("text-center").style("padding: 0 0 10px 0")
                     tree = ui.tree(
                         portfolio_dict["children"],
-                        on_expand=self._on_expand,
-                        on_select=self._on_select,
-                        on_tick=self._on_tick,
-                    ).props("selected-color=accent")
+                        on_expand=self._on_tree_expand,
+                        on_select=self._on_tree_select,
+                        on_tick=self._on_tree_tick,
+                    ).props("selected-color=secondary")
                     tree._props["expanded"] = list(range(max_id))
 
             with ui.card():
@@ -102,19 +100,19 @@ class Dashboard:
 
         ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=False)
 
-    def _on_expand(self, event: Any) -> None:
+    def _on_tree_expand(self, event: Any) -> None:
         console.log(event)
 
-    def _on_select(self, event: Any) -> None:
+    def _on_tree_select(self, event: Any) -> None:
         console.log(event)
         self.hey.set_text(f"Selected node: {event.value}")
 
-    def _on_tick(self, event: Any) -> None:
+    def _on_tree_tick(self, event: Any) -> None:
         console.log(event)
 
     def _convert_rich_tree_to_nicegui(self, rich_tree: Tree) -> Dict[str, Any]:
         name = str(rich_tree.label)
-        result = {"label": name, "icon": "trending_up", "classes": "text-weight-bold text-primary"}
+        result = {"label": name}
         if rich_tree.children:
             result["children"] = [self._convert_rich_tree_to_nicegui(c) for c in rich_tree.children]  # type: ignore
         return result

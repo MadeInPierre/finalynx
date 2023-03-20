@@ -19,7 +19,7 @@ from finalynx import Assistant
 traceback.install()
 pretty.install()
 
-if __name__ == '__main__':
+if __name__ in {"__main__", "__mp_main__"}:
     """
     Define groups of Lines, called Buckets, that will be considered as
     a single line in your portfolio.

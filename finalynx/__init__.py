@@ -29,6 +29,9 @@ from .fetch import FetchFinary
 # Advisor
 from .copilot import Copilot
 
+# Dashboard
+from .dashboard import Dashboard
+
 # Simulator
 from .simulator import Simulator
 

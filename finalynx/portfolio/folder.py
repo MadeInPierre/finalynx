@@ -93,6 +93,7 @@ class Folder(Node):
         :param hide_amount: Replace the amoutns by simple dots (easier to share the result), defaults to False.
         :param _tree: Internal method to pass the folder's root tree object to the children.
         :param args: Provide any list of arguments supported by the `Tree` class if this is the root folder in the hierarchy.
+        :param format: `rich` for console output, `name` for only names, defaults to `rich`
         :returns: A `Tree` instance containing the rendered titles for each `Node` object.
         """
         render = self.render(output_format, **render_args)

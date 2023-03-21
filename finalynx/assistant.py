@@ -3,6 +3,7 @@ from typing import Optional
 from docopt import docopt
 from finalynx import console
 from finalynx import Copilot
+from finalynx import Dashboard
 from finalynx import FetchFinary
 from finalynx import Portfolio
 from finalynx import Simulator
@@ -47,8 +48,10 @@ class Assistant:
         ignore_orphans: bool = False,
         clear_cache: bool = False,
         force_signin: bool = False,
-        hide_amount: bool = False,
+        hide_amounts: bool = False,
         hide_root: bool = False,
+        show_data: bool = False,
+        launch_dashboard: bool = False,
         output_format: str = "[console]",
     ):
         self.portfolio = portfolio
@@ -59,8 +62,10 @@ class Assistant:
         self.ignore_orphans = ignore_orphans
         self.clear_cache = clear_cache
         self.force_signin = force_signin
-        self.hide_amounts = hide_amount
+        self.hide_amounts = hide_amounts
         self.hide_root = hide_root
+        self.show_data = show_data
+        self.launch_dashboard = launch_dashboard
         self.output_format = output_format
 
         self._parse_args()
@@ -82,6 +87,10 @@ class Assistant:
             self.hide_amounts = True
         if args["--hide-root"]:
             self.hide_root = True
+        if args["--show-data"]:
+            self.show_data = True
+        if args["dashboard"]:
+            self.launch_dashboard = True
         if args["--format"]:
             self.output_format = args["--format"]
 
@@ -108,15 +117,23 @@ class Assistant:
         panels = [
             Panel(
                 self.portfolio.tree(
-                    output_format=self.output_format, hide_root=self.hide_root, hide_amount=self.hide_amounts
+                    output_format=self.output_format, hide_root=self.hide_root, hide_amounts=self.hide_amounts
                 ),
                 title=self.portfolio.name,
                 padding=(1, 4),
             ),
-            Panel(finary_tree, title="Finary data"),
             # Panel(simulation, title='Simulation'),   # TODO Coming soon
             # Panel(recommendations, title='Advisor'), # TODO Coming soon
         ]
 
+        # Show the data fetched from Finary if specified
+        if self.show_data:
+            panels.append(Panel(finary_tree, title="Finary data"))
+
         # Display the entire portfolio and associated recommendations
         console.print("\n", Columns(panels, padding=(2, 10)))
+
+        # Host a local webserver with the running dashboard
+        if self.launch_dashboard:
+            console.log("Launching dashboard.")
+            Dashboard().run(portfolio=self.portfolio)

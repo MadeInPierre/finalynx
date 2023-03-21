@@ -1,6 +1,6 @@
 """
-```{tip}
-TODO Dummy class for now, check back later or help us by contributing!
+```{warning}
+This is a barebones file (with a temporary ugly structure), check back later or contribute to this project!
 ```
 """
 import datetime
@@ -47,13 +47,8 @@ class Dashboard:
         "000000",
     ]
 
-    def __init__(self) -> None:
-        """Empty initialization for now."""
-        pass
-
     def run(self, portfolio: Portfolio) -> None:
-        """Dummy output for now, will host a local web server in the future."""
-
+        """Simple structure for now, to be improved!"""
         ui.colors(primary="#2E3440", secondary="#F5A623", accent="#F8333C")
 
         with ui.header(elevated=True).classes("items-center justify-between"):
@@ -63,7 +58,9 @@ class Dashboard:
             ui.label(self._get_today_str()).style("font-size: 18px")
             ui.button("Export", on_click=lambda: ui.notify("Coming soon!")).props("icon=file_download color=accent")
 
-        with ui.left_drawer(bottom_corner=True, elevated=True).style("background-color: #ECEFF4") as left_drawer:
+        with ui.left_drawer(value=True, bottom_corner=True, elevated=True).style(
+            "background-color: #ECEFF4"
+        ) as left_drawer:
             ui.image(self._url_logo)
             ui.markdown("#### Welcome to Finalynx!").classes("text-center")
             ui.label("Lorem ipsum dolor sit amet, consectetur adipiscing elit, ...")
@@ -96,9 +93,9 @@ class Dashboard:
                     tree._props["expanded"] = list(range(max_id))
 
             with ui.card():
-                self.hey = ui.label("Hello")
+                self.hey = ui.label("This is the very start of the dashboard, contributions welcome!")
 
-        ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=False)
+        ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=True)
 
     def _on_tree_expand(self, event: Any) -> None:
         console.log(event)

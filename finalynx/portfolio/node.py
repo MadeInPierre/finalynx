@@ -33,6 +33,8 @@ class Node(Hierarchy, Render):
         :param parent: Parent of this node, passed up to the superclass `Hierarchy`.
         :param target: Optional `Target` instance to format this line's amount based on the objective you selected.
         :param newline: Print a new line in the console at the end of this `Line` for better readability.
+        :param aliases: Add or replace render aliases used when specifying a render format.
+        :param agents: Add or replace keywords associated to rendering callbacks.
         """
         Hierarchy.__init__(self, parent)
 
@@ -113,7 +115,7 @@ class Node(Hierarchy, Render):
         """:returns: A formatted rendering of a pre-hint message (next to the amount by default)."""
         return self.target.prehint()
 
-    def _render_amount(self, hide_amount: bool = False) -> str:
+    def _render_amount(self, hide_amounts: bool = False) -> str:
         """:returns: A formatted rendering of the node amount aligned with the other
         elements in the same parent.
         :param hide_amounts: Replaces amoutn with a dummy amount with dots instead of
@@ -124,7 +126,7 @@ class Node(Hierarchy, Render):
             if (self.parent and self.parent.children)
             else 0
         )
-        return "···" if hide_amount else f"{round(self.get_amount()):>{max_length}}"
+        return "···" if hide_amounts else f"{round(self.get_amount()):>{max_length}}"
 
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""

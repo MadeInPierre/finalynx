@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.4.0 (2023-03-21)
+### Feature
+* **dashboard:** Show the portfolio tree on the web dashboard ([#35](https://github.com/MadeInPierre/finalynx/issues/35)) ([`fa48bfc`](https://github.com/MadeInPierre/finalynx/commit/fa48bfce6d94f538062a2e3d346f1da1a0340c2c))
+
 ## v1.3.0 (2023-03-19)
 ### Feature
 * **render:** Ability to customize the output format ([#38](https://github.com/MadeInPierre/finalynx/issues/38)) ([`97a2462`](https://github.com/MadeInPierre/finalynx/commit/97a24622ee18fa7f1ecf4ad673e57ae69fbd0631))

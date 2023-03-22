@@ -37,6 +37,23 @@ portfolio = Portfolio('My Portfolio', children=[
 ])
 ```
 
+```{note}
+If you have multiple lines with the same name defined in Finary, you can use Finary's unique ids instead of the name.
+Run finalynx with the `--show-data` option which will display all investments along with a unique `id` field.
+Then, copy the `id` for each line.
+
+You can use either the `name` or `id` of each line in your portfolio definition:
+
+```python
+# Run finalynx and show what has been fetched
+python your_config.py --show-data
+
+# Define each line with the investment name or id
+Line('CCP N26'),                                              # All three
+Line('Neobank', key='CCP N26'),                               # options are
+Line('Neobank', key='4ef88718-7de2-45d2-ba63-60d58e912f3e'),  # equivalent
+```
+
 ## 🎯 Set Targets for each level
 Any node in the tree accepts an optional `target` parameter. See the full list of available targets [here](https://github.com/MadeInPierre/finalynx/blob/main/finalynx/portfolio/targets.py):
 

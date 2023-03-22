@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.4.1 (2023-03-22)
+### Fix
+* **fetch:** Ask to reuse credentials if already saved ([`df8bec1`](https://github.com/MadeInPierre/finalynx/commit/df8bec1054daa19fe1e96f55849713977a9750a8))
+
 ## v1.4.0 (2023-03-21)
 ### Feature
 * **dashboard:** Show the portfolio tree on the web dashboard ([#35](https://github.com/MadeInPierre/finalynx/issues/35)) ([`fa48bfc`](https://github.com/MadeInPierre/finalynx/commit/fa48bfce6d94f538062a2e3d346f1da1a0340c2c))

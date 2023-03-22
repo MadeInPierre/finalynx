@@ -109,7 +109,8 @@ class FetchFinary(Fetch):  # TODO update docstrings
             if os.path.exists(finary_api.constants.COOKIE_FILENAME):
                 os.remove(finary_api.constants.COOKIE_FILENAME)
             if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
-                os.remove(finary_api.constants.CREDENTIAL_FILE)
+                if not Confirm.ask("Reuse saved credentials? Otherwise, they will also be deleted.", default=True):
+                    os.remove(finary_api.constants.CREDENTIAL_FILE)
 
         # Get the user credentials if there's no session yet (through environment variables or manual input)
         if not os.path.exists(finary_api.constants.COOKIE_FILENAME):

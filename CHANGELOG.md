@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.4.2 (2023-03-22)
+### Fix
+* **fetch:** Add support for id differentiation ([`4f830b8`](https://github.com/MadeInPierre/finalynx/commit/4f830b86f822c37bfa815b302689beaff2133f8b))
+
 ## v1.4.1 (2023-03-22)
 ### Fix
 * **fetch:** Ask to reuse credentials if already saved ([`df8bec1`](https://github.com/MadeInPierre/finalynx/commit/df8bec1054daa19fe1e96f55849713977a9750a8))

@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.5.0 (2023-03-23)
+### Feature
+* Add cryptos ([#43](https://github.com/MadeInPierre/finalynx/issues/43)) ([`ea79c75`](https://github.com/MadeInPierre/finalynx/commit/ea79c7599f3c9c64e67a5dd32f000b0833402190))
+
+### Documentation
+* **fetch:** Add key/id usage for identical lines ([`ecfddee`](https://github.com/MadeInPierre/finalynx/commit/ecfddee0c5cebe20bb271be74a346b25837e4396))
+
 ## v1.4.2 (2023-03-22)
 ### Fix
 * **fetch:** Add support for id differentiation ([`4f830b8`](https://github.com/MadeInPierre/finalynx/commit/4f830b86f822c37bfa815b302689beaff2133f8b))

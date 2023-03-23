@@ -15,6 +15,7 @@ from unidecode import unidecode
 
 import finary_api.__main__ as ff
 import finary_api.constants
+import finary_api.user_portfolio
 from ..console import console
 from ..portfolio.line import Line
 from ..portfolio.portfolio import Portfolio
@@ -226,19 +227,33 @@ class FetchFinary(Fetch):  # TODO update docstrings
         console.log("Fetching investments...")
         node = tree.add("[bold]Investments")
         investments = ff.get_portfolio_investments(session)["result"]
-
         for account in investments["accounts"]:
-            node_account = node.add("[bold]Account: " + account["name"])
-            for category in self._categories:
-                for item in account[category]:
-                    self._match_line(
-                        lines_list,
-                        node_account,
-                        key=item["security"]["name"],
-                        id=item["security"]["id"],
-                        amount=item["current_value"],
-                    )
+              node_account = node.add("[bold]Account: " + account["name"])
+              for account in account['securities']:
+                  self._match_line(
+                      lines_list,
+                      node_account,
+                      key=account["security"]["name"],
+                      id=account["id"],
+                      amount=account["current_value"],
+                  )
 
+        # Cryptos
+        console.log("Fetching cryptos...")
+        node = tree.add("[bold]Cryptos")
+        cryptos = finary_api.user_portfolio.get_portfolio_cryptos(session)["result"]
+
+        for account in cryptos["accounts"]:
+            node_account = node.add("[bold]Account: " + account["name"])
+            for account in account['cryptos']:
+                self._match_line(
+                    lines_list,
+                    node_account,
+                    key=account["crypto"]["name"],
+                    id=account["id"],
+                    amount=account["current_value"],
+                )
+            
         # Real estate
         console.log("Fetching real estate...")
         node = tree.add("[bold]Real estate")

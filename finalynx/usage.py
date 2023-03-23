@@ -30,6 +30,7 @@ Options:
   -v --version         Display the current version and exit
 {main_filter(main_options)}
   dashboard            Launch an interactive web dashboard!
+
   --format=string      Customize the output format to your own style and information
 
   -i --ignore-orphans  Ignore fetched lines that you didn't reference in your portfolio

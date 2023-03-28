@@ -54,15 +54,12 @@ class Folder(Node):
         for better readability.
         :param display: Choose how the folder should be displayed (expanded, collapsed or as a line).
         """
-        super().__init__(name, parent, target, newline=False)
+        super().__init__(name, parent, target, newline)
         self.children = [] if children is None else children
         self.display = display
 
         for child in self.children:
             child.set_parent(self)
-
-        if self.children:
-            child.newline = newline
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -133,11 +130,18 @@ class Folder(Node):
         """Internal method that overrides the superclass' render method to display
         the folder name with a bold font of different color.
         """
-        return "[blue bold]" if self.display != FolderDisplay.LINE else "[white]"
+        if self.display == FolderDisplay.EXPANDED:
+            return "[blue bold]"
+        elif self.display == FolderDisplay.COLLAPSED:
+            return "[blue]"
+        elif self.display == FolderDisplay.LINE:
+            return "[white]"
+        else:
+            raise ValueError("Display mode '{self.display}' not recognized.")
 
     def _render_newline(self) -> str:
         """Internal method that overrides the superclass' render method to display
         a new line after the folder has rendered.
         :returns: The newline character depending on the user configuration.
         """
-        return ""
+        return "\n" if self.newline and self.display != FolderDisplay.EXPANDED else ""

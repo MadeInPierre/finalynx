@@ -49,8 +49,8 @@ class Node(Hierarchy, Render):
 
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
-            "[text]": "[target_text][prehint] [name] [hint]",
-            "[console]": "[target][dim white][prehint][/] [name_color][name][/] [dim white][hint][/]",
+            "[text]": "[target_text][prehint] [name] [hint][newline]",
+            "[console]": "[target][dim white][prehint][/] [name_color][name][/] [dim white][hint][/][newline]",
             "[dashboard]": "[amount] [currency] [name]",
             "[target_text]": "[target_symbol] [amount] [currency]",
             "[target]": "[[target_color]][target_text][/]",
@@ -92,7 +92,6 @@ class Node(Hierarchy, Render):
         :returns: If the `_tree` argument is empty, the function returns a new `Tree` instance with this node's render.
         Otherwise, it adds this node's render as a child node and returns the `_tree`.
         """
-        output_format += "[newline]"
         render = self.render(output_format, **render_args)
         return _tree.add(render) if _tree else Tree(render, hide_root=hide_root)
 

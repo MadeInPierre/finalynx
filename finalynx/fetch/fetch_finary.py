@@ -206,14 +206,15 @@ class FetchFinary(Fetch):  # TODO update docstrings
         # Common fetching procedure for multiple sources
         def _process(
             step_name: str,
-            function: Callable[[Session, str], Dict[str, Any]],
+            function: Callable[..., Dict[str, Any]],
             callback: Callable[[Dict[str, Any]], Tuple[str, str, int]],
+            period: bool = True,
         ) -> None:
             console.log(f"Fetching {step_name.lower()}...")
             node = tree.add(f"[bold]{step_name}")
-            result = function(session, "1w")["result"]
+            result = function(session, "1w")["result"]["data"] if period else function(session)["result"]
 
-            for e in result["data"]:
+            for e in result:
                 key, id, amount = callback(e)
                 self._match_line(lines_list, node, key, id, round(amount))
 
@@ -222,6 +223,12 @@ class FetchFinary(Fetch):  # TODO update docstrings
         _process("Savings", ff.get_savings_accounts, lambda e: (e["name"], e["id"], e["fiats"][0]["current_value"]))
         _process("Fonds euro", ff.get_fonds_euro, lambda e: (e["name"], e["id"], e["current_value"]))
         _process("Others", ff.get_other_assets, lambda e: (e["name"], e["id"], e["current_value"]))
+        _process(
+            "Precious metals",
+            ff.get_user_precious_metals,
+            lambda e: (e["precious_metal"]["name"], e["id"], e["current_value"]),
+            period=False,
+        )
 
         # Investments
         console.log("Fetching investments...")

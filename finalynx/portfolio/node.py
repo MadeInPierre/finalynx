@@ -108,11 +108,12 @@ class Node(Hierarchy, Render):
 
     def _render_hint(self) -> str:
         """:returns: A formatted rendering of a hint message (at the end by default)."""
-        return self.target.hint() if self.target.check() not in [Target.RESULT_NONE, Target.RESULT_START] else ""
+        return self.target.hint() if self.target.check() != Target.RESULT_NONE else ""
 
     def _render_prehint(self) -> str:
         """:returns: A formatted rendering of a pre-hint message (next to the amount by default)."""
-        return self.target.prehint()
+        prehint = self.target.prehint()
+        return f" ({prehint})" if prehint else ""
 
     def _render_amount(self, hide_amounts: bool = False) -> str:
         """:returns: A formatted rendering of the node amount aligned with the other

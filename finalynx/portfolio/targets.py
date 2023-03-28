@@ -48,7 +48,7 @@ class Target(Hierarchy):
 
     def hint(self) -> str:
         """Virtual method for information to be printed at the end of the parent's description."""
-        return "- Gotta invest!" if self.check() == Target.RESULT_START else "- No target"
+        return "- Invest!" if self.check() == Target.RESULT_START else "- No target"
 
     def render_amount(self, hide_amount: bool = False, n_characters: int = 0) -> str:
         """Check for the parent's amount against the target logic and format the amount based on the target recommendation.
@@ -160,9 +160,13 @@ class TargetRatio(TargetRange):
         self.target_ratio = target_ratio
 
     def get_ratio(self) -> float:
-        """:returns: How much this amoutn represents agains the reference in percentage (0-100%)."""
+        """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
         total = self._get_reference_amount()
         return 100 * self.get_amount() / total if total > 0 else 0
+
+    def get_ideal(self) -> int:
+        """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
+        return round(self._get_reference_amount() * self.target_ratio / 100)
 
     def _get_variable(self) -> float:
         """:returns: The value to be checked."""
@@ -172,15 +176,21 @@ class TargetRatio(TargetRange):
         """:returns: The value to be checked against (parent's amount)."""
         if not self.parent.parent:
             raise ValueError("Target's parent's parent must not be None.")
-        return self.parent.parent.get_amount()  # typing: ignore union-attr
+
+        # If the parent also has a ratio target, propagate the reference amount
+        if isinstance(self.parent.parent.target, TargetRatio):
+            return self.parent.parent.target.get_ideal()
+
+        # Otherwise, simply get the parent's value
+        return self.parent.parent.get_amount()
 
     def prehint(self) -> str:
         """:returns: A rich-formatted view of the calculated percentage."""
-        return f" ({round(self.get_ratio()):>2}%)"
+        return f"{round(self.get_ratio()):>2}%"
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"→ {self.target_ratio}%"
+        return f"→ {self.get_ideal()} € - {self.target_ratio}%"
 
 
 class TargetGlobalRatio(TargetRatio):

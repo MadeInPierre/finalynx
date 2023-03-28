@@ -8,7 +8,7 @@ from ..portfolio import Portfolio
 class Fetch:
     """Abstract class to fetch data from multiple sources."""
 
-    MAX_CACHE_HOURS = 1
+    MAX_CACHE_HOURS = 12
 
     def __init__(self, portfolio: Portfolio, cache_filename: str):
         """This is an abstract class to provide a common interface when fetching investments from

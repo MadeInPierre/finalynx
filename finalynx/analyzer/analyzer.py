@@ -3,7 +3,10 @@
 TODO Dummy class for now, check back later or help us by contributing!
 ```
 """
-from ..portfolio.portfolio import Portfolio
+from typing import Any
+from typing import Dict
+
+from ..portfolio import Node
 
 
 class Analyzer:
@@ -13,10 +16,14 @@ class Analyzer:
     This module has not started development yet. Check back soon!
     """
 
-    def __init__(self) -> None:
-        """Empty initialization for now."""
-        pass
+    def __init__(self, node: Node):
+        self.node = node
 
-    def rich_graphs(self, portfolio: Portfolio) -> str:
-        """Dummy output for now, will return formatted recommendations in the future."""
-        return "Advice"
+    def analyze(self) -> Any:
+        """Abstract method, must be overridden by subclasses to return the analysis result."""
+        raise NotImplementedError("Method must be overridden by a subclass.")
+
+    def chart(self) -> Dict[Any, Any]:
+        """Abstract method, must be overridden by subclasses to return a Highcharts configuration
+        (will be shown in the web dashboard)."""
+        raise NotImplementedError("Method must be overridden by a subclass.")

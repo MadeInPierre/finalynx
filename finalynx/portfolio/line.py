@@ -1,6 +1,7 @@
 from typing import Optional
 from typing import TYPE_CHECKING
 
+from .constants import AssetClass
 from .node import Node
 
 if TYPE_CHECKING:
@@ -14,6 +15,7 @@ class Line(Node):
     def __init__(
         self,
         name: str,
+        asset_class: AssetClass = AssetClass.UNKNOWN,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         key: Optional[str] = None,
@@ -34,6 +36,7 @@ class Line(Node):
         :param newline: Print a new line in the console at the end of this `Line` for better readability.
         """
         super().__init__(name, parent, target, newline)
+        self.asset_class = asset_class
         self.key = key if key is not None else name
         self.amount = amount
 

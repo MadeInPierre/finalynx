@@ -1,7 +1,6 @@
 from typing import Optional
 
 from docopt import docopt
-from finalynx import console
 from finalynx import Copilot
 from finalynx import Dashboard
 from finalynx import FetchFinary
@@ -15,6 +14,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 
 from .__meta__ import __version__
+from .console import console
 from .usage import __doc__
 
 # Enable rich's features

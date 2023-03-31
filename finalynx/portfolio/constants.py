@@ -8,27 +8,26 @@ subpackage to classify lines and show relevant statistics.
 from enum import Enum
 
 
-class AssetType(Enum):
+class AssetClass(Enum):
     """Enumeration that defines the asset class for each line."""
 
     CCP = "CCP"
-    LIVRET = "Livret"
+    LIVRET = "Livrets"
     FOND_EURO = "Fonds euro"
-    ETF = "ETF"
-    STOCK = "Action"
-    OBLIGATION = "Obligation"
+    ETF = "ETFs"
+    STOCK = "Actions"
+    OBLIGATION = "Obligations"
     CROWDFUNDING = "Crowdfunding"
     GOLD = "Or"
     SILVER = "Argent"
-    PILOTED = "Gestion pilotee"
     CRYPTO = "Cryptos"
     FOREST = "Forets"
     SCPI = "SCPI"
     HOUSING = "Immobilier"
-    PASSIVE = "Passif"
+    UNKNOWN = "Inconnu"
 
 
-class EnvelopeType(Enum):
+class EnvelopeClass(Enum):
     """Enumeration that defines the envelope types that hold each line."""
 
     CCP = "CCP"

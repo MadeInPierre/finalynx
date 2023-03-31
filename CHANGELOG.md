@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v1.6.0 (2023-03-31)
+### Feature
+* **targets:** Ratio targets now show the ideal absolute amount to reach ([`8bf0aac`](https://github.com/MadeInPierre/finalynx/commit/8bf0aac72af3e7cb82e9af2f82c4af14bbea2b5b))
+* **fetch:** Import precious metals ([`54ce9f6`](https://github.com/MadeInPierre/finalynx/commit/54ce9f6b56c17328b7b8ab20d241065c9714b1ae))
+
+### Fix
+* **portfolio:** Simplify newline behavior ([`5071a4d`](https://github.com/MadeInPierre/finalynx/commit/5071a4de19d073b013b424d4d051d3c1e1bf24fc))
+* **fetch:** Increase cache time to 12h ([`d41ddb0`](https://github.com/MadeInPierre/finalynx/commit/d41ddb0d187144cac27e705800dc072c2ed6bfe1))
+
 ## v1.5.0 (2023-03-23)
 ### Feature
 * Add cryptos ([#43](https://github.com/MadeInPierre/finalynx/issues/43)) ([`ea79c75`](https://github.com/MadeInPierre/finalynx/commit/ea79c7599f3c9c64e67a5dd32f000b0833402190))

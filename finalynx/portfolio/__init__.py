@@ -26,6 +26,8 @@ are available.
 from ..console import console
 from .bucket import Bucket
 from .bucket import SharedFolder
+from .constants import AssetClass
+from .constants import EnvelopeClass
 from .folder import Folder
 from .folder import FolderDisplay
 from .hierarchy import Hierarchy

@@ -1,6 +1,6 @@
 """
 ```{warning}
-This is a barebones file (with a temporary ugly structure), check back later or contribute to this project!
+This is a barebones file (with a temporary ugly structure), please check back later!
 ```
 """
 import datetime
@@ -8,6 +8,8 @@ from typing import Any
 from typing import Dict
 from typing import Set
 
+from finalynx.analyzer.asset_class import AnalyzeAssetClasses
+from finalynx.portfolio.node import Node
 from nicegui import ui
 from rich.tree import Tree
 
@@ -95,6 +97,8 @@ class Dashboard:
             with ui.card():
                 self.hey = ui.label("This is the very start of the dashboard, contributions welcome!")
 
+                self._generate_chart(portfolio)
+
         ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=True)
 
     def _on_tree_expand(self, event: Any) -> None:
@@ -128,3 +132,13 @@ class Dashboard:
         today = datetime.date.today()
         letter = "th" if 11 <= today.day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(today.day % 10, "th")
         return today.strftime(f"%B %d{letter}, %Y")
+
+    def _generate_chart(self, portfolio: Node) -> None:
+        analysis = AnalyzeAssetClasses(portfolio).chart()
+        ui.chart(analysis).classes("w-full h-full")
+
+        # def _update_chart() -> None:
+        #     chart.options["series"][0]["data"][:] = random(3)
+        #     chart.update()
+
+        # ui.button("Update", on_click=_update_chart)

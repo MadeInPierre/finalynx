@@ -11,16 +11,14 @@ from enum import Enum
 class AssetClass(Enum):
     """Enumeration that defines the asset class for each line."""
 
-    CCP = "CCP"
+    CASH = "Cash"
     LIVRET = "Livrets"
     FOND_EURO = "Fonds euro"
-    ETF = "ETFs"
-    STOCK = "Actions"
     OBLIGATION = "Obligations"
+    STOCK = "Actions"
+    REAL_ESTATE = "Immobilier"
     GOLD = "Or"
     CRYPTO = "Cryptos"
-    SCPI = "SCPI"
-    HOUSING = "Immobilier"
     PASSIVE = "Passifs"
     UNKNOWN = "Inconnu"
 

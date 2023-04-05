@@ -84,13 +84,14 @@ class SharedFolder(Folder):
         self,
         name: str,
         bucket: Bucket,
+        asset_class: AssetClass = AssetClass.UNKNOWN,
         target_amount: float = np.inf,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         newline: bool = False,
         display: FolderDisplay = FolderDisplay.EXPANDED,
     ):
-        super().__init__(name, AssetClass.UNKNOWN, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
+        super().__init__(name, asset_class, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket

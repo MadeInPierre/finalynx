@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from .constants import AssetClass
 from .folder import Folder
 from .folder import FolderDisplay
 
@@ -89,7 +90,7 @@ class SharedFolder(Folder):
         newline: bool = False,
         display: FolderDisplay = FolderDisplay.EXPANDED,
     ):
-        super().__init__(name, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
+        super().__init__(name, AssetClass.UNKNOWN, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket

@@ -54,6 +54,13 @@ class Dashboard:
 
     def run(self, portfolio: Portfolio) -> None:
         """Simple structure for now, to be improved!"""
+        self.color_map = "finalynx"
+        self.selected_node: Node = portfolio
+
+        def _on_select_color_map(data: Any) -> None:
+            self.color_map = "finalynx" if data.value == 1 else "finary"
+            self._update_chart()
+
         ui.colors(primary="#2E3440", secondary="#F5A623", accent="#F8333C")
 
         with ui.header(elevated=True).classes("items-center justify-between"):
@@ -70,12 +77,18 @@ class Dashboard:
             ui.markdown("#### Welcome to Finalynx!").classes("text-center")
             ui.label("Lorem ipsum dolor sit amet, consectetur adipiscing elit, ...")
             # ui.badge("Hello", color="accent").props("rounded")
-            ui.button(
-                "Dense",
-                on_click=lambda: tree.props("dense")
-                if "dense" not in tree._props.keys()
-                else tree.props(remove="dense"),
-            ).props("color=secondary")
+
+            with ui.column():
+                ui.button(
+                    "Dense",
+                    on_click=lambda: tree.props("dense")
+                    if "dense" not in tree._props.keys()
+                    else tree.props(remove="dense"),
+                ).props("color=secondary")
+
+                with ui.row():
+                    ui.label("Color map: ")
+                    ui.toggle({1: "Finalynx", 2: "Finary"}, value=1, on_change=_on_select_color_map)
 
         # with ui.right_drawer(fixed=False).style('background-color: #ebf1fa').props('bordered') as right_drawer:
         #     ui.label('RIGHT DRAWER')
@@ -101,7 +114,7 @@ class Dashboard:
 
             with ui.column():
                 with ui.card().classes("w-50 h-100"):
-                    self.chart = ui.chart(AnalyzeAssetClasses(portfolio).chart())
+                    self.chart = ui.chart(AnalyzeAssetClasses(self.selected_node).chart(self.color_map))
 
                 with ui.card():
                     self.hey = ui.label(f"Selected node: {portfolio.render(output_format='[dashboard]')}")
@@ -115,12 +128,17 @@ class Dashboard:
         node_id = event.value if event.value else 1
         node = self._get_node_from_id(node_id, self.portfolio_dict)
         assert node is not None
+        self.selected_node = node
+        self._update_chart()
 
+    def _update_chart(self) -> None:
         # Show which node is currently selected
-        self.hey.set_text(f"Selected node: {node.render(output_format='[dashboard]')}")
+        self.hey.set_text(f"Selected node: {self.selected_node.render(output_format='[dashboard]')}")
 
         # Update chart with the selected node's info
-        self.chart.options["series"][0]["data"][:] = AnalyzeAssetClasses(node).chart()["series"][0]["data"]
+        new_config = AnalyzeAssetClasses(self.selected_node).chart(self.color_map)
+        self.chart.options["title"]["text"] = new_config["title"]["text"]
+        self.chart.options["series"][0]["data"][:] = new_config["series"][0]["data"]
         self.chart.update()
 
     def _on_tree_tick(self, event: Any) -> None:

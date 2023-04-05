@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from rich.tree import Tree
 
+from .constants import AssetClass
 from .line import Line
 from .node import Node
 
@@ -34,6 +35,7 @@ class Folder(Node):
     def __init__(
         self,
         name: str,
+        asset_class: AssetClass = AssetClass.UNKNOWN,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         children: Optional[List["Node"]] = None,
@@ -60,6 +62,7 @@ class Folder(Node):
 
         for child in self.children:
             child.set_parent(self)
+            # child.set_class(asset_class)  # TODO
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.

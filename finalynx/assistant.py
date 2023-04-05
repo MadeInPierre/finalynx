@@ -117,7 +117,9 @@ class Assistant:
         panels = [
             Panel(
                 self.portfolio.tree(
-                    output_format=self.output_format, hide_root=self.hide_root, hide_amounts=self.hide_amounts
+                    output_format=self.output_format,
+                    hide_root=self.hide_root,
+                    hide_amounts=self.hide_amounts,
                 ),
                 title=self.portfolio.name,
                 padding=(1, 4),

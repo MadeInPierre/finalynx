@@ -17,13 +17,11 @@ class AssetClass(Enum):
     ETF = "ETFs"
     STOCK = "Actions"
     OBLIGATION = "Obligations"
-    CROWDFUNDING = "Crowdfunding"
     GOLD = "Or"
-    SILVER = "Argent"
     CRYPTO = "Cryptos"
-    FOREST = "Forets"
     SCPI = "SCPI"
     HOUSING = "Immobilier"
+    PASSIVE = "Passifs"
     UNKNOWN = "Inconnu"
 
 

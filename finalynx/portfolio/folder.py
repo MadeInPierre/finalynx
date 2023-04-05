@@ -62,7 +62,8 @@ class Folder(Node):
 
         for child in self.children:
             child.set_parent(self)
-            # child.set_class(asset_class)  # TODO
+
+        self.set_children_class(asset_class)
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -128,6 +129,15 @@ class Folder(Node):
             elif isinstance(child, Folder) and child.set_child_amount(key, amount):
                 success = True
         return success
+
+    def set_children_class(self, asset_class: AssetClass) -> None:
+        for child in self.children:
+            if isinstance(child, Line):
+                child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
+            elif isinstance(child, Folder):
+                child.set_children_class(asset_class)
+            else:
+                raise ValueError("Unrecognized node type.")
 
     def _render_name_color(self) -> str:
         """Internal method that overrides the superclass' render method to display

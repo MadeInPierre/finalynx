@@ -144,11 +144,11 @@ class Folder(Node):
         the folder name with a bold font of different color.
         """
         if self.display == FolderDisplay.EXPANDED:
-            return "[blue bold]"
+            return "[dodger_blue2 bold]"
         elif self.display == FolderDisplay.COLLAPSED:
-            return "[blue]"
+            return "[dodger_blue2]"
         elif self.display == FolderDisplay.LINE:
-            return "[white]"
+            return super()._render_name_color()
         else:
             raise ValueError("Display mode '{self.display}' not recognized.")
 

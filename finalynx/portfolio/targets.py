@@ -12,13 +12,13 @@ if TYPE_CHECKING:
 class Target(Hierarchy):
     """Abstract class that defines an objective for a `Node` in the Portfolio tree."""
 
-    RESULT_NOK = {"name": "Not OK", "symbol": "×", "color": "red"}
+    RESULT_NOK = {"name": "NOK", "symbol": "×", "color": "red"}
     RESULT_OK = {"name": "OK", "symbol": "✓", "color": "green"}
     RESULT_TOLERATED = {"name": "Tolerated", "symbol": "≈", "color": "yellow"}
     RESULT_INVEST = {"name": "Invest", "symbol": "↗", "color": "red"}
     RESULT_DEVEST = {"name": "Devest", "symbol": "↘", "color": "magenta"}
     RESULT_START = {"name": "Start", "symbol": "↯", "color": "cyan"}
-    RESULT_NONE = {"name": "No target", "symbol": "‣", "color": "blue"}
+    RESULT_NONE = {"name": "No target", "symbol": "‣", "color": "black"}
 
     def __init__(self) -> None:
         """Abstract Target class that holds the Node parent using this instance and provides

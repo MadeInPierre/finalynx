@@ -51,7 +51,8 @@ class Node(Hierarchy, Render):
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
             "[console]": "[target][dim white][prehint][/] [name_color][name][/] [dim white][hint][/][newline]",
-            "[dashboard]": "[amount] [currency] [name]",
+            "[dashboard_tree]": "[amount] [currency] [name]",
+            "[dashboard_console]": "[bold][target][/][bright_black][prehint][/] [name_color][name][/] [bright_black][hint][/][newline]",
             "[target_text]": "[target_symbol] [amount] [currency]",
             "[target]": "[[target_color]][target_text][/]",
         }

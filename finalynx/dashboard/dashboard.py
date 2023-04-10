@@ -3,7 +3,7 @@
 This is a barebones file (with a temporary ugly structure), please check back later!
 ```
 """
-import datetime
+from datetime import date
 from typing import Any
 from typing import Dict
 from typing import Optional
@@ -15,6 +15,7 @@ from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.line import Line
 from finalynx.portfolio.node import Node
+from finalynx.simulator.simulator import Simulator
 from nicegui import ui
 
 from ..console import console
@@ -157,8 +158,11 @@ class Dashboard:
             with splitter.after:
                 self.hey = ui.markdown(f"#### {self.selected_node.name}").classes("text-center")
                 with ui.row():
+                    self.chart_simulator = ui.chart(Simulator().chart(portfolio))
                     self.chart_asset_classes = ui.chart(AnalyzeAssetClasses(self.selected_node).chart(self.color_map))
-                    self.chart_envelope_states = ui.chart(AnalyzeInvestmentStates(self.selected_node).chart())
+                    self.chart_envelope_states = ui.chart(
+                        AnalyzeInvestmentStates(self.selected_node).chart(date.today())
+                    )
                     self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
 
         ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=True, host="0.0.0.0")
@@ -182,7 +186,7 @@ class Dashboard:
         self.chart_asset_classes.options["series"][0]["data"][:] = new_config["series"][0]["data"]
         self.chart_asset_classes.update()
 
-        new_config = AnalyzeInvestmentStates(self.selected_node).chart()
+        new_config = AnalyzeInvestmentStates(self.selected_node).chart(date.today())
         self.chart_envelope_states.options["series"][0]["data"][:] = new_config["series"][0]["data"]
         self.chart_envelope_states.update()
 
@@ -247,6 +251,6 @@ class Dashboard:
         return None
 
     def _get_today_str(self) -> str:
-        today = datetime.date.today()
+        today = date.today()
         letter = "th" if 11 <= today.day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(today.day % 10, "th")
         return today.strftime(f"%B %d{letter}, %Y")

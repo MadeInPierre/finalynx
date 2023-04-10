@@ -24,19 +24,19 @@ class AnalyzeInvestmentStates(Analyzer):
         "Free": "#7BB151",  # F8961E
     }
 
-    def analyze(self) -> Dict[str, float]:
+    def analyze(self, target_date: date) -> Dict[str, float]:
         """:returns: A dictionary with keys as the asset class names and values as the
         sum of investments corresponding to each class."""
-        return self._recursive_merge(self.node)
+        return self._recursive_merge(self.node, target_date)
 
-    def _recursive_merge(self, node: Node) -> Dict[str, float]:
+    def _recursive_merge(self, node: Node, target_date: date) -> Dict[str, float]:
         """Internal method for recursive searching."""
         total = {c.value: 0.0 for c in EnvelopeState}
 
         # Lines simply return their own amount
         if isinstance(node, Line):
             if node.envelope:
-                total[node.envelope.get_state(date.today()).value] = node.get_amount()
+                total[node.envelope.get_state(target_date).value] = node.get_amount()
             else:
                 total[EnvelopeState.UNKNOWN.value] = node.get_amount()
             return total
@@ -44,7 +44,7 @@ class AnalyzeInvestmentStates(Analyzer):
         # Folders merge what the children return
         elif isinstance(node, Folder):
             for child in node.children:
-                for key, value in self._recursive_merge(child).items():
+                for key, value in self._recursive_merge(child, target_date).items():
                     total[key] += value
             return total
 
@@ -52,9 +52,9 @@ class AnalyzeInvestmentStates(Analyzer):
         else:
             raise ValueError(f"Unknown node type '{type(node)}'.")
 
-    def chart(self) -> Dict[str, Any]:
+    def chart(self, target_date: date) -> Dict[str, Any]:
         """:returns: A Highcharts configuration with the data to be displayed."""
-        analysis = self.analyze()
+        analysis = self.analyze(target_date)
 
         return {
             "chart": {"plotBackgroundColor": None, "plotBorderWidth": None, "plotShadow": False, "type": "pie"},

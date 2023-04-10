@@ -10,6 +10,8 @@ from typing import Optional
 from typing import Set
 
 from finalynx.analyzer.asset_class import AnalyzeAssetClasses
+from finalynx.analyzer.envelopes import AnalyzeEnvelopes
+from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.line import Line
 from finalynx.portfolio.node import Node
@@ -153,8 +155,11 @@ class Dashboard:
                 # ui.html(dashboard_console.export_html())
 
             with splitter.after:
-                self.chart = ui.chart(AnalyzeAssetClasses(self.selected_node).chart(self.color_map))
-                # self.hey = ui.label(f"Selected node: {portfolio.render(output_format='[dashboard]')}")
+                self.hey = ui.markdown(f"#### {self.selected_node.name}").classes("text-center")
+                with ui.row():
+                    self.chart_asset_classes = ui.chart(AnalyzeAssetClasses(self.selected_node).chart(self.color_map))
+                    self.chart_envelope_states = ui.chart(AnalyzeInvestmentStates(self.selected_node).chart())
+                    self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
 
         ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=True, host="0.0.0.0")
 
@@ -170,13 +175,20 @@ class Dashboard:
 
     def _update_chart(self) -> None:
         # Show which node is currently selected
-        # self.hey.set_text(f"Selected node: {self.selected_node.render(output_format='[dashboard]')}")
+        self.hey.set_content(f"#### {self.selected_node.name}")
 
         # Update chart with the selected node's info
         new_config = AnalyzeAssetClasses(self.selected_node).chart(self.color_map)
-        self.chart.options["title"]["text"] = new_config["title"]["text"]
-        self.chart.options["series"][0]["data"][:] = new_config["series"][0]["data"]
-        self.chart.update()
+        self.chart_asset_classes.options["series"][0]["data"][:] = new_config["series"][0]["data"]
+        self.chart_asset_classes.update()
+
+        new_config = AnalyzeInvestmentStates(self.selected_node).chart()
+        self.chart_envelope_states.options["series"][0]["data"][:] = new_config["series"][0]["data"]
+        self.chart_envelope_states.update()
+
+        new_config = AnalyzeEnvelopes(self.selected_node).chart()
+        self.chart_envelopes.options["series"][0]["data"][:] = new_config["series"][0]["data"]
+        self.chart_envelopes.update()
 
     def _on_tree_tick(self, event: Any) -> None:
         console.log(event)

@@ -5,6 +5,7 @@ from .constants import AssetClass
 from .node import Node
 
 if TYPE_CHECKING:
+    from .envelope import Envelope
     from .targets import Target
     from .folder import Folder
 
@@ -21,6 +22,7 @@ class Line(Node):
         key: Optional[str] = None,
         amount: float = 0,
         newline: bool = False,
+        envelope: Optional["Envelope"] = None,
     ):
         """
         This is a subclass of `Node` that adds an `amount` and `key` property.
@@ -39,6 +41,11 @@ class Line(Node):
         self.asset_class = asset_class
         self.key = key if key is not None else name
         self.amount = amount
+        self.envelope = envelope
+
+        # Let the envelope know that this is a child line
+        if self.envelope:
+            self.envelope.link_line(self)
 
     def get_amount(self) -> float:
         """:returns: The amount invested in this line."""

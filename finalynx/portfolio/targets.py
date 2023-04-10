@@ -48,7 +48,7 @@ class Target(Hierarchy):
 
     def hint(self) -> str:
         """Virtual method for information to be printed at the end of the parent's description."""
-        return "- Invest!" if self.check() == Target.RESULT_START else "- No target"
+        return "- Invest!" if self.check() == Target.RESULT_START else ""
 
     def render_amount(self, hide_amount: bool = False, n_characters: int = 0) -> str:
         """Check for the parent's amount against the target logic and format the amount based on the target recommendation.

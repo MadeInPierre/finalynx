@@ -28,6 +28,7 @@ from .bucket import Bucket
 from .bucket import SharedFolder
 from .constants import AssetClass
 from .constants import EnvelopeClass
+from .envelope import *
 from .folder import Folder
 from .folder import FolderDisplay
 from .hierarchy import Hierarchy

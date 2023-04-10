@@ -14,7 +14,7 @@ class AssetClass(Enum):
     CASH = "Cash"
     LIVRET = "Livrets"
     FOND_EURO = "Fonds euro"
-    OBLIGATION = "Obligations"
+    BOND = "Obligations"
     STOCK = "Actions"
     REAL_ESTATE = "Immobilier"
     GOLD = "Or"
@@ -23,7 +23,7 @@ class AssetClass(Enum):
     UNKNOWN = "Inconnu"
 
 
-class EnvelopeClass(Enum):
+class EnvelopeClass(Enum):  # TODO use or remove?
     """Enumeration that defines the envelope types that hold each line."""
 
     CCP = "CCP"

@@ -11,6 +11,7 @@ from typing import Set
 
 from finalynx.analyzer.asset_class import AnalyzeAssetClasses
 from finalynx.portfolio.folder import Folder
+from finalynx.portfolio.line import Line
 from finalynx.portfolio.node import Node
 from nicegui import ui
 
@@ -121,29 +122,31 @@ class Dashboard:
                     on_select=self._on_tree_select,
                 ).classes("w-full") as tree:
                     tree._props["expanded"] = list(range(max_id))
+                    tree.props("dense")
 
                     tree.add_slot(
                         "default-header",
                         """
                             <q-icon v-if="props.node.icon !== 'menu'" v-bind="{ name: props.node.icon, color: props.node.color }" size="20px"/>
                             <span :props="props">
-                            <strong>
-                                <span :style="{ color: props.node.color }">&nbsp;{{ props.node.amount }} €</span>
-                            </strong>
-                            <strong v-if="props.node.is_folder">
-                                <span style="color: #455A64">&nbsp;{{ props.node.name }}</span>
-                            </strong>
-                            <span v-else style="color: black">&nbsp;{{ props.node.name }}</span>
+                                <strong>
+                                    <span :style="{ color: props.node.color }">&nbsp;{{ props.node.amount }} €</span>
+                                </strong>
+                                <strong v-if="props.node.is_folder">
+                                    <span style="color: #455A64">&nbsp;{{ props.node.name }}</span>
+                                </strong>
+                                <span v-else style="color: black">&nbsp;{{ props.node.name }}</span>
+                                <span style="color: grey">&nbsp;{{ props.node.hint }}</span>
                             </span>
                         """,
                     )
 
-                    # tree.add_slot(
-                    #     "default-body",
-                    #     """
-                    #     <span :props="props">{{ props.node.hint }}</span>
-                    # """,
-                    # )
+                    tree.add_slot(
+                        "default-body",
+                        """
+                        <span v-if="props.node.newline == true" :props="props">&nbsp;</span>
+                    """,
+                    )
 
                 # dashboard_console = Console(record=True)
                 # dashboard_console.print(portfolio.tree(output_format="[dashboard_console]", hide_root=True))
@@ -199,6 +202,7 @@ class Dashboard:
             "icon": dict_icons[check_result][0],
             "color": dict_icons[check_result][1],
             "is_folder": isinstance(node, Folder),
+            "newline": bool(isinstance(node, Line) and node.newline),
             "instance": node,
         }
 

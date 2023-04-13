@@ -61,6 +61,11 @@ class Target(Hierarchy):
         number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
         return f'[{result["color"]}]{result["symbol"]} {number} €[/][dim white]{self.prehint()}[/]'
 
+    def render_goal(self) -> str:
+        """Ideal amount to be reached based on the current target and node
+        position in the tree. Must be overridden by subclasses."""
+        return ""
+
     def _render_target_name(self) -> str:
         """:returns: The name of the target recommentation."""
         return self.check()["name"]
@@ -104,6 +109,11 @@ class TargetRange(Target):
             return Target.RESULT_TOLERATED
         return Target.RESULT_DEVEST
 
+    def render_goal(self) -> str:
+        """:returns: The average between target boundaries."""
+        goal_amount = round((self.target_min + self.target_max) / 2)
+        return f"{goal_amount} € "
+
     def _get_variable(self) -> float:
         """Internal method that gives the value to be checked (overriden by subclasses)."""
         return self.get_amount()
@@ -123,6 +133,10 @@ class TargetMax(TargetRange):
         """
         super().__init__(0, target_max, tolerance)
 
+    def render_goal(self) -> str:
+        """:returns: The maximum target value."""
+        return f"{self.target_max} € "
+
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
         return f"- Maximum {self.target_max} €"
@@ -137,6 +151,10 @@ class TargetMin(TargetRange):
         :param tolerance: If the amount is at least `target_min - tolerance`, the check will return a `RESULT_TOLERATED`.
         """
         super().__init__(target_min, np.inf, tolerance)
+
+    def render_goal(self) -> str:
+        """:returns: The minimum target value."""
+        return f"{self.target_min} € "
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
@@ -167,6 +185,10 @@ class TargetRatio(TargetRange):
     def get_ideal(self) -> int:
         """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
         return round(self._get_reference_amount() * self.target_ratio / 100)
+
+    def render_goal(self) -> str:
+        """:returns: The target ratio as a string."""
+        return f"{self.target_ratio:>2} % "
 
     def _get_variable(self) -> float:
         """:returns: The value to be checked."""

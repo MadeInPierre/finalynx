@@ -51,16 +51,19 @@ class Node(Hierarchy, Render):
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
             "[console]": "[target][dim white][prehint][/] [name_color][name][/] [dim white][hint][/][newline]",
+            "[console_targets]": "[bold green][goal][/][name_color][name][/][newline]",
+            "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",
             "[dashboard_console]": "[bold][target][/][bright_black][prehint][/] [name_color][name][/] [bright_black][hint][/][newline]",
-            "[target_text]": "[target_symbol] [amount] [currency]",
             "[target]": "[[target_color]][target_text][/]",
+            "[target_text]": "[target_symbol] [amount] [currency]",
         }
         render_agents: Dict[str, Callable[..., str]] = {
             "name": self._render_name,
             "name_color": self._render_name_color,
             "newline": self._render_newline,
             "amount": self._render_amount,
+            "goal": self._render_goal,
             "hint": self._render_hint,
             "prehint": self._render_prehint,
             "currency": self._render_currency,
@@ -129,13 +132,16 @@ class Node(Hierarchy, Render):
         )
         return "···" if hide_amounts else f"{round(self.get_amount()):>{max_length}}"
 
+    def _render_goal(self) -> str:
+        return self.target.render_goal()
+
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""
         return self.name
 
     def _render_name_color(self) -> str:
         """:returns: A formatted rendering of the node name."""
-        return "[white]"
+        return "[black]"
 
     def _render_newline(self) -> str:
         """:returns: A rendering of the newline if set by the user."""

@@ -13,6 +13,7 @@ from finalynx.analyzer.asset_class import AnalyzeAssetClasses
 from finalynx.analyzer.envelopes import AnalyzeEnvelopes
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
 from finalynx.portfolio.folder import Folder
+from finalynx.portfolio.folder import FolderDisplay
 from finalynx.portfolio.line import Line
 from finalynx.portfolio.node import Node
 from finalynx.simulator.simulator import Simulator
@@ -71,8 +72,8 @@ class Dashboard:
             with ui.row().classes("items-center"):
                 ui.button(on_click=lambda: left_drawer.toggle()).props("flat color=white icon=menu")
                 ui.label("Finalynx Dashboard").classes("text-bold").style("font-size: 20px")
-            ui.label(self._get_today_str()).style("font-size: 18px")
-            ui.button("Export", on_click=lambda: ui.notify("Coming soon!")).props("icon=file_download color=accent")
+            # ui.label(self._get_today_str()).style("font-size: 18px")
+            # ui.button("Export", on_click=lambda: ui.notify("Coming soon!")).props("icon=file_download color=accent")
 
         with ui.left_drawer(value=False, bottom_corner=True, elevated=True).style(
             "background-color: #ECEFF4"
@@ -99,8 +100,12 @@ class Dashboard:
         # with ui.footer(value=True).style('background-color: #3874c8'):
         #     ui.label('FOOTER')
 
-        with ui.splitter(value=40).classes("w-full") as splitter:
-            with splitter.before:
+        with ui.tabs() as tabs:
+            ui.tab("Portfolio", icon="home")
+            ui.tab("Analysis", icon="info")
+
+        with ui.tab_panels(tabs, value="Portfolio"):
+            with ui.tab_panel("Portfolio"):
                 self.portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio)
                 max_id = self._add_ids_to_tree(self.portfolio_dict)
 
@@ -116,14 +121,12 @@ class Dashboard:
                 #     ).props("selected-color=secondary")
                 #     tree._props["expanded"] = list(range(max_id))
 
-                ui.markdown(f"#### {portfolio.render('[dashboard_tree]')}").classes("text-center").style(
-                    "padding: 0 0 10px 0"
-                )
+                ui.markdown(f"#### {portfolio.render('[dashboard_tree]')}").classes("text-center")
 
                 with ui.tree(
                     self.portfolio_dict["children"],
                     on_select=self._on_tree_select,
-                ).classes("w-full") as tree:
+                ) as tree:
                     tree._props["expanded"] = list(range(max_id))
                     tree.props("dense")
 
@@ -155,15 +158,21 @@ class Dashboard:
                 # dashboard_console.print(portfolio.tree(output_format="[dashboard_console]", hide_root=True))
                 # ui.html(dashboard_console.export_html())
 
-            with splitter.after:
-                self.hey = ui.markdown(f"#### {self.selected_node.name}").classes("text-center")
-                with ui.row():
+            with ui.tab_panel("Analysis"):
+                self.hey = ui.markdown(f"#### {self.selected_node.name}")
+                with ui.column():
                     self.chart_simulator = ui.chart(Simulator().chart(portfolio))
                     self.chart_asset_classes = ui.chart(AnalyzeAssetClasses(self.selected_node).chart(self.color_map))
                     self.chart_envelope_states = ui.chart(
                         AnalyzeInvestmentStates(self.selected_node).chart(date.today())
                     )
                     self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
+
+        # with ui.splitter(value=40).classes("w-full") as splitter:
+        #     with splitter.before:
+        #         ui.label("This is the first tab")
+        #     with splitter.after:
+        #         ui.label("This is the second tab")
 
         ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=True, host="0.0.0.0")
 
@@ -201,7 +210,7 @@ class Dashboard:
         dict_icons = {
             "NOK": ("close", "red"),
             "OK": ("done", "green"),
-            "Tolerated": ("warning", "yellow"),
+            "Tolerated": ("warning", "green"),
             "Invest": ("keyboard_double_arrow_up", "red"),
             "Devest": ("keyboard_double_arrow_down", "purple"),
             "Start": ("bolt", "blue"),
@@ -217,12 +226,15 @@ class Dashboard:
             "hint": node.target.hint(),
             "icon": dict_icons[check_result][0],
             "color": dict_icons[check_result][1],
-            "is_folder": isinstance(node, Folder),
-            "newline": bool(isinstance(node, Line) and node.newline),
+            "is_folder": bool(isinstance(node, Folder) and node.display == FolderDisplay.EXPANDED),
+            "newline": bool(
+                (isinstance(node, Line) and node.newline)
+                or (isinstance(node, Folder) and node.newline and node.display != FolderDisplay.EXPANDED)
+            ),
             "instance": node,
         }
 
-        if isinstance(node, Folder) and node.children:
+        if isinstance(node, Folder) and node.children and node.display == FolderDisplay.EXPANDED:
             result["children"] = [self._convert_rich_tree_to_nicegui(c) for c in node.children]  # type: ignore
         return result
 

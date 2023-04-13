@@ -190,7 +190,7 @@ class TargetRatio(TargetRange):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"→ {self.get_ideal()} € - {self.target_ratio}%"
+        return f"→ {self.get_ideal()} € ({self.target_ratio}%)"
 
 
 class TargetGlobalRatio(TargetRatio):

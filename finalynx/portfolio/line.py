@@ -1,3 +1,5 @@
+from typing import Callable
+from typing import Dict
 from typing import Optional
 from typing import TYPE_CHECKING
 
@@ -37,7 +39,12 @@ class Line(Node):
         account, the amount you specify will be replaced by what has been fetched online.
         :param newline: Print a new line in the console at the end of this `Line` for better readability.
         """
-        super().__init__(name, parent, target, newline)
+        # Setup custom aliases for node rendering
+        render_agents: Dict[str, Callable[..., str]] = {
+            "account_code": self._render_account_code,
+        }
+
+        super().__init__(name, parent, target, newline, agents=render_agents)
         self.asset_class = asset_class
         self.key = key if key is not None else name
         self.amount = amount
@@ -50,3 +57,6 @@ class Line(Node):
     def get_amount(self) -> float:
         """:returns: The amount invested in this line."""
         return self.amount
+
+    def _render_account_code(self) -> str:
+        return f"[{self.envelope.code}] " if self.envelope else ""

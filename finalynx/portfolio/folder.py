@@ -124,7 +124,7 @@ class Folder(Node):
         success = False
         for child in self.children:
             if isinstance(child, Line) and child.key == key:
-                child.amount = amount
+                child.amount += amount
                 success = True
             elif isinstance(child, Folder) and child.set_child_amount(key, amount):
                 success = True

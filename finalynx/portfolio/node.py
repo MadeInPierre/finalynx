@@ -50,8 +50,8 @@ class Node(Hierarchy, Render):
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
-            "[console]": "[target][dim white][prehint][/] [name_color][name][/] [dim white][hint][/][newline]",
-            "[console_targets]": "[bold green][goal][/][name_color][name][/][newline]",
+            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
+            "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",
             "[dashboard_console]": "[bold][target][/][bright_black][prehint][/] [name_color][name][/] [bright_black][hint][/][newline]",
@@ -117,7 +117,7 @@ class Node(Hierarchy, Render):
     def _render_prehint(self) -> str:
         """:returns: A formatted rendering of a pre-hint message (next to the amount by default)."""
         prehint = self.target.prehint()
-        return f" ({prehint})" if prehint else ""
+        return " " + prehint if prehint else ""
 
     def _render_amount(self, hide_amounts: bool = False) -> str:
         """:returns: A formatted rendering of the node amount aligned with the other

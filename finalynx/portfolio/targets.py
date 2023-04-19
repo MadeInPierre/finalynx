@@ -208,11 +208,19 @@ class TargetRatio(TargetRange):
 
     def prehint(self) -> str:
         """:returns: A rich-formatted view of the calculated percentage."""
-        return f"{round(self.get_ratio()):>2}%"
+        if not self.parent or not self.parent.parent:
+            raise ValueError("Target's parent must be set.")
+
+        max_length = 0
+        for child in self.parent.parent.children:
+            if isinstance(child.target, TargetRatio):
+                max_length = max(max_length, len(str(round(child.target.get_ideal()))))
+
+        return f"→ {self.get_ideal():>{max_length}} €"
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"→ {self.get_ideal()} € ({self.target_ratio}%)"
+        return f"{round(self.get_ratio())}% → {self.target_ratio}%"
 
 
 class TargetGlobalRatio(TargetRatio):
@@ -236,4 +244,4 @@ class TargetGlobalRatio(TargetRatio):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"→ Global {self.target_ratio}%"
+        return f"Global {round(self.get_ratio())}% → {self.target_ratio}%"

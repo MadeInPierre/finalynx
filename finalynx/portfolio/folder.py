@@ -5,6 +5,8 @@ from typing import Optional
 from typing import TYPE_CHECKING
 
 import numpy as np
+from finalynx.console import console
+from finalynx.portfolio.targets import TargetRatio
 from rich.tree import Tree
 
 from .constants import AssetClass
@@ -84,7 +86,7 @@ class Folder(Node):
         output_format: str = "[console]",
         _tree: Optional[Tree] = None,
         hide_root: bool = False,
-        **render_args: Any
+        **render_args: Any,
     ) -> Tree:
         """Generate a fully rendered `Tree` object from the `rich` package using the
 
@@ -109,8 +111,16 @@ class Folder(Node):
         values have been fetched from Finary. Folders do not have any processing procedure.
         Here, we only call the `process()` method of all children.
         """
+        total_ratio = 0.0
+
         for child in self.children:
             child.process()
+
+            if isinstance(child.target, TargetRatio):
+                total_ratio += child.target.target_ratio
+
+        if total_ratio != 0 and total_ratio != 100:
+            console.log(f"[yellow][bold]WARNING:[/] Folder '{self.name}' total ratio should sum to 100.")
 
     def set_child_amount(self, key: str, amount: float) -> bool:
         """Used by the `fetch` subpackage to

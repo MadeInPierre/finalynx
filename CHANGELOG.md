@@ -2,6 +2,24 @@
 
 <!--next-version-placeholder-->
 
+## v1.7.0 (2023-04-20)
+### Feature
+* **folder:** Display warning if the sum of ratios != 100 ([`88068b9`](https://github.com/MadeInPierre/finalynx/commit/88068b965cfbccad1f22b13b12634b0af04c6295))
+* **portfolio:** Display account in front of lines ([`b4456ee`](https://github.com/MadeInPierre/finalynx/commit/b4456ee6b548a7860d52c15fc1a1597db5e89e24))
+* **node:** Format option to display the tree with targets only ([`968506d`](https://github.com/MadeInPierre/finalynx/commit/968506d3f8d3adb8ded9a6679a910af0a72d896c))
+* **simulator:** Create barebones simulation with invest states ([`04320f6`](https://github.com/MadeInPierre/finalynx/commit/04320f6e32f4d225d68a893c5f325f8109a84dce))
+* Add envelopes and plot them in dashboard ([`c650ec3`](https://github.com/MadeInPierre/finalynx/commit/c650ec31a92442a931c8cce90555e6a6a17b7fce))
+* **dashboard:** Add basic newline support ([`d55e7d2`](https://github.com/MadeInPierre/finalynx/commit/d55e7d263ee847bfc2b85746d5d3cca5b1f0fca4))
+* **dashboard:** Nice web tree with colors and icons ([`3d5db42`](https://github.com/MadeInPierre/finalynx/commit/3d5db423942d7ec6a16f7136abf5cfee39c5f8ca))
+* **portfolio:** Can set the asset class in parent for all children ([`6bba5df`](https://github.com/MadeInPierre/finalynx/commit/6bba5df09f95faae3174a6624840155a4e250a55))
+* **dashboard:** Can now customize the color map ([`8e9b862`](https://github.com/MadeInPierre/finalynx/commit/8e9b8620181f15c2f3d3739ad73bc2ba448378ea))
+* **dashboard:** Click on a node to show its asset classes ([`0136d9e`](https://github.com/MadeInPierre/finalynx/commit/0136d9ec68fdbc735a0c3418955efeea502db81d))
+* **analyzer:** Add asset classes and plot chart ([`2343b65`](https://github.com/MadeInPierre/finalynx/commit/2343b654373a96ec2abb20f997634d0b4f332462))
+
+### Fix
+* **fetch:** Add amounts for lines with same id ([`8dbc7cf`](https://github.com/MadeInPierre/finalynx/commit/8dbc7cfc95bab7337275d93600e3b4a4bd22d620))
+* **dashboard:** Display collapsed/line folders on the web ([`9914a0f`](https://github.com/MadeInPierre/finalynx/commit/9914a0fcbc9c007a080424d99b8842f8b5c2d071))
+
 ## v1.6.0 (2023-03-31)
 ### Feature
 * **targets:** Ratio targets now show the ideal absolute amount to reach ([`8bf0aac`](https://github.com/MadeInPierre/finalynx/commit/8bf0aac72af3e7cb82e9af2f82c4af14bbea2b5b))

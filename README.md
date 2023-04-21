@@ -63,15 +63,10 @@ Assistant(portfolio).run()
 
 You can now populate the `Portfolio` class with your own custom hierarchy by taking inspiration from the [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) example or by reading the [Getting Started](https://finalynx.readthedocs.io/en/latest/tutorials/getting_started.html) guide in the documentation. For additional details, checkout the full [API Reference](https://finalynx.readthedocs.io/en/latest/apidocs/index.html) or [ask a question](https://github.com/MadeInPierre/finalynx/discussions/new?category=q-a).
 
-Don't forget to try out the web dashboard (under construction 🚧):
-```sh
-python your_config.py dashboard  # type --help for options
-```
-
 Once you have a fully defined portfolio tree with sensible targets, you can display how much you need to invest in each line using:
 
 ```sh
-python your_config.py --format="[console_delta]"
+python your_config.py delta  # type --help for other options, like launching a web dashboard!
 ```
 
 ## 👨‍💻 Feedback & Contributions

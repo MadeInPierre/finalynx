@@ -52,6 +52,7 @@ class Assistant:
         hide_amounts: bool = False,
         hide_root: bool = False,
         show_data: bool = False,
+        hide_deltas: bool = False,
         launch_dashboard: bool = False,
         output_format: str = "[console]",
     ):
@@ -68,6 +69,7 @@ class Assistant:
         self.show_data = show_data
         self.launch_dashboard = launch_dashboard
         self.output_format = output_format
+        self.hide_deltas = hide_deltas
 
         self._parse_args()
 
@@ -75,7 +77,6 @@ class Assistant:
         """Internal method that parses the command-line options and activates the options
         in the corresponding modules.
         """
-
         args = docopt(__doc__, version=__version__)
         if args["--ignore-orphans"]:
             self.ignore_orphans = True
@@ -94,6 +95,16 @@ class Assistant:
             self.launch_dashboard = True
         if args["--format"]:
             self.output_format = args["--format"]
+        if args["delta"]:
+            self.output_format = "[console_delta]"
+        if args["targets"]:
+            self.output_format = "[console_targets]"
+            self.hide_deltas = True
+        if args["text"]:
+            self.output_format = "[text]"
+            self.hide_deltas = True
+        if args["--hide-deltas"]:
+            self.hide_deltas = True
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -124,7 +135,7 @@ class Assistant:
         ]
 
         # Display deltas only if not already printed in the main tree
-        if "delta" not in self.output_format:
+        if not self.hide_deltas and "delta" not in self.output_format:
             render.append(self.portfolio.tree_delta())
 
         # Final set of results to be displayed

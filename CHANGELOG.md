@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.8.0 (2023-04-21)
+### Feature
+* **portfolio:** New 'console_delta' output format ([`35757ed`](https://github.com/MadeInPierre/finalynx/commit/35757edb33451e05059f85c05703621df38454a8))
+* **portfolio:** Display current amount to ideal delta ([`b9930fb`](https://github.com/MadeInPierre/finalynx/commit/b9930fbe1a156d3f2246ec9d901a73eee4c5b16b))
+
 ## v1.7.0 (2023-04-20)
 ### Feature
 * **folder:** Display warning if the sum of ratios != 100 ([`88068b9`](https://github.com/MadeInPierre/finalynx/commit/88068b965cfbccad1f22b13b12634b0af04c6295))

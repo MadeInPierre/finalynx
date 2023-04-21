@@ -50,7 +50,7 @@ class Node(Hierarchy, Render):
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
-            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
+            "[console]": "[target] [account_code][name_color][name][/] [dim white][hint][/][newline]",
             "[console_delta]": "[delta][account_code][name_color][name][/] [newline]",
             "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
@@ -161,7 +161,12 @@ class Node(Hierarchy, Render):
         if check == Target.RESULT_OK:
             return "[green]✓[/] "
         color = "green" if delta > 0 else "red"
-        return f"[{color}]{'+' if delta > 0 else ''}{delta} €[/] "
+        max_length = (
+            np.max([len(str(abs(round(c.get_delta())))) for c in self.parent.children])
+            if (self.parent and self.parent.children)
+            else 0
+        )
+        return f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} €[/] "
 
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""

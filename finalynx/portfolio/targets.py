@@ -32,6 +32,10 @@ class Target(Hierarchy):
             raise ValueError("[red]Target has no parent, not allowed.[/]")
         return self.parent.get_amount()
 
+    def get_ideal(self) -> float:
+        """:returns: The ideal amount to be invested based on surrounding targets."""
+        return 0.0
+
     def check(self) -> Dict[str, str]:
         """Default behavior to check if the parent's amount respects the target objective.
         This method should be overriden by all subclasses to define custom-tailored logic.
@@ -61,8 +65,13 @@ class Target(Hierarchy):
         number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
         return f'[{result["color"]}]{result["symbol"]} {number} €[/][dim white]{self.prehint()}[/]'
 
-    def render_goal(self) -> str:
+    def render_ideal(self) -> str:
         """Ideal amount to be reached based on the current target and node
+        position in the tree. Must be overridden by subclasses."""
+        return ""
+
+    def render_goal(self) -> str:
+        """Ideal amount or ratio to be reached based on the current target and node
         position in the tree. Must be overridden by subclasses."""
         return ""
 
@@ -109,10 +118,21 @@ class TargetRange(Target):
             return Target.RESULT_TOLERATED
         return Target.RESULT_DEVEST
 
-    def render_goal(self) -> str:
+    def get_ideal(self) -> float:
+        """:returns: The ideal amount to be invested based on surrounding targets."""
+        if self.target_min <= self.get_amount() <= self.target_max:
+            return self.get_amount()
+        elif self.get_amount() < self.target_min:
+            return self.target_min
+        return self.target_max
+
+    def render_ideal(self) -> str:
         """:returns: The average between target boundaries."""
-        goal_amount = round((self.target_min + self.target_max) / 2)
-        return f"{goal_amount} € "
+        return f"{round(self.get_ideal())} € "
+
+    def render_goal(self) -> str:
+        """:returns: Same as ideal amount."""
+        return f"{round(self.get_ideal())} € "
 
     def _get_variable(self) -> float:
         """Internal method that gives the value to be checked (overriden by subclasses)."""
@@ -133,9 +153,9 @@ class TargetMax(TargetRange):
         """
         super().__init__(0, target_max, tolerance)
 
-    def render_goal(self) -> str:
-        """:returns: The maximum target value."""
-        return f"{self.target_max} € "
+    def get_ideal(self) -> float:
+        """:returns: The ideal amount to be invested based on surrounding targets."""
+        return self.target_max
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
@@ -152,9 +172,9 @@ class TargetMin(TargetRange):
         """
         super().__init__(target_min, np.inf, tolerance)
 
-    def render_goal(self) -> str:
-        """:returns: The minimum target value."""
-        return f"{self.target_min} € "
+    def get_ideal(self) -> float:
+        """:returns: The ideal amount to be invested based on surrounding targets."""
+        return self.target_min
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""

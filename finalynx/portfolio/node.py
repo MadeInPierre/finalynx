@@ -50,7 +50,7 @@ class Node(Hierarchy, Render):
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
-            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
+            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/]     [delta][newline]",
             "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",
@@ -64,6 +64,8 @@ class Node(Hierarchy, Render):
             "newline": self._render_newline,
             "amount": self._render_amount,
             "goal": self._render_goal,
+            "ideal": self._render_ideal,
+            "delta": self._render_delta,
             "hint": self._render_hint,
             "prehint": self._render_prehint,
             "currency": self._render_currency,
@@ -77,6 +79,14 @@ class Node(Hierarchy, Render):
     def get_amount(self) -> float:
         """Virtual method that must be implemented by all subclasses."""
         raise NotImplementedError("Must be implemented by children classes")
+
+    def get_ideal(self) -> float:
+        """:returns: The ideal amount to be invested in this node based on surrounding targets."""
+        return self.target.get_ideal()
+
+    def get_delta(self) -> float:
+        """:returns: How much should be invested in this node to reach the ideal amount set by the target."""
+        return self.get_ideal() - self.get_amount()
 
     def tree(
         self,
@@ -104,6 +114,7 @@ class Node(Hierarchy, Render):
         values have been fetched from Finary. Here, this method is left as esmpty but can be
         overridden by subclasses.
         """
+        print(f"{self.name[:10]:<10}\t\t{self.get_amount()}\t{self.get_ideal()}")
         return  # Optional method for subclasses to process after fetch
 
     def _render_currency(self) -> str:
@@ -134,6 +145,16 @@ class Node(Hierarchy, Render):
 
     def _render_goal(self) -> str:
         return self.target.render_goal()
+
+    def _render_ideal(self) -> str:
+        return self.target.render_ideal()
+
+    def _render_delta(self) -> str:
+        delta = round(self.get_delta())
+        if self.target.check() == Target.RESULT_NONE or delta == 0:
+            return ""
+        color = "green" if delta > 0 else "red"
+        return f"[{color}]{'+' if delta > 0 else ''}{delta}[/]"
 
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""

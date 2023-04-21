@@ -21,7 +21,7 @@ def main_filter(message: str) -> str:
 __doc__ = f"""
 Finalynx command line v{__version__}
 Usage:
-  finalynx {main_filter(main_usage)}[targets | delta | text | --format=string] [dashboard] [options]
+  finalynx {main_filter(main_usage)}[targets | deltas | text | --format=string] [dashboard] [options]
   finalynx (-h | --help)
   finalynx (-v | --version)
 
@@ -34,7 +34,7 @@ Options:
   --hide-deltas        Don't show delta investment recommendations next to the tree
   --format=string      Customize the output format to your own style and information
   targets              Shortcut to --format="[console_targets]" (show target values instead of amounts)
-  delta                Shortcut to --format="[console_delta]" (show deltas instead of amounts)
+  deltas               Shortcut to --format="[console_deltas]" (show deltas instead of amounts)
   text                 Shortcut to --format="[console_text]" (no colors)
 
   -i --ignore-orphans  Ignore fetched lines that you didn't reference in your portfolio

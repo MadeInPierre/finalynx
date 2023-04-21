@@ -51,7 +51,7 @@ class Node(Hierarchy, Render):
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
             "[console]": "[target] [account_code][name_color][name][/] [dim white][hint][/][newline]",
-            "[console_delta]": "[delta][account_code][name_color][name][/] [newline]",
+            "[console_deltas]": "[delta][account_code][name_color][name][/] [newline]",
             "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",

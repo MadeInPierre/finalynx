@@ -1,11 +1,15 @@
+from typing import List
 from typing import Optional
+from typing import TYPE_CHECKING
 
 from docopt import docopt
-from finalynx import Copilot
 from finalynx import Dashboard
 from finalynx import FetchFinary
 from finalynx import Portfolio
-from finalynx import Simulator
+from finalynx.portfolio.envelope import Envelope
+from finalynx.portfolio.folder import Folder
+from finalynx.portfolio.folder import FolderDisplay
+from finalynx.portfolio.targets import Target
 from rich import inspect  # noqa F401
 from rich import pretty
 from rich import print  # noqa F401
@@ -13,6 +17,10 @@ from rich import traceback
 from rich.columns import Columns
 from rich.panel import Panel
 from rich.text import Text
+from rich.tree import Tree
+
+if TYPE_CHECKING:
+    from rich.console import ConsoleRenderable
 
 from .__meta__ import __version__
 from .console import console
@@ -44,8 +52,7 @@ class Assistant:
     def __init__(
         self,
         portfolio: Portfolio,
-        scenario: Optional[Simulator] = None,
-        copilot: Optional[Copilot] = None,
+        envelopes: Optional[List[Envelope]] = None,
         ignore_orphans: bool = False,
         clear_cache: bool = False,
         force_signin: bool = False,
@@ -57,8 +64,7 @@ class Assistant:
         output_format: str = "[console]",
     ):
         self.portfolio = portfolio
-        self.scenario = scenario if scenario else Simulator()  # TODO Coming soon
-        self.copilot = copilot if copilot else Copilot()  # TODO Coming soon
+        self.envelopes = envelopes if envelopes else []
 
         # Options that can either be set in the constructor or from the command line
         self.ignore_orphans = ignore_orphans
@@ -95,8 +101,8 @@ class Assistant:
             self.launch_dashboard = True
         if args["--format"]:
             self.output_format = args["--format"]
-        if args["delta"]:
-            self.output_format = "[console_delta]"
+        if args["deltas"]:
+            self.output_format = "[console_deltas]"
         if args["targets"]:
             self.output_format = "[console_targets]"
             self.hide_deltas = True
@@ -120,10 +126,10 @@ class Assistant:
         self.portfolio.process()
 
         # Simulate the portolio's evolution through the years by auto-investing each month
-        simulation = self.scenario.rich_simulation(self.portfolio)  # noqa TODO
+        # simulation = self.scenario.rich_simulation(self.portfolio)  # noqa TODO
 
         # Get recommendations for immediate investment operations
-        recommentations = self.copilot.rich_recommendations(self.portfolio)  # noqa TODO
+        # recommentations = self.copilot.rich_recommendations(self.portfolio)  # noqa TODO
 
         # Items to be rendered as a row
         render = [
@@ -139,11 +145,14 @@ class Assistant:
             render.append(self.portfolio.tree_delta())
 
         # Final set of results to be displayed
-        panels = [Columns([Text("  ")] + render)]  # type: ignore
+        panels: List[ConsoleRenderable] = [
+            Columns([Text("  ")] + render),  # type: ignore
+            Panel(self.render_envelopes(), title="Envelope investments", padding=(1, 2), expand=False),
+        ]
 
         # Show the data fetched from Finary if specified
         if self.show_data:
-            panels.append(Panel(finary_tree, title="Finary data"))  # type: ignore
+            panels.append(Panel(finary_tree, title="Finary data"))
 
         # Display the entire portfolio and associated recommendations
         console.print("\n", Columns(panels, padding=(2, 10)), "\n")
@@ -152,3 +161,42 @@ class Assistant:
         if self.launch_dashboard:
             console.log("Launching dashboard.")
             Dashboard().run(portfolio=self.portfolio)
+
+    def render_envelopes(self) -> Tree:  # TODO missing deltas for folders as lines (e.g. ramify, or)
+        """Sort lines with non-zero deltas by envelopes and display them as
+        a summary of transfers to make."""
+        tree = Tree("Envelopes", hide_root=True)
+
+        for env in self.envelopes:
+            children, env_delta = [], 0.0
+            for line in env.lines:
+                delta = line.get_delta()
+                env_delta += delta
+                if delta != 0 and line.target.check() not in [Target.RESULT_NONE, Target.RESULT_OK]:
+                    children.append(line.render(output_format="[delta] [name]"))
+
+            if children:
+                env_delta = round(env_delta)
+                render_delta = f"[{'green' if env_delta > 0 else 'red'}]{'+' if env_delta > 0 else ''}{env_delta} €"
+                node = tree.add(f"{render_delta} [dodger_blue2 bold]{env.name}")
+                for child in children:
+                    node.add(child)
+                node.children[-1].label += "\n"  # type: ignore
+
+        def _get_collapsed_folders(node: Folder) -> List[Folder]:
+            found = []
+            for child in node.children:
+                if isinstance(child, Folder):
+                    if child.display == FolderDisplay.EXPANDED:
+                        found += _get_collapsed_folders(child)
+                    else:
+                        found.append(child)
+            return found
+
+        node = tree.add("[dodger_blue2 bold]Collapsed folders")
+        collapsed_folders = _get_collapsed_folders(self.portfolio)
+        for f in collapsed_folders:
+            if f.get_delta() != 0:
+                node.add(f.render(output_format="[delta] [name]"))
+
+        return tree

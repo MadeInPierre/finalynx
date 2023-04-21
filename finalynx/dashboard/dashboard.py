@@ -100,81 +100,92 @@ class Dashboard:
         # with ui.footer(value=True).style('background-color: #3874c8'):
         #     ui.label('FOOTER')
 
-        with ui.tabs() as tabs:
-            ui.tab("Portfolio", icon="home")
-            ui.tab("Analysis", icon="info")
+        # with ui.tabs() as tabs:
+        #     ui.tab("Portfolio", icon="home")
+        #     ui.tab("Analysis", icon="info")
 
-        with ui.tab_panels(tabs, value="Portfolio"):
-            with ui.tab_panel("Portfolio"):
-                self.portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio)
-                max_id = self._add_ids_to_tree(self.portfolio_dict)
+        # with ui.tab_panels(tabs, value="Portfolio"):
+        #     with ui.tab_panel("Portfolio"):
+        #         pass
+        #     with ui.tab_panel("Analysis"):
+        #         pass
 
-                # with ui.card_section().style("padding: 20px 40px"):
-                #     ui.markdown(f"#### {self.portfolio_dict['label']}").classes("text-center").style(
-                #         "padding: 0 0 10px 0"
-                #     )
-                #     tree = ui.tree(
-                #         self.portfolio_dict["children"],
-                #         on_expand=self._on_tree_expand,
-                #         on_select=self._on_tree_select,
-                #         on_tick=self._on_tree_tick,
-                #     ).props("selected-color=secondary")
-                #     tree._props["expanded"] = list(range(max_id))
+        with ui.column():
+            self.hey = ui.markdown(f"#### {self.selected_node.name}").classes("text-center")
 
-                ui.markdown(f"#### {portfolio.render('[dashboard_tree]')}").classes("text-center")
+            with ui.splitter(value=50).classes("w-full") as splitter:
+                with splitter.before:
+                    self.portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio)
+                    max_id = self._add_ids_to_tree(self.portfolio_dict)
 
-                with ui.tree(
-                    self.portfolio_dict["children"],
-                    on_select=self._on_tree_select,
-                ) as tree:
-                    tree._props["expanded"] = list(range(max_id))
-                    tree.props("dense")
+                    # with ui.card_section().style("padding: 20px 40px"):
+                    #     ui.markdown(f"#### {self.portfolio_dict['label']}").classes("text-center").style(
+                    #         "padding: 0 0 10px 0"
+                    #     )
+                    #     tree = ui.tree(
+                    #         self.portfolio_dict["children"],
+                    #         on_expand=self._on_tree_expand,
+                    #         on_select=self._on_tree_select,
+                    #         on_tick=self._on_tree_tick,
+                    #     ).props("selected-color=secondary")
+                    #     tree._props["expanded"] = list(range(max_id))
 
-                    tree.add_slot(
-                        "default-header",
-                        """
-                            <q-icon v-if="props.node.icon !== 'menu'" v-bind="{ name: props.node.icon, color: props.node.color }" size="20px"/>
-                            <span :props="props">
-                                <strong>
-                                    <span :style="{ color: props.node.color }">&nbsp;{{ props.node.amount }} €</span>
-                                </strong>
-                                <strong v-if="props.node.is_folder">
-                                    <span style="color: #455A64">&nbsp;{{ props.node.name }}</span>
-                                </strong>
-                                <span v-else style="color: black">&nbsp;{{ props.node.name }}</span>
-                                <span style="color: grey">&nbsp;{{ props.node.hint }}</span>
-                            </span>
+                    # ui.markdown(f"#### {portfolio.render('[dashboard_tree]')}").classes("text-center")
+
+                    with ui.tree(
+                        self.portfolio_dict["children"],
+                        on_select=self._on_tree_select,
+                    ) as tree:
+                        tree._props["expanded"] = list(range(max_id))
+                        tree.props("dense")
+
+                        tree.add_slot(
+                            "default-header",
+                            """
+                                <q-icon v-if="props.node.icon !== 'menu'" v-bind="{ name: props.node.icon, color: props.node.color }" size="20px"/>
+                                <span :props="props">
+                                    <strong>
+                                        <span :style="{ color: props.node.color }">&nbsp;{{ props.node.amount }} €</span>
+                                    </strong>
+                                    <strong v-if="props.node.is_folder">
+                                        <span style="color: #455A64">&nbsp;{{ props.node.name }}</span>
+                                    </strong>
+                                    <span v-else style="color: black">&nbsp;{{ props.node.name }}</span>
+                                    <span style="color: grey">&nbsp;{{ props.node.hint }}</span>
+                                </span>
+                            """,
+                        )
+
+                        tree.add_slot(
+                            "default-body",
+                            """
+                            <span v-if="props.node.newline == true" :props="props">&nbsp;</span>
                         """,
-                    )
+                        )
 
-                    tree.add_slot(
-                        "default-body",
-                        """
-                        <span v-if="props.node.newline == true" :props="props">&nbsp;</span>
-                    """,
-                    )
+                    # dashboard_console = Console(record=True)
+                    # dashboard_console.print(portfolio.tree(output_format="[dashboard_console]", hide_root=True))
+                    # ui.html(dashboard_console.export_html())
 
-                # dashboard_console = Console(record=True)
-                # dashboard_console.print(portfolio.tree(output_format="[dashboard_console]", hide_root=True))
-                # ui.html(dashboard_console.export_html())
+                with splitter.after:
+                    with ui.column():
+                        self.chart_simulator = ui.chart(Simulator().chart(portfolio))
+                        self.chart_asset_classes = ui.chart(
+                            AnalyzeAssetClasses(self.selected_node).chart(self.color_map)
+                        )
+                        self.chart_envelope_states = ui.chart(
+                            AnalyzeInvestmentStates(self.selected_node).chart(date.today())
+                        )
+                        self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
 
-            with ui.tab_panel("Analysis"):
-                self.hey = ui.markdown(f"#### {self.selected_node.name}")
-                with ui.column():
-                    self.chart_simulator = ui.chart(Simulator().chart(portfolio))
-                    self.chart_asset_classes = ui.chart(AnalyzeAssetClasses(self.selected_node).chart(self.color_map))
-                    self.chart_envelope_states = ui.chart(
-                        AnalyzeInvestmentStates(self.selected_node).chart(date.today())
-                    )
-                    self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
-
-        # with ui.splitter(value=40).classes("w-full") as splitter:
-        #     with splitter.before:
-        #         ui.label("This is the first tab")
-        #     with splitter.after:
-        #         ui.label("This is the second tab")
-
-        ui.run(title="Finalynx Dashboard", favicon=self._url_logo, reload=True, show=True, host="0.0.0.0")
+        ui.run(
+            title="Finalynx Dashboard",
+            favicon=self._url_logo,
+            reload=False,
+            show=False,
+            host="0.0.0.0",
+            native=False,
+        )
 
     def _on_tree_expand(self, event: Any) -> None:
         console.log(event)

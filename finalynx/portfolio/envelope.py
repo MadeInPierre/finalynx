@@ -56,6 +56,13 @@ class PEA(Envelope):
         super().__init__(name, code, date_created, date_unlock, date_unlock)
 
 
+class PEE(Envelope):
+    def __init__(self, name: str, code: str, date_created: date, date_unlock: Optional[date] = None):
+        if not date_unlock:
+            date_unlock = date_created + relativedelta(years=5)
+        super().__init__(name, code, date_created, date_unlock, date_unlock)
+
+
 class AV(Envelope):
     def __init__(self, name: str, code: str, date_created: date):
         date_untax = date_created + relativedelta(years=8)

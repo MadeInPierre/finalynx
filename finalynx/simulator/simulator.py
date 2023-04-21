@@ -34,7 +34,9 @@ class Simulator:
         analyzer = AnalyzeInvestmentStates(portfolio)
         data: Dict[str, List[float]] = {c.value: [] for c in EnvelopeState}
 
-        for year in range(2000, 2100):
+        date_start, date_end = 2022, 2085  # TODO set as parameter in dashboard/options
+
+        for year in range(date_start, date_end):
             result = analyzer.analyze(date(year, 1, 1))
             for key, value in result.items():
                 data[key].append(value)
@@ -51,12 +53,12 @@ class Simulator:
             "chart": {"plotBackgroundColor": None, "plotBorderWidth": None, "plotShadow": False, "type": "area"},
             "title": {"text": "Simulation", "align": "center"},
             "plotOptions": {
-                "series": {"pointStart": 2000},
+                "series": {"pointStart": date_start},
                 "area": {
                     "stacking": "normal",
                     "lineColor": "#666666",
                     "lineWidth": 1,
-                    "marker": {"lineWidth": 1, "lineColor": "#666666"},
+                    "marker": {"lineWidth": 1, "lineColor": "#666666", "enabled": False},
                 },
             },
             "series": [{"name": key, "data": value, "color": colors[key]} for key, value in data.items()],

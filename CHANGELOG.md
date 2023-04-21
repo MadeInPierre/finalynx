@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.8.2 (2023-04-21)
+### Fix
+* **delta:** Solved misalignment when using collapsed folders ([`ef540e5`](https://github.com/MadeInPierre/finalynx/commit/ef540e51ddc2626c45d05194aa8f0af4138abbbe))
+* **delta:** Add investment summary sorted by envelope ([`1d679be`](https://github.com/MadeInPierre/finalynx/commit/1d679be039e1458fb865844f080bf59dbbb36038))
+
 ## v1.8.1 (2023-04-21)
 ### Fix
 * **delta:** Add format shorcuts as command line options ([`3eee961`](https://github.com/MadeInPierre/finalynx/commit/3eee9614042302d0de031d1ff8ddf55ab8b810b6))

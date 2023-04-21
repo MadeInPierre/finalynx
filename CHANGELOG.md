@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.8.1 (2023-04-21)
+### Fix
+* **delta:** Add format shorcuts as command line options ([`3eee961`](https://github.com/MadeInPierre/finalynx/commit/3eee9614042302d0de031d1ff8ddf55ab8b810b6))
+
 ## v1.8.0 (2023-04-21)
 ### Feature
 * **portfolio:** New 'console_delta' output format ([`35757ed`](https://github.com/MadeInPierre/finalynx/commit/35757edb33451e05059f85c05703621df38454a8))

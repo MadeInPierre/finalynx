@@ -108,13 +108,19 @@ class Folder(Node):
 
     def tree_delta(self, _tree: Optional[Tree] = None) -> Tree:
         """Generates a tree with delta amounts to be invested to reach the ideal portfolio allocation."""
-        render = self._render_delta() + ("\n" if self.newline else "")
+        render = self._render_delta()
 
+        # Follow the same print policy as the main tree
+        if self.display == FolderDisplay.COLLAPSED and self.newline:
+            render += "\n"
+
+        # Add every element to the root to create a flat tree
         if not _tree:
             _tree = Tree(render, hide_root=True)
         else:
             _tree.add(render)
 
+        # Add children if they are displayed in the main tree as well
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
                 child.tree_delta(_tree=_tree)

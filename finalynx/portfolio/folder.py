@@ -106,6 +106,20 @@ class Folder(Node):
                 child.tree(output_format=output_format, _tree=node, **render_args)
         return node
 
+    def tree_delta(self, _tree: Optional[Tree] = None) -> Tree:
+        """Generates a tree with delta amounts to be invested to reach the ideal portfolio allocation."""
+        render = self._render_delta() + ("\n" if self.newline else "")
+
+        if not _tree:
+            _tree = Tree(render, hide_root=True)
+        else:
+            _tree.add(render)
+
+        if self.display == FolderDisplay.EXPANDED:
+            for child in self.children:
+                child.tree_delta(_tree=_tree)
+        return _tree
+
     def process(self) -> None:
         """Some `Node` or `Target` objects might need to process some data once the investment
         values have been fetched from Finary. Folders do not have any processing procedure.

@@ -12,6 +12,7 @@ from rich import print  # noqa F401
 from rich import traceback
 from rich.columns import Columns
 from rich.panel import Panel
+from rich.text import Text
 
 from .__meta__ import __version__
 from .console import console
@@ -113,27 +114,28 @@ class Assistant:
         # Get recommendations for immediate investment operations
         recommentations = self.copilot.rich_recommendations(self.portfolio)  # noqa TODO
 
-        # Final set of results to be displayed
-        panels = [
-            Panel(
-                self.portfolio.tree(
-                    output_format=self.output_format,
-                    hide_root=self.hide_root,
-                    hide_amounts=self.hide_amounts,
-                ),
-                title=self.portfolio.name,
-                padding=(1, 4),
+        # Items to be rendered as a row
+        render = [
+            self.portfolio.tree(
+                output_format=self.output_format,
+                hide_root=self.hide_root,
+                hide_amounts=self.hide_amounts,
             ),
-            # Panel(simulation, title='Simulation'),   # TODO Coming soon
-            # Panel(recommendations, title='Advisor'), # TODO Coming soon
         ]
+
+        # Display deltas only if not already printed in the main tree
+        if "delta" not in self.output_format:
+            render.append(self.portfolio.tree_delta())
+
+        # Final set of results to be displayed
+        panels = [Columns([Text("  ")] + render)]  # type: ignore
 
         # Show the data fetched from Finary if specified
         if self.show_data:
-            panels.append(Panel(finary_tree, title="Finary data"))
+            panels.append(Panel(finary_tree, title="Finary data"))  # type: ignore
 
         # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(panels, padding=(2, 10)))
+        console.print("\n", Columns(panels, padding=(2, 10)), "\n")
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:

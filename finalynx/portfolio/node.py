@@ -50,7 +50,8 @@ class Node(Hierarchy, Render):
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
-            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/]     [delta][newline]",
+            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
+            "[console_delta]": "[delta][account_code][name_color][name][/] [newline]",
             "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",
@@ -109,12 +110,16 @@ class Node(Hierarchy, Render):
         render = self.render(output_format, **render_args)
         return _tree.add(render) if _tree else Tree(render, hide_root=hide_root)
 
+    def tree_delta(self, _tree: Optional[Tree] = None) -> Tree:
+        """Generates a tree with delta amounts to be invested to reach the ideal portfolio allocation."""
+        render = self._render_delta() + ("\n" if self.newline else "")
+        return _tree.add(render) if _tree else Tree(render, hide_root=True)
+
     def process(self) -> None:
         """Some `Node` or `Target` objects might need to process some data once the investment
         values have been fetched from Finary. Here, this method is left as esmpty but can be
         overridden by subclasses.
         """
-        print(f"{self.name[:10]:<10}\t\t{self.get_amount()}\t{self.get_ideal()}")
         return  # Optional method for subclasses to process after fetch
 
     def _render_currency(self) -> str:
@@ -150,11 +155,13 @@ class Node(Hierarchy, Render):
         return self.target.render_ideal()
 
     def _render_delta(self) -> str:
-        delta = round(self.get_delta())
-        if self.target.check() == Target.RESULT_NONE or delta == 0:
+        delta, check = round(self.get_delta()), self.target.check()
+        if delta == 0 or check == Target.RESULT_NONE:
             return ""
+        if check == Target.RESULT_OK:
+            return "[green]✓[/] "
         color = "green" if delta > 0 else "red"
-        return f"[{color}]{'+' if delta > 0 else ''}{delta}[/]"
+        return f"[{color}]{'+' if delta > 0 else ''}{delta} €[/] "
 
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""

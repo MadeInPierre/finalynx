@@ -33,6 +33,8 @@ class Render:
         :returns: A string representation of the instance based on the output format.
         """
 
+        # TODO automatically add a space between components instead of hardcoding everywhere?
+
         # Utility method used below
         def safe_len(obj: Any) -> int:
             return len(obj) if obj else 0

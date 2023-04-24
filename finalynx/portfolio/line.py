@@ -1,3 +1,4 @@
+from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import Optional
@@ -67,3 +68,15 @@ class Line(Node):
 
     def _render_account_code(self) -> str:
         return f"[{self.envelope.code}] " if self.envelope else ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "asset_class": self.asset_class.value,
+            "key": self.key,
+            "amount": self.amount,
+            "target": self.target.to_dict(),
+            "envelope_name": self.envelope.name if self.envelope else "",
+            "perf": self.perf.__dict__,
+            "newline": self.newline,
+        }

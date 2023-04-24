@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -236,3 +237,12 @@ class Folder(Node):
             return self.target.render_ideal()
         ideal = float(np.sum([c.get_ideal() for c in self.children]))
         return f"{round(ideal)} € " if ideal else ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "target": self.target.to_dict(),
+            "children": [child.to_dict() for child in self.children],
+            "newline": self.newline,
+            "display": self.display.value,
+        }

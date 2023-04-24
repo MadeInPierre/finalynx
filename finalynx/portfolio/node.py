@@ -200,3 +200,6 @@ class Node(Hierarchy, Render):
     def __str__(self) -> str:
         """:returns: The formatted console rendering of this node."""
         return self.render()
+
+    def to_dict(self) -> Dict[str, Any]:
+        raise NotImplementedError("Must be overridden by subclasses.")

@@ -1,3 +1,6 @@
+import json
+import os
+from datetime import date
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
@@ -6,6 +9,7 @@ from docopt import docopt
 from finalynx import Dashboard
 from finalynx import FetchFinary
 from finalynx import Portfolio
+from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.folder import FolderDisplay
@@ -52,6 +56,7 @@ class Assistant:
     def __init__(
         self,
         portfolio: Portfolio,
+        buckets: Optional[List[Bucket]] = None,
         envelopes: Optional[List[Envelope]] = None,
         ignore_orphans: bool = False,
         clear_cache: bool = False,
@@ -64,6 +69,7 @@ class Assistant:
         output_format: str = "[console]",
     ):
         self.portfolio = portfolio
+        self.buckets = buckets if buckets else []
         self.envelopes = envelopes if envelopes else []
 
         # Options that can either be set in the constructor or from the command line
@@ -163,6 +169,9 @@ class Assistant:
         console.print("\n", Columns(render, padding=(2, 2)), "\n")  # type: ignore
         console.print(Columns(panels, padding=(2, 2)), "\n")
 
+        # Save the current portfolio to a file. Useful for statistics later
+        self.export("")  # TODO
+
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:
             console.log("Launching dashboard.")
@@ -219,5 +228,22 @@ class Assistant:
             for f in collapsed_folders:
                 if f.get_delta() != 0:
                     node.add(f.render(output_format="[delta] [name]"))
-
         return tree
+
+    def export(self, dirpath: str) -> None:
+        """Save everything in a JSON file. Can be used for data analysis in future
+        or by other projects.
+        :param dirpath: Path to the directory where the file will be saved.
+        """
+        today = date.today().isoformat()
+        full_path = os.path.join(dirpath, f"finalynx_{today}.json")
+
+        final_dict = {
+            "date": today,
+            "envelopes": [e.to_dict() for e in self.envelopes],
+            "buckets": [b.to_dict() for b in self.buckets],
+            "portfolio": self.portfolio.to_dict(),
+        }
+
+        with open(full_path, "w") as f:
+            f.write(json.dumps(final_dict, indent=4))

@@ -1,5 +1,7 @@
 from datetime import date
 from enum import Enum
+from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -48,6 +50,15 @@ class Envelope:
             return EnvelopeState.TAXED
         else:
             return EnvelopeState.FREE
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "code": self.code,
+            "date_created": self.date_created.isoformat(),
+            "date_unlock": self.date_unlock.isoformat(),
+            "date_untax": self.date_untax.isoformat(),
+        }
 
 
 class PEA(Envelope):

@@ -28,7 +28,8 @@ class Bucket:
     with only the specified amount, while keeping track of what has been already used.
     """
 
-    def __init__(self, lines: List["Line"]):
+    def __init__(self, name: str, lines: List["Line"]):
+        self.name = name
         self.lines = [] if lines is None else lines
         self._prev_amount_used: float = 0
         self.amount_used: float = 0
@@ -78,6 +79,12 @@ class Bucket:
     def get_used_amount(self) -> float:
         return self.amount_used
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "lines": [line.to_dict() for line in self.lines],
+        }
+
 
 class SharedFolder(Folder):
     def __init__(
@@ -123,3 +130,13 @@ class SharedFolder(Folder):
             elif isinstance(child, Folder) and child.set_child_amount(key, amount):
                 success = True
         return success
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "bucket_name": self.bucket.name,
+            "target_amount": self.target_amount,
+            "target": self.target.to_dict(),
+            "newline": self.newline,
+            "display": self.display.value,
+        }

@@ -147,7 +147,7 @@ class Assistant:
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
             Columns([Text("  ")] + render),  # type: ignore
-            Panel(self.render_envelopes(), title="Envelope investments", padding=(1, 2), expand=False),
+            Panel(self.render_envelopes(), title="Investments Summary", padding=(1, 2), expand=False),
         ]
 
         # Show the data fetched from Finary if specified
@@ -171,8 +171,8 @@ class Assistant:
             children, env_delta = [], 0.0
             for line in env.lines:
                 delta = line.get_delta()
-                env_delta += delta
                 if delta != 0 and line.target.check() not in [Target.RESULT_NONE, Target.RESULT_OK]:
+                    env_delta += delta
                     children.append(line.render(output_format="[delta] [name]"))
 
             if children:
@@ -193,10 +193,11 @@ class Assistant:
                         found.append(child)
             return found
 
-        node = tree.add("[dodger_blue2 bold]Collapsed folders")
         collapsed_folders = _get_collapsed_folders(self.portfolio)
-        for f in collapsed_folders:
-            if f.get_delta() != 0:
-                node.add(f.render(output_format="[delta] [name]"))
+        if collapsed_folders:
+            node = tree.add("[dodger_blue2 bold]Collapsed folders")
+            for f in collapsed_folders:
+                if f.get_delta() != 0:
+                    node.add(f.render(output_format="[delta] [name]"))
 
         return tree

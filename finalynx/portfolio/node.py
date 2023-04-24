@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from rich.tree import Tree
 
+from .constants import LinePerf
 from .hierarchy import Hierarchy
 from .render import Render
 from .targets import Target
@@ -51,7 +52,9 @@ class Node(Hierarchy, Render):
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
             "[console]": "[target] [account_code][name_color][name][/] [dim white][hint][/][newline]",
-            "[console_deltas]": "[delta][account_code][name_color][name][/] [newline]",
+            "[console_ideal]": "[bold green][ideal][/][account_code][name_color][name][/][newline]",
+            "[console_deltas]": "[delta][account_code][name_color][name][/][newline]",
+            "[console_perf]": "[bold green][perf][/][account_code][name_color][name][/][newline]",
             "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",
@@ -67,6 +70,7 @@ class Node(Hierarchy, Render):
             "goal": self._render_goal,
             "ideal": self._render_ideal,
             "delta": self._render_delta,
+            "perf": self._render_perf,
             "hint": self._render_hint,
             "prehint": self._render_prehint,
             "currency": self._render_currency,
@@ -88,6 +92,10 @@ class Node(Hierarchy, Render):
     def get_delta(self) -> float:
         """:returns: How much should be invested in this node to reach the ideal amount set by the target."""
         return self.get_ideal() - self.get_amount()
+
+    def get_perf(self) -> LinePerf:
+        """:returns: The expected yearly performance of this node."""
+        raise NotImplementedError("Must be overridden by children classes")
 
     def tree(
         self,
@@ -168,12 +176,17 @@ class Node(Hierarchy, Render):
         )
         return f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} €[/] "
 
+    def _render_perf(self) -> str:
+        """:returns: A formatted rendering of the node's expected yearly performance."""
+        perf = self.get_perf()
+        return f"[{'strike ' if perf.skip else ''}bold green]{perf.expected:.1f} %[/] " if perf else ""
+
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""
         return self.name
 
     def _render_name_color(self) -> str:
-        """:returns: A formatted rendering of the node name."""
+        """:returns: A formatted rendering of the node name's color."""
         return "[black]"
 
     def _render_newline(self) -> str:

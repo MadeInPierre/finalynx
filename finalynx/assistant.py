@@ -103,6 +103,10 @@ class Assistant:
             self.output_format = args["--format"]
         if args["deltas"]:
             self.output_format = "[console_deltas]"
+        if args["perf"]:
+            self.output_format = "[console_perf]"
+        if args["ideal"]:
+            self.output_format = "[console_ideal]"
         if args["targets"]:
             self.output_format = "[console_targets]"
             self.hide_deltas = True
@@ -133,6 +137,7 @@ class Assistant:
 
         # Items to be rendered as a row
         render = [
+            Text(" "),
             self.portfolio.tree(
                 output_format=self.output_format,
                 hide_root=self.hide_root,
@@ -146,8 +151,8 @@ class Assistant:
 
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
-            Columns([Text("  ")] + render),  # type: ignore
-            Panel(self.render_envelopes(), title="Investments Summary", padding=(1, 2), expand=False),
+            Panel(self.render_envelopes(), title="Delta Investments", padding=(1, 2), expand=False),
+            Panel(self.render_perf(), title="Performance", padding=(1, 2), expand=False),
         ]
 
         # Show the data fetched from Finary if specified
@@ -155,14 +160,29 @@ class Assistant:
             panels.append(Panel(finary_tree, title="Finary data"))
 
         # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(panels, padding=(2, 10)), "\n")
+        console.print("\n", Columns(render, padding=(2, 2)), "\n")  # type: ignore
+        console.print(Columns(panels, padding=(2, 2)), "\n")
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:
             console.log("Launching dashboard.")
             Dashboard().run(portfolio=self.portfolio)
 
-    def render_envelopes(self) -> Tree:  # TODO missing deltas for folders as lines (e.g. ramify, or)
+    def render_perf(self) -> Tree:
+        """Print the current and ideal global expected performance."""
+        perf = self.portfolio.get_perf(ideal=False).expected
+        perf_ideal = self.portfolio.get_perf(ideal=True).expected
+
+        tree = Tree("Global Performance", hide_root=True)
+        tree.add(f"Current: [bold green]{perf:.1f} %")
+        tree.add(f"Target: [bold green]{perf_ideal:.1f} % ")
+
+        console.log(
+            f"""Your global portfolio's performance is {perf:.1f}%/yr, follow your targets to get {perf_ideal:.1f}%/yr."""
+        )
+        return tree
+
+    def render_envelopes(self) -> Tree:
         """Sort lines with non-zero deltas by envelopes and display them as
         a summary of transfers to make."""
         tree = Tree("Envelopes", hide_root=True)
@@ -173,12 +193,12 @@ class Assistant:
                 delta = line.get_delta()
                 if delta != 0 and line.target.check() not in [Target.RESULT_NONE, Target.RESULT_OK]:
                     env_delta += delta
-                    children.append(line.render(output_format="[delta] [name]"))
+                    children.append(line.render(output_format="[delta][name]"))
 
             if children:
                 env_delta = round(env_delta)
                 render_delta = f"[{'green' if env_delta > 0 else 'red'}]{'+' if env_delta > 0 else ''}{env_delta} €"
-                node = tree.add(f"{render_delta} [dodger_blue2 bold]{env.name}")
+                node = tree.add(f"{render_delta} [dodger_blue2 bold]{env.name}[/]")
                 for child in children:
                     node.add(child)
                 node.children[-1].label += "\n"  # type: ignore

@@ -21,7 +21,7 @@ def main_filter(message: str) -> str:
 __doc__ = f"""
 Finalynx command line v{__version__}
 Usage:
-  finalynx {main_filter(main_usage)}[ideal | targets | deltas | perf | text | --format=string] [dashboard] [options]
+  finalynx {main_filter(main_usage)}[ideal | targets | deltas | perf | text | --format=string] [--no-export | --export-dir=path] [dashboard] [options]
   finalynx (-h | --help)
   finalynx (-v | --version)
 
@@ -30,6 +30,9 @@ Options:
   -v --version         Display the current version and exit
 {main_filter(main_options)}
   dashboard            Launch an interactive web dashboard!
+
+  --no-export          Don't export to JSON
+  --export-dir=path    Path to a folder where the file will be saved
 
   --hide-deltas        Don't show delta investment recommendations next to the tree
   --format=string      Customize the output format to your own style and information

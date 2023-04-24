@@ -1,5 +1,6 @@
 # Define your own portfolio using this name if you plan to contribute
 assistant_config.py
+logs/
 
 # Ignore the cached files used for fetching
 finary_data.json

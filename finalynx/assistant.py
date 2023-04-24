@@ -67,6 +67,8 @@ class Assistant:
         hide_deltas: bool = False,
         launch_dashboard: bool = False,
         output_format: str = "[console]",
+        enable_export: bool = True,
+        export_dir: str = "logs",
     ):
         self.portfolio = portfolio
         self.buckets = buckets if buckets else []
@@ -82,6 +84,8 @@ class Assistant:
         self.launch_dashboard = launch_dashboard
         self.output_format = output_format
         self.hide_deltas = hide_deltas
+        self.enable_export = enable_export
+        self.export_dir = export_dir
 
         self._parse_args()
 
@@ -121,6 +125,10 @@ class Assistant:
             self.hide_deltas = True
         if args["--hide-deltas"]:
             self.hide_deltas = True
+        if args["--no-export"]:
+            self.enable_export = False
+        if args["--export-dir"]:
+            self.export_dir = args["--export-dir"]
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -170,7 +178,8 @@ class Assistant:
         console.print(Columns(panels, padding=(2, 2)), "\n")
 
         # Save the current portfolio to a file. Useful for statistics later
-        self.export("")  # TODO
+        if self.enable_export:
+            self.export(self.export_dir)
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:
@@ -245,5 +254,14 @@ class Assistant:
             "portfolio": self.portfolio.to_dict(),
         }
 
-        with open(full_path, "w") as f:
-            f.write(json.dumps(final_dict, indent=4))
+        try:
+            with open(full_path, "w") as f:
+                f.write(json.dumps(final_dict, indent=4))
+        except FileNotFoundError:
+            console.log(
+                """[red][bold]Error:[/] Can't find the folder to save the portfolio to JSON. Three options:
+1. Disable export using --no-export
+2. Create a folder called logs/ in this folder (default folder)
+3. Set your own export directory using --export-dir=your/path/to/dir/
+            """
+            )

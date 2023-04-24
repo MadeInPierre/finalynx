@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.9.0 (2023-04-24)
+### Feature
+* **perf:** Can now set & analyze expected yearly performance ([#51](https://github.com/MadeInPierre/finalynx/issues/51)) ([`44bde0a`](https://github.com/MadeInPierre/finalynx/commit/44bde0af65be001ea3cef101d6ccba37a78d7d57))
+
 ## v1.8.3 (2023-04-24)
 ### Fix
 * **delta:** Fix envelope delta calculation + display tweaks ([`a44ee2c`](https://github.com/MadeInPierre/finalynx/commit/a44ee2c029625d89983c879f96df6629bf5602d4))

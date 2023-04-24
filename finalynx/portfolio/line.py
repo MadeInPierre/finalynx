@@ -4,6 +4,7 @@ from typing import Optional
 from typing import TYPE_CHECKING
 
 from .constants import AssetClass
+from .constants import LinePerf
 from .node import Node
 
 if TYPE_CHECKING:
@@ -25,6 +26,7 @@ class Line(Node):
         amount: float = 0,
         newline: bool = False,
         envelope: Optional["Envelope"] = None,
+        perf: Optional[LinePerf] = None,
     ):
         """
         This is a subclass of `Node` that adds an `amount` and `key` property.
@@ -49,6 +51,7 @@ class Line(Node):
         self.key = key if key is not None else name
         self.amount = amount
         self.envelope = envelope
+        self.perf = perf if perf else LinePerf(0)
 
         # Let the envelope know that this is a child line
         if self.envelope:
@@ -57,6 +60,10 @@ class Line(Node):
     def get_amount(self) -> float:
         """:returns: The amount invested in this line."""
         return self.amount
+
+    def get_perf(self) -> LinePerf:
+        """:returns: The expected yearly performance of this line (set by user)."""
+        return self.perf
 
     def _render_account_code(self) -> str:
         return f"[{self.envelope.code}] " if self.envelope else ""

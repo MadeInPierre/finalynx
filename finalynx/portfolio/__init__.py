@@ -33,6 +33,7 @@ from .folder import Folder
 from .folder import FolderDisplay
 from .hierarchy import Hierarchy
 from .line import Line
+from .line import LinePerf
 from .node import Node
 from .portfolio import Portfolio
 from .targets import *

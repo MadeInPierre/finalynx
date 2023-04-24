@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Any
 from typing import List
 from typing import Optional
-from typing import TYPE_CHECKING
 
 import numpy as np
 from finalynx.console import console
@@ -11,10 +10,9 @@ from rich.tree import Tree
 
 from .constants import AssetClass
 from .line import Line
+from .line import LinePerf
 from .node import Node
-
-if TYPE_CHECKING:
-    from .targets import Target
+from .targets import Target
 
 
 class FolderDisplay(Enum):
@@ -43,11 +41,14 @@ class Folder(Node):
         children: Optional[List["Node"]] = None,
         newline: bool = False,
         display: FolderDisplay = FolderDisplay.EXPANDED,
+        perf: Optional[LinePerf] = None,
     ):
         """
         This class handles the orchestration of rendering of its children.
 
         :param name: Name to be displayed in the final output.
+        :param asset_class: Useful shortcut to set all chidlren's asset class at once. Children keep priority
+        over this shortcut.
         :param parent: Optional Node object as a parent. Each folder sets their children's
         parents as itself by default.
         :param target: Optional `Target` instance for this folder to render the total amount
@@ -57,6 +58,8 @@ class Folder(Node):
         :param newline: When printing to the console, you can print a blank line after this folder
         for better readability.
         :param display: Choose how the folder should be displayed (expanded, collapsed or as a line).
+        :param perf: Useful shortcut to set all chidlren's performance at once. Children keep priority
+        over this shortcut.
         """
         super().__init__(name, parent, target, newline)
         self.children = [] if children is None else children
@@ -65,7 +68,7 @@ class Folder(Node):
         for child in self.children:
             child.set_parent(self)
 
-        self.set_children_class(asset_class)
+        self.set_children(asset_class, perf)
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -80,6 +83,39 @@ class Folder(Node):
         :returns: The sum of what each child's `get_amount()` method returns.
         """
         return float(np.sum([child.get_amount() for child in self.children]) if self.children else 0)
+
+    def get_ideal(self) -> float:
+        """:returns: The ideal amount to be invested in this node based on surrounding targets."""
+        return (
+            self.target.get_ideal()
+            if self.target.check() != Target.RESULT_NONE
+            else float(np.sum([c.get_ideal() for c in self.children]))
+        )
+
+    def get_perf(self, ideal: bool = True) -> LinePerf:
+        """Get the weighted mean expected performance of all children to get the folder's
+        expected performance."""
+
+        # Get children's performances
+        children = [c for c in self.children if not (isinstance(c, Line) and c.perf.skip)]
+        perfs = [c.get_perf(ideal) if isinstance(c, Folder) else c.get_perf() for c in children]
+
+        # If this folder is empty or all children want to be skipped, mark self as skipped
+        if not children or np.all([p.skip for p in perfs]):
+            return LinePerf(0, skip=True)
+
+        # Get every not-skipped children's expected amounts (either current or ideal)
+        amounts = [(c.get_ideal() if ideal else c.get_amount()) for c in children]
+        total = np.sum(amounts)
+
+        # If children have not set targets, give identical weights to each child
+        if not total:
+            weights = list(np.ones(len(amounts)) / len(amounts))
+        else:
+            weights = [e / total for e in amounts]
+
+        # Calculate the folder's performance as the weighted sum of not-skipped children's performances
+        return LinePerf(np.sum([w * p.expected for w, p in zip(weights, perfs)]))
 
     def tree(
         self,
@@ -106,6 +142,7 @@ class Folder(Node):
                 child.tree(output_format=output_format, _tree=node, **render_args)
         return node
 
+    # TODO convert this to show any customizable output_format?
     def tree_delta(self, _tree: Optional[Tree] = None) -> Tree:
         """Generates a tree with delta amounts to be invested to reach the ideal portfolio allocation."""
         render = self._render_delta()
@@ -160,12 +197,15 @@ class Folder(Node):
                 success = True
         return success
 
-    def set_children_class(self, asset_class: AssetClass) -> None:
+    def set_children(self, asset_class: AssetClass, perf: Optional[LinePerf]) -> None:
+        """Used at initialization time by Folders to set attributes once in the Folder
+        instead of setting it in each child."""
         for child in self.children:
             if isinstance(child, Line):
                 child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
+                child.perf = perf if perf and child.perf.expected == 0 else child.perf
             elif isinstance(child, Folder):
-                child.set_children_class(asset_class)
+                child.set_children(asset_class, perf)
             else:
                 raise ValueError("Unrecognized node type.")
 
@@ -188,3 +228,11 @@ class Folder(Node):
         :returns: The newline character depending on the user configuration.
         """
         return "\n" if self.newline and self.display != FolderDisplay.EXPANDED else ""
+
+    def _render_ideal(self) -> str:
+        """:returns: A string representation of the ideal amount to be invested in
+        this folder. If this folder has no target, use the sum of its children's ideals."""
+        if self.target.check() != Target.RESULT_NONE:
+            return self.target.render_ideal()
+        ideal = float(np.sum([c.get_ideal() for c in self.children]))
+        return f"{round(ideal)} € " if ideal else ""

@@ -30,10 +30,10 @@ from .constants import EnvelopeClass
 from .envelope import *
 from .folder import Folder
 from .folder import FolderDisplay
+from .folder import Portfolio
+from .folder import SharedFolder
 from .hierarchy import Hierarchy
 from .line import Line
 from .line import LinePerf
 from .node import Node
-from .portfolio import Portfolio
-from .shared_folder import SharedFolder
 from .targets import *

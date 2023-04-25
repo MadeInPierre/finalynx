@@ -20,7 +20,7 @@ from finalynx.simulator.simulator import Simulator
 from nicegui import ui
 
 from ..console import console
-from ..portfolio.portfolio import Portfolio
+from ..portfolio.folder import Portfolio
 
 # TODO UGLY CODE FOR NOW, TO BE REFACTORED!!!
 

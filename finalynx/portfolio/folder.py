@@ -6,6 +6,7 @@ from typing import Optional
 
 import numpy as np
 from finalynx.console import console
+from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.targets import TargetRatio
 from rich.tree import Tree
 
@@ -14,8 +15,6 @@ from .line import Line
 from .line import LinePerf
 from .node import Node
 from .targets import Target
-
-# from finalynx.parse.node_from_dict import node_from_dict
 
 
 class FolderDisplay(Enum):
@@ -250,12 +249,128 @@ class Folder(Node):
             "display": self.display.value,
         }
 
-    # @staticmethod
-    # def from_dict(dict: Dict[str, Any]) -> "Folder":
-    #     return Folder(
-    #         name=dict["name"],
-    #         target=Target.from_dict(dict["target"]),
-    #         children=[node_from_dict(c) for c in dict["children"]],
-    #         display=FolderDisplay(dict["display"]),
-    #         newline=bool(dict["newline"]),
-    #     )
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "Folder":
+        children: List[Node] = []
+
+        for child_dict in dict["children"]:
+            if child_dict["type"] == "line":
+                children.append(Line.from_dict(child_dict))
+            elif child_dict["type"] == "folder":
+                children.append(Folder.from_dict(child_dict))
+            elif child_dict["type"] == "shared_folder":
+                children.append(SharedFolder.from_dict(child_dict))
+
+        return Folder(
+            name=dict["name"],
+            target=Target.from_dict(dict["target"]),
+            children=children,
+            display=FolderDisplay(dict["display"]),
+            newline=bool(dict["newline"]),
+        )
+
+
+class SharedFolder(Folder):
+    def __init__(
+        self,
+        name: str,
+        bucket: Bucket,
+        asset_class: AssetClass = AssetClass.UNKNOWN,
+        target_amount: float = np.inf,
+        parent: Optional["Folder"] = None,
+        target: Optional["Target"] = None,
+        newline: bool = False,
+        display: FolderDisplay = FolderDisplay.EXPANDED,
+    ):
+        super().__init__(name, asset_class, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
+        self.target_amount = target_amount
+        self.newline = newline
+        self.bucket = bucket
+
+    def process(self) -> None:
+        super().process()  # Process children
+        self.children = self.bucket.use_amount(self.target_amount)  # type: ignore # TODO couldn't fix the mypy error
+
+        for child in self.children:
+            child.set_parent(self)
+
+        if self.children:
+            self.children[-1].newline = self.newline
+
+    def set_child_amount(self, key: str, amount: float) -> bool:
+        """Used by the `fetch` subpackage to
+
+        This method passes down the vey:value pair corresponding to an investment fetched online
+        (e.g. in your Finary account) to its children until a match is found.
+
+        :param key: Name of the line in the online account.
+        :param amount: Fetched amount in the online account.
+        """
+        success = False
+        for child in self.children:
+            if isinstance(child, Line) and child.key == key:
+                child.amount = amount
+                success = True
+            elif isinstance(child, Folder) and child.set_child_amount(key, amount):
+                success = True
+        return success
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "shared_folder",
+            "name": self.name,
+            "bucket_name": self.bucket.name,
+            "target_amount": self.target_amount,
+            "target": self.target.to_dict(),
+            "newline": self.newline,
+            "display": self.display.value,
+        }
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "SharedFolder":
+        return SharedFolder(
+            name=dict["name"],
+            bucket=Bucket(dict["bucket_name"], [Line("hey", amount=100000000)]),  # TODO
+            target_amount=dict["target_amount"],
+            target=Target.from_dict(dict["target"]),
+            newline=bool(dict["newline"]),
+            display=FolderDisplay(dict["display"]),
+        )
+
+
+class Portfolio(Folder):
+    """This is the root of your custom portfolio hierarchy."""
+
+    def __init__(
+        self, name: str = "Portfolio", target: Optional["Target"] = None, children: Optional[List["Node"]] = None
+    ):
+        """
+        This class is actually nothing more than a normal `Folder` renamed to `Portfolio` for user clarity
+        (and with 'Portfolio' as the default folder name). Technically, the hierarchy could just as much
+        start with a `Folder` object.
+
+        :param name: The name that will be displayed in the rendered tree, defaults to _Portfolio_.
+        :param target: optional `TargetSomething` instance to render the total portfolio amount with
+         certain conditions, defaults to None.
+        :param children: List of `Line`, `Folder`, and `SharedFolder` objects to recursively define the
+        entire structure, defaults to an empty list.
+        """
+        super().__init__(name, parent=None, target=target, children=children, newline=False)
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "Portfolio":
+        children: List[Node] = []
+
+        for child_dict in dict["children"]:
+            if child_dict["type"] == "line":
+                children.append(Line.from_dict(child_dict))
+            elif child_dict["type"] == "folder":
+                children.append(Folder.from_dict(child_dict))
+            elif child_dict["type"] == "shared_folder":
+                children.append(SharedFolder.from_dict(child_dict))
+
+        return Portfolio(
+            name=dict["name"],
+            target=Target.from_dict(dict["target"]),
+            children=children,
+        )

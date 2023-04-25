@@ -60,6 +60,16 @@ class Envelope:
             "date_untax": self.date_untax.isoformat(),
         }
 
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "Envelope":
+        return Envelope(
+            dict["name"],
+            dict["code"],
+            date.fromisoformat(dict["date_created"]),
+            date.fromisoformat(dict["date_unlock"]),
+            date.fromisoformat(dict["date_untax"]),
+        )
+
 
 class PEA(Envelope):
     def __init__(self, name: str, code: str, date_created: date):

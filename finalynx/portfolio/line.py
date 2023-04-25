@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING
 from .constants import AssetClass
 from .constants import LinePerf
 from .node import Node
+from .targets import Target
 
 if TYPE_CHECKING:
     from .envelope import Envelope
-    from .targets import Target
     from .folder import Folder
 
 
@@ -71,6 +71,7 @@ class Line(Node):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            "type": "line",
             "name": self.name,
             "asset_class": self.asset_class.value,
             "key": self.key,
@@ -80,3 +81,16 @@ class Line(Node):
             "perf": self.perf.__dict__,
             "newline": self.newline,
         }
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "Line":
+        return Line(
+            name=dict["name"],
+            asset_class=AssetClass(dict["asset_class"]),
+            key=dict["key"],
+            amount=dict["amount"],
+            target=Target.from_dict(dict["target"]),
+            envelope=None,  # TODO use dict["envelope_name"]
+            perf=LinePerf.from_dict(dict["perf"]),
+            newline=bool(dict["newline"]),
+        )

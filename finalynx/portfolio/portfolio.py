@@ -1,13 +1,17 @@
+# from typing import Any
+# from typing import Dict
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
 
 from .folder import Folder
+from .targets import Target
+
+# from finalynx.parse.node_from_dict import node_from_dict
 
 
 if TYPE_CHECKING:
     from .node import Node
-    from .targets import Target
 
 
 class Portfolio(Folder):
@@ -28,3 +32,11 @@ class Portfolio(Folder):
         entire structure, defaults to an empty list.
         """
         super().__init__(name, parent=None, target=target, children=children, newline=False)
+
+    # @staticmethod
+    # def from_dict(dict: Dict[str, Any]) -> "Portfolio":
+    #     return Portfolio(
+    #         name=dict["name"],
+    #         target=Target.from_dict(dict["target"]),
+    #         children=[node_from_dict(c) for c in dict["children"]],
+    #     )

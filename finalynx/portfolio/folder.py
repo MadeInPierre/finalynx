@@ -15,6 +15,8 @@ from .line import LinePerf
 from .node import Node
 from .targets import Target
 
+# from finalynx.parse.node_from_dict import node_from_dict
+
 
 class FolderDisplay(Enum):
     """Enumeration to select how a folder should be displayed.
@@ -240,9 +242,20 @@ class Folder(Node):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            "type": "folder",
             "name": self.name,
             "target": self.target.to_dict(),
             "children": [child.to_dict() for child in self.children],
             "newline": self.newline,
             "display": self.display.value,
         }
+
+    # @staticmethod
+    # def from_dict(dict: Dict[str, Any]) -> "Folder":
+    #     return Folder(
+    #         name=dict["name"],
+    #         target=Target.from_dict(dict["target"]),
+    #         children=[node_from_dict(c) for c in dict["children"]],
+    #         display=FolderDisplay(dict["display"]),
+    #         newline=bool(dict["newline"]),
+    #     )

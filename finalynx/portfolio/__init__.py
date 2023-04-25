@@ -25,7 +25,6 @@ are available.
 # flake8: noqa
 from ..console import console
 from .bucket import Bucket
-from .bucket import SharedFolder
 from .constants import AssetClass
 from .constants import EnvelopeClass
 from .envelope import *
@@ -36,4 +35,5 @@ from .line import Line
 from .line import LinePerf
 from .node import Node
 from .portfolio import Portfolio
+from .shared_folder import SharedFolder
 from .targets import *

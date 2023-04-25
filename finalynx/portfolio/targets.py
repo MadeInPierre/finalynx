@@ -89,7 +89,25 @@ class Target(Hierarchy):
         return self.check()["color"]
 
     def to_dict(self) -> Dict[str, Any]:
+        """Empty dict, should be overridden by subclasses."""
         return {}
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "Target":
+        if "type" not in dict:
+            return Target()
+        elif dict["type"] == "range":
+            return TargetRange(dict["target_min"], dict["target_max"], dict["tolerance"])
+        elif dict["type"] == "max":
+            return TargetMax(dict["target_max"], dict["tolerance"])
+        elif dict["type"] == "min":
+            return TargetMin(dict["target_min"], dict["tolerance"])
+        elif dict["type"] == "ratio":
+            return TargetRatio(dict["target_ratio"], dict["zone"], dict["tolerance"])
+        elif dict["type"] == "global_ratio":
+            return TargetGlobalRatio(dict["target_ratio"], dict["zone"], dict["tolerance"])
+        else:
+            raise ValueError("Unrecognized target type.")
 
 
 class TargetRange(Target):

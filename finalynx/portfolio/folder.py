@@ -146,10 +146,10 @@ class Folder(Node):
     # TODO convert this to show any customizable output_format?
     def tree_delta(self, _tree: Optional[Tree] = None) -> Tree:
         """Generates a tree with delta amounts to be invested to reach the ideal portfolio allocation."""
-        render = self._render_delta()
+        render = self._render_delta(align=False)
 
         # Follow the same print policy as the main tree
-        if self.display == FolderDisplay.COLLAPSED and self.newline:
+        if self.display != FolderDisplay.EXPANDED and self.newline:
             render += "\n"
 
         # Add every element to the root to create a flat tree

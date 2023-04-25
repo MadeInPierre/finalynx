@@ -15,7 +15,13 @@ class ImportJSON(Parser):
         """:returns: An `Assistant` instance with a full configuration definition."""
         json_dict = json.loads(self.data)
 
-        buckets = [Bucket.from_dict(b) for b in json_dict["buckets"]]
         envelopes = [Envelope.from_dict(e) for e in json_dict["envelopes"]]
-        portfolio = Portfolio.from_dict(json_dict["portfolio"])
-        return Assistant(portfolio, buckets, envelopes)
+        buckets = [Bucket.from_dict(b, {e.name: e for e in envelopes}) for b in json_dict["buckets"]]
+
+        portfolio = Portfolio.from_dict(
+            json_dict["portfolio"],
+            {b.name: b for b in buckets},
+            {e.name: e for e in envelopes},
+        )
+
+        return Assistant(portfolio, buckets, envelopes, enable_export=False)

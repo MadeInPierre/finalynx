@@ -3,10 +3,14 @@ import itertools
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from .line import Line
+
+if TYPE_CHECKING:
+    from .envelope import Envelope
 
 
 class Bucket:
@@ -78,5 +82,5 @@ class Bucket:
         }
 
     @staticmethod
-    def from_dict(dict: Dict[str, Any]) -> "Bucket":
-        return Bucket(dict["name"], [Line.from_dict(line) for line in dict["lines"]])
+    def from_dict(dict: Dict[str, Any], envelopes: Dict[str, "Envelope"]) -> "Bucket":
+        return Bucket(dict["name"], [Line.from_dict(line, envelopes) for line in dict["lines"]])

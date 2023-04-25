@@ -7,6 +7,7 @@ from typing import Optional
 import numpy as np
 from finalynx.console import console
 from finalynx.portfolio.bucket import Bucket
+from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.targets import TargetRatio
 from rich.tree import Tree
 
@@ -250,16 +251,16 @@ class Folder(Node):
         }
 
     @staticmethod
-    def from_dict(dict: Dict[str, Any]) -> "Folder":
+    def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket], envelopes: Dict[str, Envelope]) -> "Folder":
         children: List[Node] = []
 
         for child_dict in dict["children"]:
             if child_dict["type"] == "line":
-                children.append(Line.from_dict(child_dict))
+                children.append(Line.from_dict(child_dict, envelopes))
             elif child_dict["type"] == "folder":
-                children.append(Folder.from_dict(child_dict))
+                children.append(Folder.from_dict(child_dict, buckets, envelopes))
             elif child_dict["type"] == "shared_folder":
-                children.append(SharedFolder.from_dict(child_dict))
+                children.append(SharedFolder.from_dict(child_dict, buckets))
 
         return Folder(
             name=dict["name"],
@@ -327,10 +328,10 @@ class SharedFolder(Folder):
         }
 
     @staticmethod
-    def from_dict(dict: Dict[str, Any]) -> "SharedFolder":
+    def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket]) -> "SharedFolder":
         return SharedFolder(
             name=dict["name"],
-            bucket=Bucket(dict["bucket_name"], [Line("hey", amount=100000000)]),  # TODO
+            bucket=buckets[dict["bucket_name"]],
             target_amount=dict["target_amount"],
             target=Target.from_dict(dict["target"]),
             newline=bool(dict["newline"]),
@@ -358,16 +359,16 @@ class Portfolio(Folder):
         super().__init__(name, parent=None, target=target, children=children, newline=False)
 
     @staticmethod
-    def from_dict(dict: Dict[str, Any]) -> "Portfolio":
+    def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket], envelopes: Dict[str, Envelope]) -> "Portfolio":
         children: List[Node] = []
 
         for child_dict in dict["children"]:
             if child_dict["type"] == "line":
-                children.append(Line.from_dict(child_dict))
+                children.append(Line.from_dict(child_dict, envelopes))
             elif child_dict["type"] == "folder":
-                children.append(Folder.from_dict(child_dict))
+                children.append(Folder.from_dict(child_dict, buckets, envelopes))
             elif child_dict["type"] == "shared_folder":
-                children.append(SharedFolder.from_dict(child_dict))
+                children.append(SharedFolder.from_dict(child_dict, buckets))
 
         return Portfolio(
             name=dict["name"],

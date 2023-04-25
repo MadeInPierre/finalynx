@@ -83,14 +83,14 @@ class Line(Node):
         }
 
     @staticmethod
-    def from_dict(dict: Dict[str, Any]) -> "Line":
+    def from_dict(dict: Dict[str, Any], envelopes: Dict[str, "Envelope"]) -> "Line":
         return Line(
             name=dict["name"],
             asset_class=AssetClass(dict["asset_class"]),
             key=dict["key"],
             amount=dict["amount"],
             target=Target.from_dict(dict["target"]),
-            envelope=None,  # TODO use dict["envelope_name"]
+            envelope=envelopes[dict["envelope_name"]] if dict["envelope_name"] else None,
             perf=LinePerf.from_dict(dict["perf"]),
             newline=bool(dict["newline"]),
         )

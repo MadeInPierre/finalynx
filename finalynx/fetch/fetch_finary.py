@@ -219,14 +219,20 @@ class FetchFinary(Fetch):  # TODO update docstrings
                 self._match_line(lines_list, node, key, id, round(amount))
 
         # Process similar sources together
-        _process("Checkings", ff.get_checking_accounts, lambda e: (e["name"], e["id"], e["fiats"][0]["current_value"]))
-        _process("Savings", ff.get_savings_accounts, lambda e: (e["name"], e["id"], e["fiats"][0]["current_value"]))
-        _process("Fonds euro", ff.get_fonds_euro, lambda e: (e["name"], e["id"], e["current_value"]))
-        _process("Others", ff.get_other_assets, lambda e: (e["name"], e["id"], e["current_value"]))
+        _process(
+            "Checkings",
+            ff.get_checking_accounts,
+            lambda e: (e["name"], e["id"], e["fiats"][0]["display_current_value"]),
+        )
+        _process(
+            "Savings", ff.get_savings_accounts, lambda e: (e["name"], e["id"], e["fiats"][0]["display_current_value"])
+        )
+        _process("Fonds euro", ff.get_fonds_euro, lambda e: (e["name"], e["id"], e["display_current_value"]))
+        _process("Others", ff.get_other_assets, lambda e: (e["name"], e["id"], e["display_current_value"]))
         _process(
             "Precious metals",
             ff.get_user_precious_metals,
-            lambda e: (e["precious_metal"]["name"], e["id"], e["current_value"]),
+            lambda e: (e["precious_metal"]["name"], e["id"], e["display_current_value"]),
             period=False,
         )
 
@@ -242,7 +248,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
                     node_account,
                     key=account["security"]["name"],
                     id=account["id"],
-                    amount=account["current_value"],
+                    amount=account["display_current_value"],
                 )
 
         # Cryptos
@@ -258,7 +264,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
                     node_account,
                     key=account["crypto"]["name"],
                     id=account["id"],
-                    amount=account["current_value"],
+                    amount=account["display_current_value"],
                 )
 
         # Real estate
@@ -267,10 +273,12 @@ class FetchFinary(Fetch):  # TODO update docstrings
         real_estate = ff.get_real_estates(session, "1w")["result"]
 
         for item in real_estate["data"]["real_estates"]:
-            self._match_line(lines_list, node, key=item["description"], id=item["id"], amount=item["current_value"])
+            self._match_line(
+                lines_list, node, key=item["description"], id=item["id"], amount=item["display_current_value"]
+            )
         for item in real_estate["data"]["scpis"]:
             self._match_line(
-                lines_list, node, key=item["scpi"]["name"], id=item["scpi"]["id"], amount=item["current_value"]
+                lines_list, node, key=item["scpi"]["name"], id=item["scpi"]["id"], amount=item["display_current_value"]
             )
 
         return lines_list, tree

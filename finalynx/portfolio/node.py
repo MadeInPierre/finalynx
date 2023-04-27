@@ -157,12 +157,16 @@ class Node(Hierarchy, Render):
         return "···" if hide_amounts else f"{round(self.get_amount()):>{max_length}}"
 
     def _render_goal(self) -> str:
+        """:returns: A formatted rendering of the target goal. This could either be an ideal
+        amount or ratio to be reached."""
         return self.target.render_goal()
 
     def _render_ideal(self) -> str:
+        """:returns: A formatted rendering of the ideal amount to be invested based on the target."""
         return self.target.render_ideal()
 
     def _render_delta(self, align: bool = True) -> str:
+        """:returns: A formatted rendering of the delta investment needed to reach the target."""
         delta, check = round(self.get_delta()), self.target.check()
         if delta == 0 or check == Target.RESULT_NONE:
             return ""

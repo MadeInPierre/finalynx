@@ -173,13 +173,13 @@ class Assistant:
         if self.show_data:
             panels.append(Panel(finary_tree, title="Finary data"))
 
-        # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(render, padding=(2, 2)), "\n")  # type: ignore
-        console.print(Columns(panels, padding=(2, 2)), "\n")
-
         # Save the current portfolio to a file. Useful for statistics later
         if self.enable_export:
             self.export(self.export_dir)
+
+        # Display the entire portfolio and associated recommendations
+        console.print("\n", Columns(render, padding=(2, 2)), "\n")  # type: ignore
+        console.print(Columns(panels, padding=(2, 2)), "\n")
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:
@@ -257,6 +257,7 @@ class Assistant:
         try:
             with open(full_path, "w") as f:
                 f.write(json.dumps(final_dict, indent=4))
+            console.log(f"Saved current portfolio to '{full_path}'")
         except FileNotFoundError:
             console.log(
                 """[red][bold]Error:[/] Can't find the folder to save the portfolio to JSON. Three options:

@@ -67,6 +67,7 @@ class Line(Node):
         return self.perf
 
     def _render_account_code(self) -> str:
+        """:returns: A formatted string representation of this line's envelope."""
         return f"[{self.envelope.code}] " if self.envelope else ""
 
     def to_dict(self) -> Dict[str, Any]:

@@ -5,8 +5,9 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-from dateutil.relativedelta import relativedelta
-from finalynx.portfolio.line import Line
+from dateutil.relativedelta import relativedelta  # type: ignore
+
+from .line import Line
 
 
 class EnvelopeState(Enum):
@@ -42,6 +43,8 @@ class Envelope:
         self.lines.append(line)
 
     def get_state(self, date: date) -> EnvelopeState:
+        """:return: The state of the envelope at the specified `date` based on the instance's
+        creation, unlock, and untax dates."""
         if date < self.date_created:
             return EnvelopeState.CLOSED
         elif date < self.date_unlock:

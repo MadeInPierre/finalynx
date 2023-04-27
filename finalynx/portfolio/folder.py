@@ -5,17 +5,17 @@ from typing import List
 from typing import Optional
 
 import numpy as np
-from finalynx.console import console
-from finalynx.portfolio.bucket import Bucket
-from finalynx.portfolio.envelope import Envelope
-from finalynx.portfolio.targets import TargetRatio
 from rich.tree import Tree
 
+from ..console import console
+from .bucket import Bucket
 from .constants import AssetClass
+from .envelope import Envelope
 from .line import Line
 from .line import LinePerf
 from .node import Node
 from .targets import Target
+from .targets import TargetRatio
 
 
 class FolderDisplay(Enum):
@@ -328,7 +328,7 @@ class SharedFolder(Folder):
         }
 
     @staticmethod
-    def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket]) -> "SharedFolder":
+    def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket]) -> "SharedFolder":  # type: ignore
         return SharedFolder(
             name=dict["name"],
             bucket=buckets[dict["bucket_name"]],

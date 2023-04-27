@@ -25,15 +25,22 @@ class Bucket:
     """
 
     def __init__(self, name: str, lines: List["Line"]):
+        """:param name: Name for the bucket used to display it and export it to JSON.
+        :param lines: List of `Line` instances that will be shared with all `SharedFolder` objects
+        that use this `Bucket`.
+        """
         self.name = name
         self.lines = [] if lines is None else lines
         self._prev_amount_used: float = 0
         self.amount_used: float = 0
 
     def get_max_amount(self) -> float:
+        """:returns: The total amount contained in this bucket."""
         return float(np.sum([line.get_amount() for line in self.lines]))
 
     def _get_cumulative_index(self, target: float) -> Dict[str, Any]:
+        """:returns: A dictionary containing the Line index where the cumulative sum meets,
+        and the remainder amount not used in this line."""
         result = {"index": -1, "remainder": 0.0}
         amounts = [line.get_amount() for line in self.lines]
         cumulative_sum = list(itertools.accumulate(amounts))
@@ -45,6 +52,8 @@ class Bucket:
         return result
 
     def get_lines(self) -> List["Line"]:
+        """:returns: A copy of the `Bucket`'s lines between the two previous `use_amount()`
+        calls."""
         result_prev = self._get_cumulative_index(self._prev_amount_used)
         result = self._get_cumulative_index(self.amount_used)
         sublines = []
@@ -68,11 +77,16 @@ class Bucket:
         return sublines
 
     def use_amount(self, amount: float) -> List["Line"]:
+        """Ask to consume the specified amount from the bucket.
+        :returns: A list of copies of the used Lines with their respective used amounts.
+        Next time this method is called, the bucket will start from the cumulative amount
+        used so far."""
         self._prev_amount_used = self.amount_used
         self.amount_used = min(self.get_max_amount(), self.amount_used + amount)
         return self.get_lines()
 
     def get_used_amount(self) -> float:
+        """:return: The total amount used from the bucket until now."""
         return self.amount_used
 
     def to_dict(self) -> Dict[str, Any]:

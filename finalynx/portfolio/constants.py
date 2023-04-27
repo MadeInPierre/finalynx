@@ -7,6 +7,8 @@ subpackage to classify lines and show relevant statistics.
 """
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 
@@ -21,6 +23,10 @@ class LinePerf:
     pessimistic: Optional[float] = 0  # TODO not used
     optimistic: Optional[float] = 0  # TODO not used
     skip: bool = False
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "LinePerf":
+        return LinePerf(expected=dict["expected"], skip=dict["skip"])
 
 
 class AssetClass(Enum):

@@ -12,7 +12,7 @@ from typing import Optional
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
 from finalynx.portfolio.envelope import EnvelopeState
 
-from ..portfolio.portfolio import Portfolio
+from ..portfolio.folder import Portfolio
 
 
 class Simulator:

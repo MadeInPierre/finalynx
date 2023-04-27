@@ -25,15 +25,15 @@ are available.
 # flake8: noqa
 from ..console import console
 from .bucket import Bucket
-from .bucket import SharedFolder
 from .constants import AssetClass
 from .constants import EnvelopeClass
 from .envelope import *
 from .folder import Folder
 from .folder import FolderDisplay
+from .folder import Portfolio
+from .folder import SharedFolder
 from .hierarchy import Hierarchy
 from .line import Line
 from .line import LinePerf
 from .node import Node
-from .portfolio import Portfolio
 from .targets import *

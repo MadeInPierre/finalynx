@@ -1,10 +1,13 @@
 from datetime import date
 from enum import Enum
+from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 
-from dateutil.relativedelta import relativedelta
-from finalynx.portfolio.line import Line
+from dateutil.relativedelta import relativedelta  # type: ignore
+
+from .line import Line
 
 
 class EnvelopeState(Enum):
@@ -40,6 +43,8 @@ class Envelope:
         self.lines.append(line)
 
     def get_state(self, date: date) -> EnvelopeState:
+        """:return: The state of the envelope at the specified `date` based on the instance's
+        creation, unlock, and untax dates."""
         if date < self.date_created:
             return EnvelopeState.CLOSED
         elif date < self.date_unlock:
@@ -48,6 +53,25 @@ class Envelope:
             return EnvelopeState.TAXED
         else:
             return EnvelopeState.FREE
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "code": self.code,
+            "date_created": self.date_created.isoformat(),
+            "date_unlock": self.date_unlock.isoformat(),
+            "date_untax": self.date_untax.isoformat(),
+        }
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "Envelope":
+        return Envelope(
+            dict["name"],
+            dict["code"],
+            date.fromisoformat(dict["date_created"]),
+            date.fromisoformat(dict["date_unlock"]),
+            date.fromisoformat(dict["date_untax"]),
+        )
 
 
 class PEA(Envelope):

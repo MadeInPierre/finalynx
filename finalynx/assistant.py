@@ -1,3 +1,6 @@
+import json
+import os
+from datetime import date
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
@@ -6,6 +9,7 @@ from docopt import docopt
 from finalynx import Dashboard
 from finalynx import FetchFinary
 from finalynx import Portfolio
+from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.folder import FolderDisplay
@@ -52,6 +56,7 @@ class Assistant:
     def __init__(
         self,
         portfolio: Portfolio,
+        buckets: Optional[List[Bucket]] = None,
         envelopes: Optional[List[Envelope]] = None,
         ignore_orphans: bool = False,
         clear_cache: bool = False,
@@ -62,8 +67,11 @@ class Assistant:
         hide_deltas: bool = False,
         launch_dashboard: bool = False,
         output_format: str = "[console]",
+        enable_export: bool = True,
+        export_dir: str = "logs",
     ):
         self.portfolio = portfolio
+        self.buckets = buckets if buckets else []
         self.envelopes = envelopes if envelopes else []
 
         # Options that can either be set in the constructor or from the command line
@@ -76,6 +84,8 @@ class Assistant:
         self.launch_dashboard = launch_dashboard
         self.output_format = output_format
         self.hide_deltas = hide_deltas
+        self.enable_export = enable_export
+        self.export_dir = export_dir
 
         self._parse_args()
 
@@ -115,6 +125,10 @@ class Assistant:
             self.hide_deltas = True
         if args["--hide-deltas"]:
             self.hide_deltas = True
+        if args["--no-export"]:
+            self.enable_export = False
+        if args["--export-dir"]:
+            self.export_dir = args["--export-dir"]
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -158,6 +172,10 @@ class Assistant:
         # Show the data fetched from Finary if specified
         if self.show_data:
             panels.append(Panel(finary_tree, title="Finary data"))
+
+        # Save the current portfolio to a file. Useful for statistics later
+        if self.enable_export:
+            self.export(self.export_dir)
 
         # Display the entire portfolio and associated recommendations
         console.print("\n", Columns(render, padding=(2, 2)), "\n")  # type: ignore
@@ -219,5 +237,32 @@ class Assistant:
             for f in collapsed_folders:
                 if f.get_delta() != 0:
                     node.add(f.render(output_format="[delta] [name]"))
-
         return tree
+
+    def export(self, dirpath: str) -> None:
+        """Save everything in a JSON file. Can be used for data analysis in future
+        or by other projects.
+        :param dirpath: Path to the directory where the file will be saved.
+        """
+        today = date.today().isoformat()
+        full_path = os.path.join(dirpath, f"finalynx_{today}.json")
+
+        final_dict = {
+            "date": today,
+            "envelopes": [e.to_dict() for e in self.envelopes],
+            "buckets": [b.to_dict() for b in self.buckets],
+            "portfolio": self.portfolio.to_dict(),
+        }
+
+        try:
+            with open(full_path, "w") as f:
+                f.write(json.dumps(final_dict, indent=4))
+            console.log(f"Saved current portfolio to '{full_path}'")
+        except FileNotFoundError:
+            console.log(
+                """[red][bold]Error:[/] Can't find the folder to save the portfolio to JSON. Three options:
+1. Disable export using --no-export
+2. Create a folder called logs/ in this folder (default folder)
+3. Set your own export directory using --export-dir=your/path/to/dir/
+            """
+            )

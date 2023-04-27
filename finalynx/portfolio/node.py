@@ -120,7 +120,7 @@ class Node(Hierarchy, Render):
 
     def tree_delta(self, _tree: Optional[Tree] = None) -> Tree:
         """Generates a tree with delta amounts to be invested to reach the ideal portfolio allocation."""
-        render = self._render_delta() + ("\n" if self.newline else "")
+        render = self._render_delta(align=False) + ("\n" if self.newline else "")
         return _tree.add(render) if _tree else Tree(render, hide_root=True)
 
     def process(self) -> None:
@@ -157,12 +157,16 @@ class Node(Hierarchy, Render):
         return "···" if hide_amounts else f"{round(self.get_amount()):>{max_length}}"
 
     def _render_goal(self) -> str:
+        """:returns: A formatted rendering of the target goal. This could either be an ideal
+        amount or ratio to be reached."""
         return self.target.render_goal()
 
     def _render_ideal(self) -> str:
+        """:returns: A formatted rendering of the ideal amount to be invested based on the target."""
         return self.target.render_ideal()
 
-    def _render_delta(self) -> str:
+    def _render_delta(self, align: bool = True) -> str:
+        """:returns: A formatted rendering of the delta investment needed to reach the target."""
         delta, check = round(self.get_delta()), self.target.check()
         if delta == 0 or check == Target.RESULT_NONE:
             return ""
@@ -174,6 +178,7 @@ class Node(Hierarchy, Render):
             if (self.parent and self.parent.children)
             else 0
         )
+        max_length = max_length if align else 0
         return f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} €[/] "
 
     def _render_perf(self) -> str:
@@ -200,3 +205,6 @@ class Node(Hierarchy, Render):
     def __str__(self) -> str:
         """:returns: The formatted console rendering of this node."""
         return self.render()
+
+    def to_dict(self) -> Dict[str, Any]:
+        raise NotImplementedError("Must be overridden by subclasses.")

@@ -1,3 +1,4 @@
+from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import Optional
@@ -6,10 +7,10 @@ from typing import TYPE_CHECKING
 from .constants import AssetClass
 from .constants import LinePerf
 from .node import Node
+from .targets import Target
 
 if TYPE_CHECKING:
     from .envelope import Envelope
-    from .targets import Target
     from .folder import Folder
 
 
@@ -66,4 +67,31 @@ class Line(Node):
         return self.perf
 
     def _render_account_code(self) -> str:
+        """:returns: A formatted string representation of this line's envelope."""
         return f"[{self.envelope.code}] " if self.envelope else ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "line",
+            "name": self.name,
+            "asset_class": self.asset_class.value,
+            "key": self.key,
+            "amount": self.amount,
+            "target": self.target.to_dict(),
+            "envelope_name": self.envelope.name if self.envelope else "",
+            "perf": self.perf.__dict__,
+            "newline": self.newline,
+        }
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any], envelopes: Dict[str, "Envelope"]) -> "Line":
+        return Line(
+            name=dict["name"],
+            asset_class=AssetClass(dict["asset_class"]),
+            key=dict["key"],
+            amount=dict["amount"],
+            target=Target.from_dict(dict["target"]),
+            envelope=envelopes[dict["envelope_name"]] if dict["envelope_name"] else None,
+            perf=LinePerf.from_dict(dict["perf"]),
+            newline=bool(dict["newline"]),
+        )

@@ -17,8 +17,8 @@ import finary_api.__main__ as ff
 import finary_api.constants
 import finary_api.user_portfolio
 from ..console import console
+from ..portfolio.folder import Portfolio
 from ..portfolio.line import Line
-from ..portfolio.portfolio import Portfolio
 from .fetch import Fetch
 
 

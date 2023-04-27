@@ -1,3 +1,4 @@
+from typing import Any
 from typing import Dict
 from typing import TYPE_CHECKING
 
@@ -87,6 +88,27 @@ class Target(Hierarchy):
         """:returns: The color associated to the target recommentation."""
         return self.check()["color"]
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Empty dict, should be overridden by subclasses."""
+        return {}
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "Target":
+        if "type" not in dict:
+            return Target()
+        elif dict["type"] == "range":
+            return TargetRange(dict["target_min"], dict["target_max"], dict["tolerance"])
+        elif dict["type"] == "max":
+            return TargetMax(dict["target_max"], dict["tolerance"])
+        elif dict["type"] == "min":
+            return TargetMin(dict["target_min"], dict["tolerance"])
+        elif dict["type"] == "ratio":
+            return TargetRatio(dict["target_ratio"], dict["zone"], dict["tolerance"])
+        elif dict["type"] == "global_ratio":
+            return TargetGlobalRatio(dict["target_ratio"], dict["zone"], dict["tolerance"])
+        else:
+            raise ValueError("Unrecognized target type.")
+
 
 class TargetRange(Target):
     """Target to make sure your node stays within a specified range."""
@@ -142,6 +164,14 @@ class TargetRange(Target):
         """:returns: A formatted description of the target."""
         return f"- Range {self.target_min}-{self.target_max} €"
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "range",
+            "target_min": self.target_min,
+            "target_max": self.target_max,
+            "tolerance": self.tolerance,
+        }
+
 
 class TargetMax(TargetRange):
     """Target to make sure your node does not exceed a specified value."""
@@ -160,6 +190,13 @@ class TargetMax(TargetRange):
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
         return f"- Maximum {self.target_max} €"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "max",
+            "target_max": self.target_max,
+            "tolerance": self.tolerance,
+        }
 
 
 class TargetMin(TargetRange):
@@ -180,6 +217,13 @@ class TargetMin(TargetRange):
         """:returns: A formatted description of the target."""
         return f"- Minimum {self.target_min} €"
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "min",
+            "target_min": self.target_min,
+            "tolerance": self.tolerance,
+        }
+
 
 class TargetRatio(TargetRange):
     """Target to make sure your node represents a specified ratio in a folder."""
@@ -196,6 +240,7 @@ class TargetRatio(TargetRange):
         target_max = min(target_ratio + zone, 100)
         super().__init__(target_min, target_max, tolerance)
         self.target_ratio = target_ratio
+        self.zone = zone
 
     def get_ratio(self) -> float:
         """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
@@ -242,6 +287,14 @@ class TargetRatio(TargetRange):
         """:returns: A formatted description of the target."""
         return f"{round(self.get_ratio())}% → {self.target_ratio}%"
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "ratio",
+            "target_ratio": self.target_ratio,
+            "zone": self.zone,
+            "tolerance": self.tolerance,
+        }
+
 
 class TargetGlobalRatio(TargetRatio):
     """Target to make sure your node represents a specified ratio in your portfolio."""
@@ -265,3 +318,11 @@ class TargetGlobalRatio(TargetRatio):
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
         return f"Global {round(self.get_ratio())}% → {self.target_ratio}%"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "global_ratio",
+            "target_ratio": self.target_ratio,
+            "zone": self.zone,
+            "tolerance": self.tolerance,
+        }

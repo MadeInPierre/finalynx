@@ -25,12 +25,13 @@ if __name__ in {"__main__", "__mp_main__"}:
     a single line in your portfolio.
     """
     bucket_garanti = Bucket(
+        "Safe funds",
         [
             Line("Livret A", key="LIVRET A"),
             Line("LDDS", key="Livret de Developpement Durable et Solidaire"),
             Line("Livret Jeune", key="LIVRET JEUNE"),
             Line("Fonds euro", key="Fonds Euro Nouvelle Generation"),
-        ]
+        ],
     )
 
     """

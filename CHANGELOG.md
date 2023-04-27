@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.10.0 (2023-04-27)
+### Feature
+* **json:** Export & import portfolio ([#53](https://github.com/MadeInPierre/finalynx/issues/53)) ([`4f852fb`](https://github.com/MadeInPierre/finalynx/commit/4f852fba8c365189eada3e3c3b1aa7f38b34805a))
+
 ## v1.9.0 (2023-04-24)
 ### Feature
 * **perf:** Can now set & analyze expected yearly performance ([#51](https://github.com/MadeInPierre/finalynx/issues/51)) ([`44bde0a`](https://github.com/MadeInPierre/finalynx/commit/44bde0af65be001ea3cef101d6ccba37a78d7d57))

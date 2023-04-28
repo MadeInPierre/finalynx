@@ -13,6 +13,7 @@ from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.folder import FolderDisplay
+from finalynx.portfolio.folder import SharedFolder
 from finalynx.portfolio.targets import Target
 from rich import inspect  # noqa F401
 from rich import pretty
@@ -221,20 +222,22 @@ class Assistant:
                     node.add(child)
                 node.children[-1].label += "\n"  # type: ignore
 
-        def _get_collapsed_folders(node: Folder) -> List[Folder]:
-            found = []
+        def _get_folders(node: Folder) -> List[Folder]:
+            found: List[Folder] = []
             for child in node.children:
                 if isinstance(child, Folder):
-                    if child.display == FolderDisplay.EXPANDED:
-                        found += _get_collapsed_folders(child)
+                    if isinstance(child, SharedFolder):
+                        found.append(child)
+                    elif child.display == FolderDisplay.EXPANDED:
+                        found += _get_folders(child)
                     else:
                         found.append(child)
             return found
 
-        collapsed_folders = _get_collapsed_folders(self.portfolio)
-        if collapsed_folders:
-            node = tree.add("[dodger_blue2 bold]Collapsed folders")
-            for f in collapsed_folders:
+        folders = _get_folders(self.portfolio)
+        if folders:
+            node = tree.add("[dodger_blue2 bold]Folders")
+            for f in folders:
                 if f.get_delta() != 0:
                     node.add(f.render(output_format="[delta] [name]"))
         return tree

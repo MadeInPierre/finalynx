@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.11.1 (2023-04-28)
+### Fix
+* **folder:** Propagate currencies to orphan nodes ([#56](https://github.com/MadeInPierre/finalynx/issues/56)) ([`e1f0968`](https://github.com/MadeInPierre/finalynx/commit/e1f0968e138bd006c58362bce6eb5afa101edcbd))
+
 ## v1.11.0 (2023-04-28)
 ### Feature
 * **portfolio:** Basic support for multi-currencies ([#55](https://github.com/MadeInPierre/finalynx/issues/55)) ([`9b0e8ff`](https://github.com/MadeInPierre/finalynx/commit/9b0e8ff70346be6fab474c1cb35b2b3c4cee7337))

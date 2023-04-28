@@ -89,8 +89,8 @@ class Folder(Node):
         return float(np.sum([child.get_amount() for child in self.children]) if self.children else 0)
 
     def get_currency(self) -> str:
-        """:returns: This node's currency symbol, equal to it's chidlren common currency.
-        If children have different currencies, return an unknown currency (TODO to be improved)."""
+        """:returns: This folder's currency symbol, equal to its children common currency.
+        If children have different currencies, return an unknown symbol (TODO to be improved)."""
         currencies = [c.get_currency() for c in self.children]
         if currencies and currencies.count(currencies[0]) == len(currencies):
             return currencies[0]
@@ -353,7 +353,11 @@ class Portfolio(Folder):
     """This is the root of your custom portfolio hierarchy."""
 
     def __init__(
-        self, name: str = "Portfolio", target: Optional["Target"] = None, children: Optional[List["Node"]] = None
+        self,
+        name: str = "Portfolio",
+        target: Optional["Target"] = None,
+        children: Optional[List["Node"]] = None,
+        currency: Optional[str] = None,
     ):
         """
         This class is actually nothing more than a normal `Folder` renamed to `Portfolio` for user clarity
@@ -366,7 +370,7 @@ class Portfolio(Folder):
         :param children: List of `Line`, `Folder`, and `SharedFolder` objects to recursively define the
         entire structure, defaults to an empty list.
         """
-        super().__init__(name, parent=None, target=target, children=children, newline=False)
+        super().__init__(name, parent=None, target=target, children=children, newline=False, currency=currency)
 
     @staticmethod
     def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket], envelopes: Dict[str, Envelope]) -> "Portfolio":

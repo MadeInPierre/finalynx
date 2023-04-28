@@ -195,15 +195,23 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
             return session
 
+    def _fetch_currency(self, session):
+        """Fetches the currency of the Finary account."""
+        user = ff.get_user_me(session)
+        currency_symbol = user["result"]["ui_configuration"]["display_currency"]["symbol"]
+        # Required when symbol is None, can happen when currency is BTC
+        currency_code = user["result"]["ui_configuration"]["display_currency"]["code"]
+        return currency_symbol if currency_symbol is not None else currency_code
+
     def _fetch_data(self, session: Session, tree: Tree) -> Tuple[List[Dict[str, Any]], Tree]:
         """Internal method used to fetch every investment in your Finary account.
         :returns: A dictionary of all fetched investments (name:amount format), and a `Tree`
         instance which can be displayed in the console to make sure everything was retrieved.
         """
         # Automatically fetch user's display currency
-        user = ff.get_user_me(session)
-        currency = user["result"]["ui_configuration"]["display_currency"]["symbol"]
-        self.portfolio.currency = currency if self.portfolio.currency is None else self.portfolio.currency
+        self.portfolio.currency = (
+            self._fetch_currency(session) if self.portfolio.currency is None else self.portfolio.currency
+        )
 
         # Create a rich Tree to display the fetched data nicely
         lines_list: List[Dict[str, Any]] = []

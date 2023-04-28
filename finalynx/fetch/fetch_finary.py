@@ -200,6 +200,11 @@ class FetchFinary(Fetch):  # TODO update docstrings
         :returns: A dictionary of all fetched investments (name:amount format), and a `Tree`
         instance which can be displayed in the console to make sure everything was retrieved.
         """
+        # Automatically fetch user's display currency
+        user = ff.get_user_me(session)
+        currency = user["result"]["ui_configuration"]["display_currency"]["symbol"]
+        self.portfolio.currency = currency if self.portfolio.currency is None else self.portfolio.currency
+
         # Create a rich Tree to display the fetched data nicely
         lines_list: List[Dict[str, Any]] = []
 

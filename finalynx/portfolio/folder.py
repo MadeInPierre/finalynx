@@ -45,6 +45,7 @@ class Folder(Node):
         newline: bool = False,
         display: FolderDisplay = FolderDisplay.EXPANDED,
         perf: Optional[LinePerf] = None,
+        currency: Optional[str] = None,
     ):
         """
         This class handles the orchestration of rendering of its children.
@@ -71,7 +72,7 @@ class Folder(Node):
         for child in self.children:
             child.set_parent(self)
 
-        self.set_children(asset_class, perf)
+        self.set_children_attribs(asset_class, perf, currency)
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -86,6 +87,14 @@ class Folder(Node):
         :returns: The sum of what each child's `get_amount()` method returns.
         """
         return float(np.sum([child.get_amount() for child in self.children]) if self.children else 0)
+
+    def get_currency(self) -> str:
+        """:returns: This folder's currency symbol, equal to its children common currency.
+        If children have different currencies, return an unknown symbol (TODO to be improved)."""
+        currencies = [c.get_currency() for c in self.children]
+        if currencies and currencies.count(currencies[0]) == len(currencies):
+            return currencies[0]
+        return "?"
 
     def get_ideal(self) -> float:
         """:returns: The ideal amount to be invested in this node based on surrounding targets."""
@@ -200,15 +209,16 @@ class Folder(Node):
                 success = True
         return success
 
-    def set_children(self, asset_class: AssetClass, perf: Optional[LinePerf]) -> None:
+    def set_children_attribs(self, asset_class: AssetClass, perf: Optional[LinePerf], currency: Optional[str]) -> None:
         """Used at initialization time by Folders to set attributes once in the Folder
         instead of setting it in each child."""
         for child in self.children:
             if isinstance(child, Line):
                 child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
                 child.perf = perf if perf and child.perf.expected == 0 else child.perf
+                child.currency = currency if currency else child.currency
             elif isinstance(child, Folder):
-                child.set_children(asset_class, perf)
+                child.set_children_attribs(asset_class, perf, currency)
             else:
                 raise ValueError("Unrecognized node type.")
 
@@ -343,7 +353,11 @@ class Portfolio(Folder):
     """This is the root of your custom portfolio hierarchy."""
 
     def __init__(
-        self, name: str = "Portfolio", target: Optional["Target"] = None, children: Optional[List["Node"]] = None
+        self,
+        name: str = "Portfolio",
+        target: Optional["Target"] = None,
+        children: Optional[List["Node"]] = None,
+        currency: Optional[str] = None,
     ):
         """
         This class is actually nothing more than a normal `Folder` renamed to `Portfolio` for user clarity
@@ -356,7 +370,7 @@ class Portfolio(Folder):
         :param children: List of `Line`, `Folder`, and `SharedFolder` objects to recursively define the
         entire structure, defaults to an empty list.
         """
-        super().__init__(name, parent=None, target=target, children=children, newline=False)
+        super().__init__(name, parent=None, target=target, children=children, newline=False, currency=currency)
 
     @staticmethod
     def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket], envelopes: Dict[str, Envelope]) -> "Portfolio":

@@ -210,7 +210,11 @@ class Assistant:
             children, env_delta = [], 0.0
             for line in env.lines:
                 delta = line.get_delta()
-                if delta != 0 and line.target.check() not in [Target.RESULT_NONE, Target.RESULT_OK]:
+                if delta != 0 and line.target.check() not in [
+                    Target.RESULT_NONE,
+                    Target.RESULT_OK,
+                    Target.RESULT_TOLERATED,
+                ]:
                     env_delta += delta
                     children.append(line.render(output_format="[delta][name]"))
 

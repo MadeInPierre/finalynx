@@ -28,6 +28,7 @@ class Line(Node):
         newline: bool = False,
         envelope: Optional["Envelope"] = None,
         perf: Optional[LinePerf] = None,
+        currency: str = "€",
     ):
         """
         This is a subclass of `Node` that adds an `amount` and `key` property.
@@ -47,7 +48,7 @@ class Line(Node):
             "account_code": self._render_account_code,
         }
 
-        super().__init__(name, parent, target, newline, agents=render_agents)
+        super().__init__(name, parent, target, newline, agents=render_agents, currency=currency)
         self.asset_class = asset_class
         self.key = key if key is not None else name
         self.amount = amount
@@ -81,6 +82,7 @@ class Line(Node):
             "envelope_name": self.envelope.name if self.envelope else "",
             "perf": self.perf.__dict__,
             "newline": self.newline,
+            "currency": self.currency,
         }
 
     @staticmethod
@@ -94,4 +96,5 @@ class Line(Node):
             envelope=envelopes[dict["envelope_name"]] if dict["envelope_name"] else None,
             perf=LinePerf.from_dict(dict["perf"]),
             newline=bool(dict["newline"]),
+            currency=dict["currency"] if "currency" in dict.keys() else "€",
         )

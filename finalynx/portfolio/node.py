@@ -27,6 +27,7 @@ class Node(Hierarchy, Render):
         newline: bool = False,
         aliases: Optional[Dict[str, str]] = None,
         agents: Optional[Dict[str, Callable[..., str]]] = None,
+        currency: str = "€",
     ):
         """This is an abstract class used by the `Line` and `Folder` subclasses.
 
@@ -44,6 +45,7 @@ class Node(Hierarchy, Render):
         self.newline = newline
         self.target = target if target is not None else Target()
         self.target.set_parent(self)
+        self.currency = currency
 
         if target is not None:
             target.set_parent(self)
@@ -97,6 +99,10 @@ class Node(Hierarchy, Render):
         """:returns: The expected yearly performance of this node."""
         raise NotImplementedError("Must be overridden by children classes")
 
+    def get_currency(self) -> str:
+        """:returns: This node's currency symbol."""
+        return self.currency
+
     def tree(
         self,
         output_format: str = "[console]",
@@ -132,7 +138,7 @@ class Node(Hierarchy, Render):
 
     def _render_currency(self) -> str:
         """:returns: A formatted rendering of this element's currency."""
-        return "€"  # TODO add multi-currency support?
+        return self.get_currency()
 
     def _render_hint(self) -> str:
         """:returns: A formatted rendering of a hint message (at the end by default)."""

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "finalynx"
-version = "1.10.1"
+version = "1.11.0"
 description = "A command line investment assistant to organize your portfolio and simulate its future to reach your life goals."
 authors = ["MadeInPierre <pielaclau@gmail.com>"]
 license = "GPLv3"
@@ -52,7 +52,7 @@ build_command = "pip install poetry && poetry build"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "1.10.1"
+version = "1.11.0"
 tag_format = "v$version"
 
 [tool.mypy]

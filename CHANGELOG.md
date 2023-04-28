@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.11.0 (2023-04-28)
+### Feature
+* **portfolio:** Basic support for multi-currencies ([#55](https://github.com/MadeInPierre/finalynx/issues/55)) ([`9b0e8ff`](https://github.com/MadeInPierre/finalynx/commit/9b0e8ff70346be6fab474c1cb35b2b3c4cee7337))
+
 ## v1.10.1 (2023-04-28)
 ### Fix
 * **delta:** Include shared folders in the delta list ([`63b3762`](https://github.com/MadeInPierre/finalynx/commit/63b3762ea30f55fc9a66078700a63190fdfec101))

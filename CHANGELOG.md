@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.10.1 (2023-04-28)
+### Fix
+* **delta:** Include shared folders in the delta list ([`63b3762`](https://github.com/MadeInPierre/finalynx/commit/63b3762ea30f55fc9a66078700a63190fdfec101))
+
 ## v1.10.0 (2023-04-27)
 ### Feature
 * **json:** Export & import portfolio ([#53](https://github.com/MadeInPierre/finalynx/issues/53)) ([`4f852fb`](https://github.com/MadeInPierre/finalynx/commit/4f852fba8c365189eada3e3c3b1aa7f38b34805a))

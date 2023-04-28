@@ -68,6 +68,9 @@ class Folder(Node):
         super().__init__(name, parent, target, newline)
         self.children = [] if children is None else children
         self.display = display
+        self.asset_class = asset_class
+        self.perf = perf
+        self.currency = currency
 
         for child in self.children:
             child.set_parent(self)
@@ -81,6 +84,7 @@ class Folder(Node):
         """
         child.set_parent(self)
         self.children.append(child)
+        self.set_child_attribs(child, self.asset_class, self.perf, self.currency)
 
     def get_amount(self) -> float:
         """Get the total amount contained in this folder.
@@ -209,18 +213,29 @@ class Folder(Node):
                 success = True
         return success
 
+    def set_child_attribs(
+        self,
+        child,
+        asset_class: AssetClass,
+        perf: Optional[LinePerf],
+        currency: Optional[str],
+    ) -> None:
+        """Used by Folders to set attributes once in the Folder instead of setting it in each child.
+        Called at initialization time and when a child is manually added to the folder."""
+        if isinstance(child, Line):
+            child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
+            child.perf = perf if perf and child.perf.expected == 0 else child.perf
+            child.currency = currency if currency else child.currency
+        elif isinstance(child, Folder):
+            child.set_children_attribs(asset_class, perf, currency)
+        else:
+            raise ValueError("Unrecognized node type.")
+
     def set_children_attribs(self, asset_class: AssetClass, perf: Optional[LinePerf], currency: Optional[str]) -> None:
         """Used at initialization time by Folders to set attributes once in the Folder
         instead of setting it in each child."""
         for child in self.children:
-            if isinstance(child, Line):
-                child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
-                child.perf = perf if perf and child.perf.expected == 0 else child.perf
-                child.currency = currency if currency else child.currency
-            elif isinstance(child, Folder):
-                child.set_children_attribs(asset_class, perf, currency)
-            else:
-                raise ValueError("Unrecognized node type.")
+            self.set_child_attribs(child, asset_class, perf, currency)
 
     def _render_name_color(self) -> str:
         """Internal method that overrides the superclass' render method to display
@@ -370,7 +385,14 @@ class Portfolio(Folder):
         :param children: List of `Line`, `Folder`, and `SharedFolder` objects to recursively define the
         entire structure, defaults to an empty list.
         """
-        super().__init__(name, parent=None, target=target, children=children, newline=False, currency=currency)
+        super().__init__(
+            name,
+            parent=None,
+            target=target,
+            children=children,
+            newline=False,
+            currency=currency,
+        )
 
     @staticmethod
     def from_dict(dict: Dict[str, Any], buckets: Dict[str, Bucket], envelopes: Dict[str, Envelope]) -> "Portfolio":

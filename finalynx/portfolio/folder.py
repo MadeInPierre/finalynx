@@ -98,7 +98,7 @@ class Folder(Node):
         currencies = [c.get_currency() for c in self.children]
         if currencies and currencies.count(currencies[0]) == len(currencies):
             return currencies[0]
-        return "?"
+        return "#"  # TODO replace with a better behavior
 
     def get_ideal(self) -> float:
         """:returns: The ideal amount to be invested in this node based on surrounding targets."""
@@ -263,7 +263,7 @@ class Folder(Node):
         if self.target.check() != Target.RESULT_NONE:
             return self.target.render_ideal()
         ideal = float(np.sum([c.get_ideal() for c in self.children]))
-        return f"{round(ideal)} € " if ideal else ""
+        return f"{round(ideal)} {self._render_currency()} " if ideal else ""
 
     def to_dict(self) -> Dict[str, Any]:
         return {

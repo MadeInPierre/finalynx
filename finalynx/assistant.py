@@ -9,6 +9,7 @@ from docopt import docopt
 from finalynx import Dashboard
 from finalynx import FetchFinary
 from finalynx import Portfolio
+from finalynx.config import DEFAULT_CURRENCY
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
@@ -216,11 +217,11 @@ class Assistant:
                     Target.RESULT_TOLERATED,
                 ]:
                     env_delta += delta
-                    children.append(line.render(output_format="[delta][name]"))
+                    children.append(line._render_delta(children=env.lines) + line._render_name())
 
             if children:
                 env_delta = round(env_delta)
-                render_delta = f"[{'green' if env_delta > 0 else 'red'}]{'+' if env_delta > 0 else ''}{env_delta} €"
+                render_delta = f"[{'green' if env_delta > 0 else 'red'}]{'+' if env_delta > 0 else ''}{env_delta} {DEFAULT_CURRENCY}"
                 node = tree.add(f"{render_delta} [dodger_blue2 bold]{env.name}[/]")
                 for child in children:
                     node.add(child)
@@ -243,7 +244,7 @@ class Assistant:
             node = tree.add("[dodger_blue2 bold]Folders")
             for f in folders:
                 if f.get_delta() != 0:
-                    node.add(f.render(output_format="[delta] [name]"))
+                    node.add(f._render_delta(children=folders) + f._render_name())
         return tree
 
     def export(self, dirpath: str) -> None:

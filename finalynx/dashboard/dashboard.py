@@ -145,7 +145,7 @@ class Dashboard:
                                 <q-icon v-if="props.node.icon !== 'menu'" v-bind="{ name: props.node.icon, color: props.node.color }" size="20px"/>
                                 <span :props="props">
                                     <strong>
-                                        <span :style="{ color: props.node.color }">&nbsp;{{ props.node.amount }} €</span>
+                                        <span :style="{ color: props.node.color }">&nbsp;{{ props.node.amount }} {{ props.node.currency }}</span>
                                     </strong>
                                     <strong v-if="props.node.is_folder">
                                         <span style="color: #455A64">&nbsp;{{ props.node.name }}</span>
@@ -233,6 +233,7 @@ class Dashboard:
         result = {
             "label": node.render(output_format="[dashboard_tree]"),
             "amount": node.get_amount(),
+            "currency": node.get_currency(),
             "name": node.name,
             "hint": node.target.hint(),
             "icon": dict_icons[check_result][0],

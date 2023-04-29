@@ -64,7 +64,9 @@ class Target(Hierarchy):
         result = self.check()
         result = result if result != True else Target.RESULT_START  # type: ignore # noqa: E712 TODO weird bug??? Workaround for now
         number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
-        return f'[{result["color"]}]{result["symbol"]} {number} €[/][dim white]{self.prehint()}[/]'
+        return (
+            f'[{result["color"]}]{result["symbol"]} {number} {self._render_currency()}[/][dim white]{self.prehint()}[/]'
+        )
 
     def render_ideal(self) -> str:
         """Ideal amount to be reached based on the current target and node
@@ -87,6 +89,12 @@ class Target(Hierarchy):
     def _render_target_color(self) -> str:
         """:returns: The color associated to the target recommentation."""
         return self.check()["color"]
+
+    def _render_currency(self) -> str:
+        """:returns: This parent's currency symbol, used for target render methods."""
+        if not self.parent:
+            raise ValueError("Target's parent must not be None.")
+        return self.parent._render_currency()
 
     def to_dict(self) -> Dict[str, Any]:
         """Empty dict, should be overridden by subclasses."""
@@ -150,11 +158,11 @@ class TargetRange(Target):
 
     def render_ideal(self) -> str:
         """:returns: The average between target boundaries."""
-        return f"{round(self.get_ideal())} € "
+        return f"{round(self.get_ideal())} {self._render_currency()} "
 
     def render_goal(self) -> str:
         """:returns: Same as ideal amount."""
-        return f"{round(self.get_ideal())} € "
+        return f"{round(self.get_ideal())} {self._render_currency()} "
 
     def _get_variable(self) -> float:
         """Internal method that gives the value to be checked (overriden by subclasses)."""
@@ -162,7 +170,7 @@ class TargetRange(Target):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"- Range {self.target_min}-{self.target_max} €"
+        return f"- Range {self.target_min}-{self.target_max} {self._render_currency()}"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -189,7 +197,7 @@ class TargetMax(TargetRange):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"- Maximum {self.target_max} €"
+        return f"- Maximum {self.target_max} {self._render_currency()}"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -215,7 +223,7 @@ class TargetMin(TargetRange):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"- Minimum {self.target_min} €"
+        return f"- Minimum {self.target_min} {self._render_currency()}"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -281,7 +289,7 @@ class TargetRatio(TargetRange):
             if isinstance(child.target, TargetRatio):
                 max_length = max(max_length, len(str(round(child.target.get_ideal()))))
 
-        return f"→ {self.get_ideal():>{max_length}} €"
+        return f"→ {self.get_ideal():>{max_length}} {self._render_currency()}"
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""

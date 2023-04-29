@@ -4,6 +4,7 @@ from typing import Dict
 from typing import Optional
 from typing import TYPE_CHECKING
 
+from ..config import DEFAULT_CURRENCY
 from .constants import AssetClass
 from .constants import LinePerf
 from .node import Node
@@ -28,7 +29,7 @@ class Line(Node):
         newline: bool = False,
         envelope: Optional["Envelope"] = None,
         perf: Optional[LinePerf] = None,
-        currency: str = "€",
+        currency: Optional[str] = None,
     ):
         """
         This is a subclass of `Node` that adds an `amount` and `key` property.
@@ -96,5 +97,5 @@ class Line(Node):
             envelope=envelopes[dict["envelope_name"]] if dict["envelope_name"] else None,
             perf=LinePerf.from_dict(dict["perf"]),
             newline=bool(dict["newline"]),
-            currency=dict["currency"] if "currency" in dict.keys() else "€",
+            currency=dict["currency"] if "currency" in dict.keys() else DEFAULT_CURRENCY,
         )

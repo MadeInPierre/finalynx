@@ -1,12 +1,14 @@
 from typing import Any
 from typing import Callable
 from typing import Dict
+from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
 
 import numpy as np
 from rich.tree import Tree
 
+from ..config import DEFAULT_CURRENCY
 from .constants import LinePerf
 from .hierarchy import Hierarchy
 from .render import Render
@@ -27,7 +29,7 @@ class Node(Hierarchy, Render):
         newline: bool = False,
         aliases: Optional[Dict[str, str]] = None,
         agents: Optional[Dict[str, Callable[..., str]]] = None,
-        currency: str = "€",
+        currency: Optional[str] = None,
     ):
         """This is an abstract class used by the `Line` and `Folder` subclasses.
 
@@ -45,7 +47,7 @@ class Node(Hierarchy, Render):
         self.newline = newline
         self.target = target if target is not None else Target()
         self.target.set_parent(self)
-        self.currency = currency
+        self.currency = currency if currency else DEFAULT_CURRENCY
 
         if target is not None:
             target.set_parent(self)
@@ -171,21 +173,22 @@ class Node(Hierarchy, Render):
         """:returns: A formatted rendering of the ideal amount to be invested based on the target."""
         return self.target.render_ideal()
 
-    def _render_delta(self, align: bool = True) -> str:
-        """:returns: A formatted rendering of the delta investment needed to reach the target."""
+    def _render_delta(self, align: bool = True, children: Optional[List["Node"]] = None) -> str:
+        """Creates a formatted rendering of the delta investment needed to reach the target.
+        :param align: Use the `children` parameter as a list of nodes to align all amounts vertically.
+        :param children: List of `Node` objects used for vertical alignemnt, defaults to this parent's children.
+        :returns: The rendered string.
+        """
         delta, check = round(self.get_delta()), self.target.check()
         if delta == 0 or check == Target.RESULT_NONE:
             return ""
-        if check == Target.RESULT_OK:
-            return "[green]✓[/] "
         color = "green" if delta > 0 else "red"
-        max_length = (
-            np.max([len(str(abs(round(c.get_delta())))) for c in self.parent.children])
-            if (self.parent and self.parent.children)
-            else 0
-        )
+        children = children if children else (self.parent.children if self.parent and self.parent.children else [])
+        max_length = np.max([len(str(abs(round(c.get_delta())))) for c in children]) if children else 0
         max_length = max_length if align else 0
-        return f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} €[/] "
+        if check == Target.RESULT_OK:
+            return f"[green]{'✓':>{max_length+3}}[/] "
+        return f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} {self._render_currency()}[/] "
 
     def _render_perf(self) -> str:
         """:returns: A formatted rendering of the node's expected yearly performance."""

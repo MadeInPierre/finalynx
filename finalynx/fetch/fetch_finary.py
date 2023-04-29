@@ -292,6 +292,15 @@ class FetchFinary(Fetch):  # TODO update docstrings
                 lines_list, node, key=account["name"], id=account["id"], amount=-account["display_balance"]
             )
 
+        # Credit accounts
+        console.log("Fetching credit accounts...")
+        node = tree.add("[bold]Loans")
+        # TODO: when https://github.com/lasconic/finary/pull/68 is merged, use get_credit_accounts
+        credits = session.get(f"{finary_api.constants.API_ROOT}/users/me/views/credit_accounts").json()["result"]
+
+        for item in credits["data"]:
+            self._match_line(lines_list, node, key=item["name"], id=item["id"], amount=-item["display_balance"])
+
         return lines_list, tree
 
     def _match_line(self, lines_list: List[Dict[str, Any]], node: Tree, key: str, id: str, amount: int) -> None:

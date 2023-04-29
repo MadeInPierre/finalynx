@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.11.2 (2023-04-29)
+### Fix
+* **currency:** Use node currency everywhere, add default config ([`94f4711`](https://github.com/MadeInPierre/finalynx/commit/94f47113e3d233d640ce55b0cecdbb924e7ca71e))
+
 ## v1.11.1 (2023-04-28)
 ### Fix
 * **folder:** Propagate currencies to orphan nodes ([#56](https://github.com/MadeInPierre/finalynx/issues/56)) ([`e1f0968`](https://github.com/MadeInPierre/finalynx/commit/e1f0968e138bd006c58362bce6eb5afa101edcbd))

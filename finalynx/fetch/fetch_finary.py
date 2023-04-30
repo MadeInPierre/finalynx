@@ -104,11 +104,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
             if not session:
                 return Tree("Finary signin failed.")
 
-            try:
-                lines_list, tree = self._fetch_data(session, tree)
-            except Exception:
-                console.log("[red bold]Error: Couldn't fetch data, please try using the `-f` option to signin again.")
-                return tree
+            lines_list, tree = self._fetch_data(session, tree)
 
             # Save what has been found in a cache file for offline use and better performance at next launch
             self._save_cache(lines_list)
@@ -305,6 +301,10 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
     def _match_line(self, lines_list: List[Dict[str, Any]], node: Tree, key: str, id: str, amount: int) -> None:
         """Internal method used to register a new investment found from Finary."""
+
+        if not key or not id:
+            console.log("[yellow][bold]WARNING:[/] Invalid element in the API response, skipping.")
+            return
 
         # Discard non-ASCII characters in the key
         key, id, amount = unidecode(key), str(id), round(amount)

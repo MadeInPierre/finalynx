@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.12.0 (2023-04-30)
+### Feature
+* **fetch:** Support loans and credit accounts ([#61](https://github.com/MadeInPierre/finalynx/issues/61)) ([`c51acd2`](https://github.com/MadeInPierre/finalynx/commit/c51acd2ef8eaf351797ad27677b6122a844b61b7))
+
 ## v1.11.2 (2023-04-29)
 ### Fix
 * **currency:** Use node currency everywhere, add default config ([`94f4711`](https://github.com/MadeInPierre/finalynx/commit/94f47113e3d233d640ce55b0cecdbb924e7ca71e))

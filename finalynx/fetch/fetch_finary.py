@@ -294,7 +294,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
         # Credit accounts
         console.log("Fetching credit accounts...")
-        node = tree.add("[bold]Loans")
+        node = tree.add("[bold]Credit accounts")
         # TODO: when https://github.com/lasconic/finary/pull/68 is merged, use get_credit_accounts
         credits = session.get(f"{finary_api.constants.API_ROOT}/users/me/views/credit_accounts").json()["result"]
 

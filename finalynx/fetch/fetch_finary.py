@@ -104,7 +104,11 @@ class FetchFinary(Fetch):  # TODO update docstrings
             if not session:
                 return Tree("Finary signin failed.")
 
-            lines_list, tree = self._fetch_data(session, tree)
+            try:
+                lines_list, tree = self._fetch_data(session, tree)
+            except Exception:
+                console.log("[red bold]Error: Couldn't fetch data, please try using the `-f` option to signin again.")
+                return tree
 
             # Save what has been found in a cache file for offline use and better performance at next launch
             self._save_cache(lines_list)

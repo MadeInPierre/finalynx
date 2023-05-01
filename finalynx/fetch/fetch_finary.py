@@ -306,6 +306,10 @@ class FetchFinary(Fetch):  # TODO update docstrings
     def _match_line(self, lines_list: List[Dict[str, Any]], node: Tree, key: str, id: str, amount: int) -> None:
         """Internal method used to register a new investment found from Finary."""
 
+        if not key or not id:
+            console.log("[yellow][bold]WARNING:[/] Invalid element in the API response, skipping.")
+            return
+
         # Discard non-ASCII characters in the key
         key, id, amount = unidecode(key), str(id), round(amount)
 

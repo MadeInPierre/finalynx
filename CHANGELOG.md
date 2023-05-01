@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.12.1 (2023-05-01)
+### Fix
+* **fetch:** Ignore invalid elements from API response ([#66](https://github.com/MadeInPierre/finalynx/issues/66)) ([`fcfa91a`](https://github.com/MadeInPierre/finalynx/commit/fcfa91ae4a56c6ce4bd0595cb19173f313ef3a8c))
+
 ## v1.12.0 (2023-04-30)
 ### Feature
 * **fetch:** Support loans and credit accounts ([#61](https://github.com/MadeInPierre/finalynx/issues/61)) ([`c51acd2`](https://github.com/MadeInPierre/finalynx/commit/c51acd2ef8eaf351797ad27677b6122a844b61b7))

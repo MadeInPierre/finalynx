@@ -2,12 +2,11 @@ import datetime
 import json
 import os
 from typing import Any
-from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
-from typing import Tuple
 
+from finalynx.fetch.fetch_match import FetchLine
 from requests import Session
 from rich.prompt import Confirm
 from rich.tree import Tree
@@ -90,28 +89,46 @@ class FetchFinary(Fetch):  # TODO update docstrings
             os.remove(self.cache_fullpath)
 
         # This will hold a key:amount dictionary of all lines found in the Finary account
-        lines_list: List[Dict[str, Any]] = self._get_cache()  # try to get the data in the cache first
+        fetched_lines: List[FetchLine] = self._get_cache()  # try to get the data in the cache first
         tree = Tree("Finary API", highlight=True, hide_root=True)
 
-        # If the cache is not empty, Match all lines to the portfolio hierarchy
-        if lines_list:
-            for line in lines_list:
-                self._match_line([], tree, key=line["key"], id=line["id"], amount=line["amount"])
-
         # If there's no valid cache, signin and fetch the data online
-        else:
+        if not fetched_lines:
             session = self._authenticate()
             if not session:
                 return Tree("Finary signin failed.")
 
-            try:
-                lines_list, tree = self._fetch_data(session, tree)
-            except Exception:
-                console.log("[red bold]Error: Couldn't fetch data, please try using the `-f` option to signin again.")
-                return tree
+            # try:
+            fetched_lines = self._fetch_data(session, tree)
+            # except Exception:
+            #     console.log("[red bold]Error: Couldn't fetch data, please try using the `-f` option to signin again.")
+            #     return tree
 
             # Save what has been found in a cache file for offline use and better performance at next launch
-            self._save_cache(lines_list)
+            self._save_cache(fetched_lines)
+
+        # If the cache is not empty, Match all lines to the portfolio hierarchy
+        for fline in fetched_lines:
+            name = fline.name if fline.name else "Unknown"
+            matched_lines: List[Line] = []  # TODO self.portfolio.match_lines(fline)
+
+            # Set attributes to the first matched line
+            if matched_lines:
+                # Issue a warning if multiple lines matched, try to set a stricter key
+                if len(matched_lines) > 1:
+                    console.log(
+                        f"[yellow][bold]Warning:[/] Line '{name}' matched with multiple nodes, updating first only."
+                    )
+
+                # Update the first line's attributes based on whata has been found online
+                fline.update_line(matched_lines[0])
+
+            # If no line matched, attach a fake line to root (unless ignored)
+            elif not self.ignore_orphans:
+                console.log(
+                    f"[yellow][bold]Warning:[/] Line '{name}' did not match with any portfolio node, attaching to root."
+                )
+                self.portfolio.add_child(Line(name, amount=fline.amount))
 
         # Return a rich tree to be displayed in the console as a recap of what has been fetched
         console.log("Done fetching Finary data.")
@@ -195,141 +212,198 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
             return session
 
-    def _fetch_data(self, session: Session, tree: Tree) -> Tuple[List[Dict[str, Any]], Tree]:
+    def _fetch_data(self, session: Session, tree: Tree) -> List[FetchLine]:
         """Internal method used to fetch every investment in your Finary account.
         :returns: A dictionary of all fetched investments (name:amount format), and a `Tree`
         instance which can be displayed in the console to make sure everything was retrieved.
         """
+
         # Create a rich Tree to display the fetched data nicely
-        lines_list: List[Dict[str, Any]] = []
+        fetched_lines: List[FetchLine] = []
 
-        # Common fetching procedure for multiple sources
-        def _process(
-            step_name: str,
-            function: Callable[..., Dict[str, Any]],
-            callback: Callable[[Dict[str, Any]], Tuple[str, str, int]],
-            period: bool = True,
-        ) -> None:
+        # Simple utility function
+        def start_step(step_name: str, tree_node: Tree) -> Tree:
             console.log(f"Fetching {step_name.lower()}...")
-            node = tree.add(f"[bold]{step_name}")
-            result = function(session, "1w")["result"]["data"] if period else function(session)["result"]
+            return tree_node.add(f"[bold]{step_name}")
 
-            for e in result:
-                key, id, amount = callback(e)
-                self._match_line(lines_list, node, key, id, round(amount))
+        # Checkings
+        node = start_step("Checkings", tree)
+        for e in ff.get_checking_accounts(session, "1w")["result"]["data"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["name"],
+                id=e["id"],
+                account=e["institution"]["name"],
+                amount=e["display_balance"],
+                currency=e["display_currency"]["symbol"],
+            )
 
-        # Process similar sources together
-        _process(
-            "Checkings",
-            ff.get_checking_accounts,
-            lambda e: (e["name"], e["id"], e["fiats"][0]["display_current_value"]),
-        )
-        _process(
-            "Savings", ff.get_savings_accounts, lambda e: (e["name"], e["id"], e["fiats"][0]["display_current_value"])
-        )
-        _process("Fonds euro", ff.get_fonds_euro, lambda e: (e["name"], e["id"], e["display_current_value"]))
-        _process("Others", ff.get_other_assets, lambda e: (e["name"], e["id"], e["display_current_value"]))
-        _process(
-            "Precious metals",
-            ff.get_user_precious_metals,
-            lambda e: (e["precious_metal"]["name"], e["id"], e["display_current_value"]),
-            period=False,
-        )
+        # Savings
+        node = start_step("Savings", tree)
+        for e in ff.get_savings_accounts(session, "1w")["result"]["data"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["name"],
+                id=e["id"],
+                account=e["institution"]["name"],
+                amount=e["display_balance"],
+                currency=e["display_currency"]["symbol"],
+            )
+
+        # Fonds euro
+        node = start_step("Fonds euro", tree)
+        for e in ff.get_fonds_euro(session, "1w")["result"]["data"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["name"],
+                id=e["id"],
+                account=e["account"]["name"],
+                amount=e["account"]["display_balance"],
+                currency=e["account"]["display_currency"]["symbol"],
+            )
+
+        # Others
+        node = start_step("Others", tree)
+        for e in ff.get_other_assets(session, "1w")["result"]["data"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["name"],
+                id=e["id"],
+                account=e["account"]["name"],
+                amount=e["display_current_value"],
+                currency=e["account"]["display_currency"]["symbol"],
+            )
+
+        # Precious metals
+        node = start_step("Precious metals", tree)
+        for e in ff.get_user_precious_metals(session)["result"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["precious_metal"]["name"],
+                id=e["id"],
+                account=e["account"]["name"],
+                amount=e["display_current_value"],
+                currency=e["precious_metal"]["display_currency"]["symbol"],
+            )
 
         # Investments
-        console.log("Fetching investments...")
-        node = tree.add("[bold]Investments")
-        investments = ff.get_portfolio_investments(session)["result"]
-        for account in investments["accounts"]:
-            node_account = node.add("[bold]Account: " + account["name"])
-            for account in account["securities"]:
-                self._match_line(
-                    lines_list,
-                    node_account,
-                    key=account["security"]["name"],
-                    id=account["id"],
-                    amount=account["display_current_value"],
+        node = start_step("Investments", tree)
+        for account in ff.get_portfolio_investments(session)["result"]["accounts"]:
+            node_account = node.add(f"[bold]Account: {account['name']}")
+            for e in account["securities"]:
+                self._register_fetchline(
+                    fetched_lines=fetched_lines,
+                    tree_node=node_account,
+                    name=e["security"]["name"],
+                    id=e["id"],
+                    account=account["name"],
+                    amount=e["display_current_value"],
+                    currency=e["security"]["display_currency"]["symbol"],
                 )
 
         # Cryptos
-        console.log("Fetching cryptos...")
-        node = tree.add("[bold]Cryptos")
-        cryptos = finary_api.user_portfolio.get_portfolio_cryptos(session)["result"]
-
-        for account in cryptos["accounts"]:
-            node_account = node.add("[bold]Account: " + account["name"])
-            for account in account["cryptos"]:
-                self._match_line(
-                    lines_list,
-                    node_account,
-                    key=account["crypto"]["name"],
-                    id=account["id"],
-                    amount=account["display_current_value"],
+        node = start_step("Cryptos", tree)
+        for account in finary_api.user_portfolio.get_portfolio_cryptos(session)["result"]["accounts"]:
+            node_account = node.add(f"[bold]Account: {account['name']}")
+            for e in account["cryptos"]:
+                self._register_fetchline(
+                    fetched_lines=fetched_lines,
+                    tree_node=node_account,
+                    name=e["crypto"]["name"],
+                    id=e["id"],
+                    account=account["name"],
+                    amount=e["display_current_value"],
+                    currency=e["buying_price_currency"]["symbol"],
                 )
 
         # Real estate
-        console.log("Fetching real estate...")
-        node = tree.add("[bold]Real estate")
-        real_estate = ff.get_real_estates(session, "1w")["result"]
-
-        for item in real_estate["data"]["real_estates"]:
-            self._match_line(
-                lines_list, node, key=item["description"], id=item["id"], amount=item["display_current_value"]
+        node = start_step("Real estate", tree)
+        real_estate = ff.get_real_estates(session, "1w")["result"]["data"]
+        for e in real_estate["real_estates"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["description"],
+                id=e["id"],
+                account=e["account"]["name"],
+                amount=e["display_current_value"],
+                currency=e["account"]["display_currency"]["symbol"],
             )
-        for item in real_estate["data"]["scpis"]:
-            self._match_line(
-                lines_list, node, key=item["scpi"]["name"], id=item["scpi"]["id"], amount=item["display_current_value"]
+        for e in real_estate["scpis"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["scpi"]["name"],
+                id=e["id"],
+                account=e["account"]["name"],
+                amount=e["display_current_value"],
+                currency=e["account"]["display_currency"]["symbol"],
             )
 
         # Loans
-        console.log("Fetching loans...")
-        node = tree.add("[bold]Loans")
-        loans = ff.get_loans(session)["result"]
-
-        for item in loans["data"]:
-            account = item["account"]
-            self._match_line(
-                lines_list, node, key=account["name"], id=account["id"], amount=-account["display_balance"]
+        node = start_step("Loans", tree)
+        for e in ff.get_loans(session)["result"]["data"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["name"],
+                id=e["id"],
+                account=e["account"]["name"],
+                amount=-e["account"]["display_balance"],
+                currency=e["display_currency"]["symbol"],
             )
 
-        # Credit accounts
-        console.log("Fetching credit accounts...")
-        node = tree.add("[bold]Credit accounts")
-        # TODO: when https://github.com/lasconic/finary/pull/68 is merged, use get_credit_accounts
+        # Credit accounts # TODO: when https://github.com/lasconic/finary/pull/68 is merged, use get_credit_accounts
+        node = start_step("Credit accounts", tree)
         credits = session.get(f"{finary_api.constants.API_ROOT}/users/me/views/credit_accounts").json()["result"]
+        for e in credits["data"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["name"],
+                id=e["id"],
+                account=e["account"]["name"],
+                amount=-e["display_balance"],
+                currency=e["display_currency"]["symbol"],
+            )
 
-        for item in credits["data"]:
-            self._match_line(lines_list, node, key=item["name"], id=item["id"], amount=-item["display_balance"])
+        return fetched_lines
 
-        return lines_list, tree
-
-    def _match_line(self, lines_list: List[Dict[str, Any]], node: Tree, key: str, id: str, amount: int) -> None:
+    def _register_fetchline(
+        self,
+        fetched_lines: List[FetchLine],
+        tree_node: Tree,
+        name: str,
+        id: str,
+        account: str,
+        amount: int,
+        currency: str,
+        custom: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """Internal method used to register a new investment found from Finary."""
 
-        if not key or not id:
-            console.log("[yellow][bold]WARNING:[/] Invalid element in the API response, skipping.")
+        # Skip malformed lines
+        if not (name or id or account):
+            console.log("[yellow][bold]Warning:[/] Invalid element in the API response, skipping.")
             return
 
-        # Discard non-ASCII characters in the key
-        key, id, amount = unidecode(key), str(id), round(amount)
-
-        # Add the line to the dictionary of fetched items
-        lines_list.append({"key": key, "id": id, "amount": amount})
+        # Discard non-ASCII characters in the fields
+        name, id, account, amount = unidecode(name), str(id), unidecode(account), round(float(amount))
 
         # Add the line to the rendering tree
-        node_child = node.add(f"{amount} {key} [dim white]{id=}")
+        tree_node.add(f"{amount} {currency} {name} [dim white]{id=} {account=}")
 
-        # Fill the line's amount in the portfolio
-        for k in [key, id]:
-            if self.portfolio.set_child_amount(k, amount):
-                return
+        # Form a FetLine instance from the information given and return it
+        fetched_lines.append(
+            FetchLine(name=name, id=id, account=account, custom=custom, amount=amount, currency=currency)
+        )
 
-        # Attach it to root if the line is absent (unless ignored)
-        if not self.ignore_orphans:
-            node_child.add("[yellow]WARNING: This line did not match with any envelope, attaching to root")
-            self.portfolio.add_child(Line(key, amount=amount))
-
-    def _get_cache(self) -> List[Dict[str, Any]]:
+    def _get_cache(self) -> List[FetchLine]:
         """Attempt to retrieve the cached data. Check if more than an hour has passed since the last update.
         :returns: A key:amount dictionary if the cache file is less than an hour old, None otherwise.
         """
@@ -350,12 +424,11 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
         if hours_passed < self.MAX_CACHE_HOURS:
             console.log(f"Using recently cached data (<{self.MAX_CACHE_HOURS}h max)")
-            lines: List[Dict[str, Any]] = data["lines"]
-            return lines
+            return [FetchLine.from_dict(line_dict) for line_dict in data["lines"]]
         console.log(f"Fetching data (cache file is {hours_passed}h old > {self.MAX_CACHE_HOURS}h max)")
         return []
 
-    def _save_cache(self, lines_list: List[Dict[str, Any]]) -> None:
+    def _save_cache(self, fetched_lines: List[FetchLine]) -> None:
         """Save the fetched data locally to work offline and reduce the amoutn of calls to the API.
         :param tree: Generated tree object containing all information
         """
@@ -363,6 +436,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         # Save current date and time to a JSON file with the fetched data
         console.log(f"Saving fetched data in '{self.cache_fullpath}'")
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        data = {"last_updated": current_time, "lines": lines_list}
+        data = {"last_updated": current_time, "lines": [line.to_dict() for line in fetched_lines]}
         with open(self.cache_fullpath, "w") as f:
             json.dump(data, f, indent=4)

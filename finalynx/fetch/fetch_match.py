@@ -8,7 +8,9 @@ from typing import List
 from typing import Optional
 
 import numpy as np
+from finalynx.config import DEFAULT_CURRENCY
 from finalynx.console import console
+from finalynx.portfolio.line import Line
 from finalynx.portfolio.node import Node
 
 
@@ -22,10 +24,17 @@ class FetchAttribs:
     account: Optional[str] = None
     custom: Optional[Dict[str, Any]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Runs after an instance is created to validate inputs. At least one field must be set."""
         if not (self.name or self.id or self.account or self.custom):
             raise ValueError(f"{type(self).__name__} instance must have at least one field set.")
+
+    def to_dict(self) -> Dict[str, Any]:
+        return self.__dict__
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "FetchAttribs":
+        raise NotImplementedError("Absctract method must be overridden by subclasses.")
 
 
 @dataclass
@@ -36,6 +45,28 @@ class FetchLine(FetchAttribs):
 
     amount: float = 0
     currency: Optional[str] = None
+
+    def update_line(self, line: Line) -> None:
+        """Update a `Line` instance, usually matched against a FetchKe, in the portfolio,
+        with data fetched online."""
+        if not line.amount:
+            line.amount = self.amount
+        if not line.currency:
+            line.currency = self.currency if self.currency else DEFAULT_CURRENCY
+
+    def to_dict(self) -> Dict[str, Any]:
+        return self.__dict__
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "FetchLine":
+        return FetchLine(
+            name=dict["name"],
+            id=dict["id"],
+            account=dict["account"],
+            custom=dict["custom"],
+            amount=dict["amount"],
+            currency=dict["currency"],
+        )
 
 
 @dataclass
@@ -82,3 +113,16 @@ class FetchKey(FetchAttribs):
 
         # This method reaches here if all compared pairs matched (or if no pair could be compared)
         return bool(np.all([i for i in results if i is not None])) if self.match_all else bool(True in results)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return self.__dict__
+
+    @staticmethod
+    def from_dict(dict: Dict[str, Any]) -> "FetchKey":
+        return FetchKey(
+            name=dict["name"],
+            id=dict["id"],
+            account=dict["account"],
+            custom=dict["custom"],
+            match_all=dict["match_all"],
+        )

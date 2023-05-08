@@ -45,59 +45,54 @@ class AssetClass(Enum):
     DIVERSIFIED = "Diversifié"
 
 
-@dataclass
-class Asset:
-    """Asset subclass definition class."""
-
-    name: str
-    asset_class: AssetClass
-
-
-class Assets(Enum):
+class AssetSubclass(Enum):
     """Default collection of assets used as asset subclasses (for easier visualization and analysis)."""
 
     # Cash
-    CASH_CCP = Asset("Comptes courants", AssetClass.CASH)
-    CASH_MONETARY = Asset("Monétaire", AssetClass.CASH)
+    CASH_CCP = "Comptes courants"
+    CASH_MONETARY = "Monétaire"
 
     # Guaranteed investments (mostly french)
-    GUARANTEED_LIVRET = Asset("Livrets", AssetClass.GUARANTEED)
-    GUARANTEED_LIVRET_TAXED = Asset("Livrets imposables", AssetClass.GUARANTEED)
-    GUARANTEED_FOND_EURO = Asset("Fonds euro", AssetClass.GUARANTEED)
+    GUARANTEED_LIVRET = "Livrets"
+    GUARANTEED_LIVRET_TAXED = "Livrets imposables"
+    GUARANTEED_FOND_EURO = "Fonds euro"
 
     # Bonds
-    BOND_DATED = Asset("Fonds datés", AssetClass.BOND)
-    BOND_ETF = Asset("ETFs Obligations", AssetClass.BOND)
+    BOND_DATED = "Fonds datés"
+    BOND_ETF = "ETFs Obligations"
 
     # Stocks
-    STOCK_SHARE = Asset("Titres vifs", AssetClass.STOCK)
-    STOCK_ETF = Asset("ETFs Actions", AssetClass.STOCK)
+    STOCK_SHARE = "Titres vifs"
+    STOCK_ETF = "ETFs Actions"
 
     # Real estate
-    REAL_ESTATE_PHYSICAL = Asset("Immobilier physique", AssetClass.REAL_ESTATE)
-    REAL_ESTATE_SCPI = Asset("SCPI", AssetClass.REAL_ESTATE)
-    REAL_ESTATE_SCI = Asset("SCI", AssetClass.REAL_ESTATE)
+    REAL_ESTATE_PHYSICAL = "Immobilier physique"
+    REAL_ESTATE_SCPI = "SCPI"
+    REAL_ESTATE_SCI = "SCI"
 
     # Metals
-    MATERIAL_GOLD = Asset("Or", AssetClass.MATERIAL)
-    MATERIAL_SILVER = Asset("Argent", AssetClass.MATERIAL)
-    MATERIAL_RAW = Asset("Matières premières", AssetClass.MATERIAL)
+    MATERIAL_GOLD = "Or"
+    MATERIAL_SILVER = "Argent"
+    MATERIAL_RAW = "Matières premières"
 
     # Cryptos
-    CRYPTO_L1 = Asset("L1", AssetClass.CRYPTO)
-    CRYPTO_STABLECOINS = Asset("Stablecoins", AssetClass.CRYPTO)
-    CRYPTO_DEFI = Asset("DeFi", AssetClass.CRYPTO)
+    CRYPTO_L1 = "L1"
+    CRYPTO_STABLECOINS = "Stablecoins"
+    CRYPTO_DEFI = "DeFi"
 
     # Exotics
-    EXOTIC_GFI = Asset("Forêts", AssetClass.EXOTIC)
-    EXOTIC_ART = Asset("Art", AssetClass.EXOTIC)
-    EXOTIC_WATCH = Asset("Watches", AssetClass.EXOTIC)
+    EXOTIC_GFI = "Forêts"
+    EXOTIC_ART = "Art"
+    EXOTIC_WATCH = "Watches"
 
     # Diversified
-    UNKNOWN_OPCVM = Asset("OPCVM", AssetClass.DIVERSIFIED)
+    UNKNOWN_OPCVM = "OPCVM"
 
     # Passives
-    PASSIVE_VEHICLE = Asset("Véhicule", AssetClass.PASSIVE)
+    PASSIVE_VEHICLE = "Véhicule"
+
+    # Unknown (default)
+    UNKNOWN = "Unknown"
 
 
 class EnvelopeClass(Enum):  # TODO use or remove?

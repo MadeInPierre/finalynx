@@ -10,6 +10,7 @@ from rich.tree import Tree
 from ..console import console
 from .bucket import Bucket
 from .constants import AssetClass
+from .constants import AssetSubclass
 from .envelope import Envelope
 from .line import Line
 from .line import LinePerf
@@ -39,6 +40,7 @@ class Folder(Node):
         self,
         name: str,
         asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         children: Optional[List["Node"]] = None,
@@ -68,14 +70,15 @@ class Folder(Node):
         super().__init__(name, parent, target, newline)
         self.children = [] if children is None else children
         self.display = display
-        self.asset_class = asset_class
-        self.perf = perf
-        self.currency = currency
+        self._asset_class = asset_class
+        self._asset_subclass = asset_subclass
+        self._perf = perf
+        self._currency = currency
 
         for child in self.children:
             child.set_parent(self)
 
-        self.set_children_attribs(asset_class, perf, currency)
+        self.set_children_attribs(asset_class, asset_subclass, perf, currency)
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -84,7 +87,13 @@ class Folder(Node):
         """
         child.set_parent(self)
         self.children.append(child)
-        self.set_child_attribs(child, self.asset_class, self.perf, self.currency)
+        self.set_child_attribs(
+            child,
+            self._asset_class,
+            self._asset_subclass,
+            self._perf,
+            self._currency,
+        )
 
     def get_amount(self) -> float:
         """Get the total amount contained in this folder.
@@ -215,8 +224,9 @@ class Folder(Node):
 
     def set_child_attribs(
         self,
-        child,
+        child: Node,
         asset_class: AssetClass,
+        asset_subclass: AssetSubclass,
         perf: Optional[LinePerf],
         currency: Optional[str],
     ) -> None:
@@ -224,18 +234,27 @@ class Folder(Node):
         Called at initialization time and when a child is manually added to the folder."""
         if isinstance(child, Line):
             child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
+            child.asset_subclass = (
+                asset_subclass if child.asset_subclass is AssetClass.UNKNOWN else child.asset_subclass
+            )
             child.perf = perf if perf and child.perf.expected == 0 else child.perf
             child.currency = currency if currency else child.currency
         elif isinstance(child, Folder):
-            child.set_children_attribs(asset_class, perf, currency)
+            child.set_children_attribs(asset_class, asset_subclass, perf, currency)
         else:
             raise ValueError("Unrecognized node type.")
 
-    def set_children_attribs(self, asset_class: AssetClass, perf: Optional[LinePerf], currency: Optional[str]) -> None:
+    def set_children_attribs(
+        self,
+        asset_class: AssetClass,
+        asset_subclass: AssetSubclass,
+        perf: Optional[LinePerf],
+        currency: Optional[str],
+    ) -> None:
         """Used at initialization time by Folders to set attributes once in the Folder
         instead of setting it in each child."""
         for child in self.children:
-            self.set_child_attribs(child, asset_class, perf, currency)
+            self.set_child_attribs(child, asset_class, asset_subclass, perf, currency)
 
     def _render_name_color(self) -> str:
         """Internal method that overrides the superclass' render method to display
@@ -302,13 +321,14 @@ class SharedFolder(Folder):
         name: str,
         bucket: Bucket,
         asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         target_amount: float = np.inf,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         newline: bool = False,
         display: FolderDisplay = FolderDisplay.EXPANDED,
     ):
-        super().__init__(name, asset_class, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
+        super().__init__(name, asset_class, asset_subclass, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket

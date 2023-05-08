@@ -26,12 +26,14 @@ class Envelope:
         date_created: date,
         date_unlock: Optional[date] = None,
         date_untax: Optional[date] = None,
+        key: Optional[str] = None,
     ):
         self.name = name
         self.code = code
         self.date_created = date_created
         self.date_unlock = date_unlock if date_unlock else date_created
         self.date_untax = date_untax if date_untax else date_created
+        self.key = key
 
         if not (self.date_created <= self.date_unlock <= self.date_untax):
             raise ValueError("Envelope dates must be ordered by created <= unlock <= untax")
@@ -75,24 +77,26 @@ class Envelope:
 
 
 class PEA(Envelope):
-    def __init__(self, name: str, code: str, date_created: date):
+    def __init__(self, name: str, code: str, date_created: date, key: Optional[str] = None):
         date_unlock = date_created + relativedelta(years=5)
-        super().__init__(name, code, date_created, date_unlock, date_unlock)
+        super().__init__(name, code, date_created, date_unlock, date_unlock, key=key)
 
 
 class PEE(Envelope):
-    def __init__(self, name: str, code: str, date_created: date, date_unlock: Optional[date] = None):
+    def __init__(
+        self, name: str, code: str, date_created: date, date_unlock: Optional[date] = None, key: Optional[str] = None
+    ):
         if not date_unlock:
             date_unlock = date_created + relativedelta(years=5)
-        super().__init__(name, code, date_created, date_unlock, date_unlock)
+        super().__init__(name, code, date_created, date_unlock, date_unlock, key=key)
 
 
 class AV(Envelope):
-    def __init__(self, name: str, code: str, date_created: date):
+    def __init__(self, name: str, code: str, date_created: date, key: Optional[str] = None):
         date_untax = date_created + relativedelta(years=8)
-        super().__init__(name, code, date_created, date_created, date_untax)
+        super().__init__(name, code, date_created, date_created, date_untax, key=key)
 
 
 class PER(Envelope):
-    def __init__(self, name: str, code: str, date_created: date, date_retirement: date):
-        super().__init__(name, code, date_created, date_retirement, date_retirement)
+    def __init__(self, name: str, code: str, date_created: date, date_retirement: date, key: Optional[str] = None):
+        super().__init__(name, code, date_created, date_retirement, date_retirement, key=key)

@@ -30,7 +30,7 @@ class FetchAttribs:
 
     @staticmethod
     def from_dict(dict: Dict[str, Any]) -> "FetchAttribs":
-        raise NotImplementedError("Absctract method must be overridden by subclasses.")
+        raise NotImplementedError("Abstract method must be overridden by subclasses.")
 
 
 @dataclass
@@ -41,6 +41,17 @@ class FetchLine(FetchAttribs):
 
     amount: float = 0
     currency: Optional[str] = None
+
+    def matches_line(self, line: Line) -> bool:  # TODO improve?
+        # See if the line's name or key fields match
+        matched_name = bool((line.key and line.key in [self.name, self.id, self.account]) or line.name == self.name)
+
+        # If the envelope is set, it must also match
+        if line.envelope:
+            return matched_name and (line.envelope.name == self.account or line.envelope.key == self.account)
+
+        # If there's no envelope set, only the name/key counts
+        return matched_name
 
     def update_line(self, line: Line) -> None:
         """Update a `Line` instance, usually matched against a FetchKe, in the portfolio,

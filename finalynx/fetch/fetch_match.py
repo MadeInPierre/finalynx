@@ -4,14 +4,10 @@ tree with investments fetched online (e.g. from your Finary account).
 from dataclasses import dataclass
 from typing import Any
 from typing import Dict
-from typing import List
 from typing import Optional
 
-import numpy as np
 from finalynx.config import DEFAULT_CURRENCY
-from finalynx.console import console
 from finalynx.portfolio.line import Line
-from finalynx.portfolio.node import Node
 
 
 @dataclass
@@ -66,63 +62,4 @@ class FetchLine(FetchAttribs):
             custom=dict["custom"],
             amount=dict["amount"],
             currency=dict["currency"],
-        )
-
-
-@dataclass
-class FetchKey(FetchAttribs):
-    """Represents a filter to match an investment fetch online (e.g. from your Finary account)
-    to a `Node` in your portfolio tree. At least one of the available fields must be set.
-
-    :param match_all: Only match with a `FetchLine` if all fields are the same, defaults to
-    False (meaning any matched fields will procude a full match).
-    :param parent: Used internally to link a key with its parent and share attributes.
-    """
-
-    match_all: bool = False
-    parent: Optional[Node] = None
-
-    def set_parent(self, node: Node) -> None:
-        """Used by each Node's initialization stage to link its own properties."""
-        self.parent = node
-
-    def match(self, fetch_line: FetchLine) -> bool:
-        """:returns: True if any (or all if specified) of"""
-        pairs = [
-            (self.parent.name if self.parent else None, fetch_line.name),
-            (self.name, fetch_line.name),
-            (self.id, fetch_line.id),
-            (self.account, fetch_line.account),
-        ]
-
-        # Add the common custom attributes to the comparison
-        if self.custom and fetch_line.custom:
-            for key in self.custom.keys():
-                if key in fetch_line.custom.keys():
-                    pairs.append((self.custom[key], fetch_line.custom[key]))
-
-        # Compare all pairs, use None if one of the values is None
-        results: List[Optional[bool]] = [
-            (None if (value1 is None or value2 is None) else (value1 == value2)) for value1, value2 in pairs
-        ]
-
-        # Safety check, make sure at least one pair wasn't (None, None)
-        if len([i for i in results if i is None]) == len(results):
-            console.log("[yellow][bold]Warning:[/] Key couldn't compare with any of the fetched line's attributes.")
-            return False
-
-        # This method reaches here if all compared pairs matched (or if no pair could be compared)
-        return bool(np.all([i for i in results if i is not None])) if self.match_all else bool(True in results)
-
-    def to_dict(self) -> Dict[str, Any]:
-        return self.__dict__
-
-    @staticmethod
-    def from_dict(dict: Dict[str, Any]) -> "FetchKey":
-        return FetchKey(
-            name=dict["name"],
-            id=dict["id"],
-            account=dict["account"],
-            custom=dict["custom"],
-            match_all=dict["match_all"],
         )

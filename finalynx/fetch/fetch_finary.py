@@ -263,7 +263,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
                 name=e["name"],
                 id=e["id"],
                 account=e["account"]["name"],
-                amount=e["account"]["display_balance"],
+                amount=e["display_current_value"],
                 currency=e["account"]["display_currency"]["symbol"],
             )
 

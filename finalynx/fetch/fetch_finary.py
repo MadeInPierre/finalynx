@@ -112,7 +112,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
         # If the cache is not empty, Match all lines to the portfolio hierarchy
         for fline in fetched_lines:
             name = fline.name if fline.name else "Unknown"
-            matched_lines: List[Line] = self.portfolio.match_lines(fline)
+            matched_lines: List[Line] = list(set(self.portfolio.match_lines(fline)))  # merge identical instances
 
             # Set attributes to the first matched line
             if matched_lines:

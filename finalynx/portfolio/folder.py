@@ -215,7 +215,7 @@ class Folder(Node):
 
     def set_child_attribs(
         self,
-        child,
+        child: Node,
         asset_class: AssetClass,
         perf: Optional[LinePerf],
         currency: Optional[str],

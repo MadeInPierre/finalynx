@@ -50,6 +50,7 @@ class Folder(Node):
         display: FolderDisplay = FolderDisplay.EXPANDED,
         perf: Optional[LinePerf] = None,
         currency: Optional[str] = None,
+        envelope: Optional[Envelope] = None,
     ):
         """
         This class handles the orchestration of rendering of its children.
@@ -75,11 +76,12 @@ class Folder(Node):
         self.asset_class = asset_class
         self.perf = perf
         self.currency = currency
+        self.envelope = envelope
 
         for child in self.children:
             child.set_parent(self)
 
-        self.set_children_attribs(asset_class, perf, currency)
+        self.set_children_attribs(asset_class, perf, currency, envelope)
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -88,7 +90,7 @@ class Folder(Node):
         """
         child.set_parent(self)
         self.children.append(child)
-        self.set_child_attribs(child, self.asset_class, self.perf, self.currency)
+        self.set_child_attribs(child, self.asset_class, self.perf, self.currency, self.envelope)
 
     def get_amount(self) -> float:
         """Get the total amount contained in this folder.
@@ -209,6 +211,14 @@ class Folder(Node):
         :returns: A list of nodes that match with the online investment based on name, key, envelope, etc.
         """
         matched: List[Line] = []
+
+        # Automatically match lines with the Folder's envelope
+        if self.envelope and fetch_line.account in [self.envelope.key, self.envelope.name]:
+            generated_line = fetch_line.generate_line()
+            self.add_child(generated_line)
+            matched.append(generated_line)
+
+        # Default behavior: return children lines that fully matched
         for child in self.children:
             if isinstance(child, Line) and fetch_line.matches_line(child):
                 matched.append(child)
@@ -222,6 +232,7 @@ class Folder(Node):
         asset_class: AssetClass,
         perf: Optional[LinePerf],
         currency: Optional[str],
+        envelope: Optional[Envelope],
     ) -> None:
         """Used by Folders to set attributes once in the Folder instead of setting it in each child.
         Called at initialization time and when a child is manually added to the folder."""
@@ -229,16 +240,23 @@ class Folder(Node):
             child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
             child.perf = perf if perf and child.perf.expected == 0 else child.perf
             child.currency = currency if currency else child.currency
+            child.envelope = envelope if envelope else child.envelope
         elif isinstance(child, Folder):
-            child.set_children_attribs(asset_class, perf, currency)
+            child.set_children_attribs(asset_class, perf, currency, envelope)
         else:
             raise ValueError("Unrecognized node type.")
 
-    def set_children_attribs(self, asset_class: AssetClass, perf: Optional[LinePerf], currency: Optional[str]) -> None:
+    def set_children_attribs(
+        self,
+        asset_class: AssetClass,
+        perf: Optional[LinePerf],
+        currency: Optional[str],
+        envelope: Optional[Envelope],
+    ) -> None:
         """Used at initialization time by Folders to set attributes once in the Folder
         instead of setting it in each child."""
         for child in self.children:
-            self.set_child_attribs(child, asset_class, perf, currency)
+            self.set_child_attribs(child, asset_class, perf, currency, envelope)
 
     def _render_name_color(self) -> str:
         """Internal method that overrides the superclass' render method to display

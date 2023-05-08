@@ -61,6 +61,12 @@ class FetchLine(FetchAttribs):
         if not line.currency:
             line.currency = self.currency if self.currency else DEFAULT_CURRENCY
 
+    def generate_line(self) -> Line:
+        """Generate a basic Line instance from this abstract fetched line.
+        Used when filling folders based on account filters."""
+        name = self.name if self.name else "Unknown"
+        return Line(name, key=self.id, amount=self.amount, currency=self.currency)
+
     def to_dict(self) -> Dict[str, Any]:
         return self.__dict__
 

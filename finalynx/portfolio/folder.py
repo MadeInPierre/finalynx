@@ -326,24 +326,6 @@ class SharedFolder(Folder):
         if self.children:
             self.children[-1].newline = self.newline
 
-    def set_child_amount(self, key: str, amount: float) -> bool:
-        """Used by the `fetch` subpackage to
-
-        This method passes down the vey:value pair corresponding to an investment fetched online
-        (e.g. in your Finary account) to its children until a match is found.
-
-        :param key: Name of the line in the online account.
-        :param amount: Fetched amount in the online account.
-        """
-        success = False
-        for child in self.children:
-            if isinstance(child, Line) and child.key == key:
-                child.amount = amount
-                success = True
-            elif isinstance(child, Folder) and child.set_child_amount(key, amount):
-                success = True
-        return success
-
     def to_dict(self) -> Dict[str, Any]:
         return {
             "type": "shared_folder",

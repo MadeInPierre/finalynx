@@ -80,8 +80,7 @@ class Folder(Node):
 
         for child in self.children:
             child.set_parent(self)
-
-        self.set_children_attribs(asset_class, perf, currency, envelope)
+            self.set_child_attribs(child, asset_class, perf, currency, envelope)
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -242,21 +241,10 @@ class Folder(Node):
             child.currency = currency if currency else child.currency
             child.envelope = envelope if envelope else child.envelope
         elif isinstance(child, Folder):
-            child.set_children_attribs(asset_class, perf, currency, envelope)
+            for c in child.children:
+                child.set_child_attribs(c, asset_class, perf, currency, envelope)
         else:
             raise ValueError("Unrecognized node type.")
-
-    def set_children_attribs(
-        self,
-        asset_class: AssetClass,
-        perf: Optional[LinePerf],
-        currency: Optional[str],
-        envelope: Optional[Envelope],
-    ) -> None:
-        """Used at initialization time by Folders to set attributes once in the Folder
-        instead of setting it in each child."""
-        for child in self.children:
-            self.set_child_attribs(child, asset_class, perf, currency, envelope)
 
     def _render_name_color(self) -> str:
         """Internal method that overrides the superclass' render method to display

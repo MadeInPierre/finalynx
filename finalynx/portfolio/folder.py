@@ -3,9 +3,13 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 from rich.tree import Tree
+
+if TYPE_CHECKING:
+    from finalynx.fetch.fetch_line import FetchLine
 
 from ..console import console
 from .bucket import Bucket
@@ -195,27 +199,26 @@ class Folder(Node):
         if total_ratio != 0 and total_ratio != 100:
             console.log(f"[yellow][bold]WARNING:[/] Folder '{self.name}' total ratio should sum to 100.")
 
-    def set_child_amount(self, key: str, amount: float) -> bool:
+    def match_lines(self, fetch_line: "FetchLine") -> List[Line]:
         """Used by the `fetch` subpackage to
 
-        This method passes down the vey:value pair corresponding to an investment fetched online
-        (e.g. in your Finary account) to its children until a match is found.
+        This method passes down the instance corresponding to an investment fetched online
+        (e.g. in your Finary account) to its children and returns a constructed list of matching lines.
 
-        :param key: Name of the line in the online account.
-        :param amount: Fetched amount in the online account.
+        :param fetch_line: FetchLine instance created that represents an investment found online.
+        :returns: A list of nodes that match with the online investment based on name, key, envelope, etc.
         """
-        success = False
+        matched: List[Line] = []
         for child in self.children:
-            if isinstance(child, Line) and child.key == key:
-                child.amount += amount
-                success = True
-            elif isinstance(child, Folder) and child.set_child_amount(key, amount):
-                success = True
-        return success
+            if isinstance(child, Line) and fetch_line.matches_line(child):
+                matched.append(child)
+            elif isinstance(child, Folder):
+                matched += child.match_lines(fetch_line)
+        return matched
 
     def set_child_attribs(
         self,
-        child,
+        child: Node,
         asset_class: AssetClass,
         perf: Optional[LinePerf],
         currency: Optional[str],

@@ -6,7 +6,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-from finalynx.fetch.fetch_match import FetchLine
+from finalynx.fetch.fetch_line import FetchLine
 from requests import Session
 from rich.prompt import Confirm
 from rich.tree import Tree
@@ -86,6 +86,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
         # Remove the cached Finary data if asked by the user
         if self.clear_cache and os.path.exists(self.cache_fullpath):
+            console.log("Deleting cache per user request.")
             os.remove(self.cache_fullpath)
 
         # This will hold a key:amount dictionary of all lines found in the Finary account
@@ -111,7 +112,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
         # If the cache is not empty, Match all lines to the portfolio hierarchy
         for fline in fetched_lines:
             name = fline.name if fline.name else "Unknown"
-            matched_lines: List[Line] = []  # TODO self.portfolio.match_lines(fline)
+            matched_lines: List[Line] = self.portfolio.match_lines(fline)
 
             # Set attributes to the first matched line
             if matched_lines:

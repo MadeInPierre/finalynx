@@ -2,6 +2,21 @@
 
 <!--next-version-placeholder-->
 
+## v1.13.0 (2023-05-08)
+### Feature
+* **fetch:** Set folder envelope to autofill children ([`87fc64b`](https://github.com/MadeInPierre/finalynx/commit/87fc64bdda556bfa386d9e5df34335f427cd262a))
+* **fetch:** Add & match envelope keys, connected new logic ([`6049225`](https://github.com/MadeInPierre/finalynx/commit/6049225455f7ca98965d94061ebff849ebe2ae8e))
+* **fetch:** Refactor, fetch account & currency [WIP] ([`c876d42`](https://github.com/MadeInPierre/finalynx/commit/c876d4237fe0f642001ac182285717de6baacac1))
+* **fetch:** Create FetchKey & FetchLine pair ([`7b7bd16`](https://github.com/MadeInPierre/finalynx/commit/7b7bd162f74a266718e97f69aca94888f9c8b8e8))
+
+### Fix
+* **fetch:** Fond euro amount mistake ([`6bb1555`](https://github.com/MadeInPierre/finalynx/commit/6bb155518ec7a884e8cf424e78eaca06da782913))
+* **fetch:** Solve warning for buckets ([`36d4ea6`](https://github.com/MadeInPierre/finalynx/commit/36d4ea6b597745cc47abb06c4e8f65d2e30507ff))
+
+## v1.12.1 (2023-05-01)
+### Fix
+* **fetch:** Ignore invalid elements from API response ([#66](https://github.com/MadeInPierre/finalynx/issues/66)) ([`fcfa91a`](https://github.com/MadeInPierre/finalynx/commit/fcfa91ae4a56c6ce4bd0595cb19173f313ef3a8c))
+
 ## v1.12.0 (2023-04-30)
 ### Feature
 * **fetch:** Support loans and credit accounts ([#61](https://github.com/MadeInPierre/finalynx/issues/61)) ([`c51acd2`](https://github.com/MadeInPierre/finalynx/commit/c51acd2ef8eaf351797ad27677b6122a844b61b7))

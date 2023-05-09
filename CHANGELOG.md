@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.13.1 (2023-05-09)
+### Fix
+* **fetch:** Fixed filter to skip malformed line ([`279abaf`](https://github.com/MadeInPierre/finalynx/commit/279abaff1526a020101ba428ab42e4a78eb442d1))
+
 ## v1.13.0 (2023-05-08)
 ### Feature
 * **fetch:** Set folder envelope to autofill children ([`87fc64b`](https://github.com/MadeInPierre/finalynx/commit/87fc64bdda556bfa386d9e5df34335f427cd262a))

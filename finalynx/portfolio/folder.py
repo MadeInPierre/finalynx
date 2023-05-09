@@ -83,7 +83,15 @@ class Folder(Node):
 
         for child in self.children:
             child.set_parent(self)
-            self.set_child_attribs(child, asset_class, asset_subclass, perf, currency, envelope)
+
+            self.set_child_attribs(
+                child,
+                self.asset_class,
+                self.asset_subclass,
+                self.perf,
+                self.currency,
+                self.envelope,
+            )
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -240,9 +248,9 @@ class Folder(Node):
         """Used by Folders to set attributes once in the Folder instead of setting it in each child.
         Called at initialization time and when a child is manually added to the folder."""
         if isinstance(child, Line):
-            child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
+            child.asset_class = asset_class if child.asset_class == AssetClass.UNKNOWN else child.asset_class
             child.asset_subclass = (
-                asset_subclass if child.asset_subclass is AssetClass.UNKNOWN else child.asset_subclass
+                asset_subclass if child.asset_subclass == AssetSubclass.UNKNOWN else child.asset_subclass
             )
             child.perf = perf if perf and child.perf.expected == 0 else child.perf
             child.currency = currency if currency else child.currency

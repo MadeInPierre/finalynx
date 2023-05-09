@@ -49,47 +49,48 @@ class AssetSubclass(Enum):
     """Default collection of assets used as asset subclasses (for easier visualization and analysis)."""
 
     # Cash
-    CASH_CCP = "Comptes courants"
-    CASH_MONETARY = "Monétaire"
+    CCP = "Comptes courants"
+    MONETARY = "Monétaire"
+    LIQUIDITY = "Liquidités"
 
     # Guaranteed investments (mostly french)
-    GUARANTEED_LIVRET = "Livrets"
-    GUARANTEED_LIVRET_TAXED = "Livrets imposables"
-    GUARANTEED_FOND_EURO = "Fonds euro"
+    LIVRET = "Livrets"
+    LIVRET_TAXED = "Livrets imposables"
+    FOND_EURO = "Fonds euro"
 
     # Bonds
     BOND_DATED = "Fonds datés"
-    BOND_ETF = "ETFs Obligations"
 
     # Stocks
     STOCK_SHARE = "Titres vifs"
-    STOCK_ETF = "ETFs Actions"
+    ETF = "ETF"
 
     # Real estate
-    REAL_ESTATE_PHYSICAL = "Immobilier physique"
-    REAL_ESTATE_SCPI = "SCPI"
-    REAL_ESTATE_SCI = "SCI"
+    PHYSICAL = "Immobilier physique"
+    SCPI = "SCPI"
+    SCI = "SCI"
 
     # Metals
-    MATERIAL_GOLD = "Or"
-    MATERIAL_SILVER = "Argent"
-    MATERIAL_RAW = "Matières premières"
+    GOLD = "Or"
+    SILVER = "Argent"
+    RAW = "Matières premières"
 
     # Cryptos
-    CRYPTO_L1 = "L1"
-    CRYPTO_STABLECOINS = "Stablecoins"
-    CRYPTO_DEFI = "DeFi"
+    L1 = "L1"
+    STABLECOINS = "Stablecoins"
+    DEFI = "DeFi"
 
     # Exotics
-    EXOTIC_GFI = "Forêts"
-    EXOTIC_ART = "Art"
-    EXOTIC_WATCH = "Watches"
+    GFI = "Forêts"
+    ART = "Art"
+    WATCH = "Watches"
 
     # Diversified
-    UNKNOWN_OPCVM = "OPCVM"
+    DIVERSIFIED = "Diversifié"
+    OPCVM = "OPCVM"
 
     # Passives
-    PASSIVE_VEHICLE = "Véhicule"
+    VEHICLE = "Véhicule"
 
     # Unknown (default)
     UNKNOWN = "Unknown"

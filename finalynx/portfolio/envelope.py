@@ -102,6 +102,13 @@ class PEA(Envelope):
     """Handy shortcut to quickly define a PEA (automatically sets 5-years locked)."""
 
     def __init__(self, name: str, code: str, date_created: date, key: Optional[str] = None):
+        """Declare a PEA (locked for 5 years) with:
+        :param name: Name of your account.
+        :param code: Short name of your account (3 characters recommended).
+        :param date_created: A `date` instance of the account creation date.
+        :param key: Optional, if you want to use a different name in Finalynx than in Finary.
+        See `Envelope`'s documentation for additional details.
+        """
         date_unlock = date_created + relativedelta(years=5)
         super().__init__(name, code, date_created, date_unlock, date_unlock, key=key)
 
@@ -112,6 +119,14 @@ class PEE(Envelope):
     def __init__(
         self, name: str, code: str, date_created: date, date_unlock: Optional[date] = None, key: Optional[str] = None
     ):
+        """Declare a PEE (locked for 5 years) with:
+        :param name: Name of your account.
+        :param code: Short name of your account (3 characters recommended).
+        :param date_created: A `date` instance of the account creation date.
+        :param date_unlock: A `date` instance of the account unlock date, defaults to 5 years.
+        :param key: Optional, if you want to use a different name in Finalynx than in Finary.
+        See `Envelope`'s documentation for additional details.
+        """
         if not date_unlock:
             date_unlock = date_created + relativedelta(years=5)
         super().__init__(name, code, date_created, date_unlock, date_unlock, key=key)
@@ -121,6 +136,13 @@ class AV(Envelope):
     """Handy shortcut to quickly define a PEA (automatically sets 8-years taxed)."""
 
     def __init__(self, name: str, code: str, date_created: date, key: Optional[str] = None):
+        """Declare an Assurance Vie (taxed for 8 years) with:
+        :param name: Name of your account.
+        :param code: Short name of your account (3 characters recommended).
+        :param date_created: A `date` instance of the account creation date.
+        :param key: Optional, if you want to use a different name in Finalynx than in Finary.
+        See `Envelope`'s documentation for additional details.
+        """
         date_untax = date_created + relativedelta(years=8)
         super().__init__(name, code, date_created, date_created, date_untax, key=key)
 
@@ -129,4 +151,12 @@ class PER(Envelope):
     """Handy shortcut to quickly define a PER (locked until retirement)."""
 
     def __init__(self, name: str, code: str, date_created: date, date_retirement: date, key: Optional[str] = None):
+        """Declare a PER (locked until retirement) with:
+        :param name: Name of your account.
+        :param code: Short name of your account (3 characters recommended).
+        :param date_created: A `date` instance of the account creation date.
+        :param date_retirement: A `date` instance of your expected retirement date.
+        :param key: Optional, if you want to use a different name in Finalynx than in Finary.
+        See `Envelope`'s documentation for additional details.
+        """
         super().__init__(name, code, date_created, date_retirement, date_retirement, key=key)

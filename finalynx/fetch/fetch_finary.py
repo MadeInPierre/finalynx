@@ -390,7 +390,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
         """Internal method used to register a new investment found from Finary."""
 
         # Skip malformed lines
-        if not (name or id or account):
+        if not name or not id or not account:
             console.log("[yellow][bold]Warning:[/] Invalid element in the API response, skipping.")
             return
 

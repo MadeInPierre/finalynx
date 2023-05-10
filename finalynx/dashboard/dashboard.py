@@ -57,6 +57,9 @@ class Dashboard:
         "000000",
     ]
 
+    def __init__(self, hide_amounts: bool = False):
+        self.hide_amounts = hide_amounts
+
     def run(self, portfolio: Portfolio) -> None:
         """Simple structure for now, to be improved!"""
         self.color_map = "finalynx"
@@ -144,7 +147,7 @@ class Dashboard:
                             """
                                 <q-icon v-if="props.node.icon !== 'menu'" v-bind="{ name: props.node.icon, color: props.node.color }" size="20px"/>
                                 <span :props="props">
-                                    <strong>
+                                    <strong v-if="props.node.hide_amount === 'False'">
                                         <span :style="{ color: props.node.color }">&nbsp;{{ props.node.amount }} {{ props.node.currency }}</span>
                                     </strong>
                                     <strong v-if="props.node.is_folder">
@@ -245,6 +248,7 @@ class Dashboard:
                 or (isinstance(node, Folder) and node.newline and node.display != FolderDisplay.EXPANDED)
             ),
             "instance": node,
+            "hide_amount": str(self.hide_amounts),
         }
 
         if isinstance(node, Folder) and node.children and node.display == FolderDisplay.EXPANDED:

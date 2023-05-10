@@ -186,7 +186,7 @@ class Assistant:
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:
             console.log("Launching dashboard.")
-            Dashboard().run(portfolio=self.portfolio)
+            Dashboard(hide_amounts=self.hide_amounts).run(portfolio=self.portfolio)
 
     def render_perf(self) -> Tree:
         """Print the current and ideal global expected performance."""

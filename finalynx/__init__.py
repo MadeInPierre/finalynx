@@ -21,7 +21,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "finary_api"))
 # Portfolio
 from .portfolio import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
 from .portfolio import Line, LinePerf, Folder, Bucket, SharedFolder, Portfolio, FolderDisplay
-from .portfolio import AssetClass, EnvelopeClass
+from .portfolio import AssetClass, AssetSubclass, EnvelopeClass
 from .portfolio import Envelope, EnvelopeState, PEA, PEE, AV, PER
 
 # Fetch

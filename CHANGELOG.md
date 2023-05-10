@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.4 (2023-05-10)
+### Fix
+* **dashboard:** Hide amounts if specified by user ([`440f8c1`](https://github.com/MadeInPierre/finalynx/commit/440f8c134297b22be538826ca4b221d61aab003f))
+
 ## v1.14.3 (2023-05-10)
 ### Fix
 * **install:** Bump nicegui version dependency ([`8b5c7ad`](https://github.com/MadeInPierre/finalynx/commit/8b5c7ad71c0939da187749c29477508f2c33dd1d))

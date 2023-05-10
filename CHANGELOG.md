@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.3 (2023-05-10)
+### Fix
+* **install:** Bump nicegui version dependency ([`8b5c7ad`](https://github.com/MadeInPierre/finalynx/commit/8b5c7ad71c0939da187749c29477508f2c33dd1d))
+
 ## v1.14.2 (2023-05-10)
 ### Fix
 * **imports:** Forgot to expose AssetSubclass import ([`eaf3e99`](https://github.com/MadeInPierre/finalynx/commit/eaf3e99a59496376686bfc2413b17c2f7812e5d7))

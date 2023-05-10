@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.0 (2023-05-10)
+### Feature
+* **assets:** Create asset subclass definitions & visualizations ([#64](https://github.com/MadeInPierre/finalynx/issues/64)) ([`14a1d3d`](https://github.com/MadeInPierre/finalynx/commit/14a1d3d3d1923235a13f35406dbb490705a0ce58))
+
+### Documentation
+* Add envelope docstrings ([`f9317fb`](https://github.com/MadeInPierre/finalynx/commit/f9317fb30ca073e7d468df01eaf50e23cc963ecf))
+* **envelope:** Add envelope docstrings ([`b7f5989`](https://github.com/MadeInPierre/finalynx/commit/b7f5989a1ecbe846e22654b3c018a2a222caa716))
+
 ## v1.13.1 (2023-05-09)
 ### Fix
 * **fetch:** Fixed filter to skip malformed line ([`279abaf`](https://github.com/MadeInPierre/finalynx/commit/279abaff1526a020101ba428ab42e4a78eb442d1))

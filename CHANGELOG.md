@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.1 (2023-05-10)
+### Fix
+* **fetch:** Skip fetched lines with no amount invested ([`05adaa1`](https://github.com/MadeInPierre/finalynx/commit/05adaa1650b77965553ab387ab5c1ca7eca1c18c))
+
 ## v1.14.0 (2023-05-10)
 ### Feature
 * **assets:** Create asset subclass definitions & visualizations ([#64](https://github.com/MadeInPierre/finalynx/issues/64)) ([`14a1d3d`](https://github.com/MadeInPierre/finalynx/commit/14a1d3d3d1923235a13f35406dbb490705a0ce58))

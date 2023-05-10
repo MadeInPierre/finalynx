@@ -1,6 +1,8 @@
 from typing import Any
 from typing import Dict
 
+import numpy as np
+
 from ..portfolio import AssetClass
 from ..portfolio import AssetSubclass
 from ..portfolio import Folder
@@ -99,16 +101,8 @@ class AnalyzeAssetClasses(Analyzer):
     def chart(self, color_map: str = "finary") -> Dict[str, Any]:
         """:returns: A Highcharts configuration with the data to be displayed."""
         analysis = self.analyze()
+        total = np.sum([analysis[k]["total"] for k in analysis.keys()])
         colors = self.ASSET_COLORS_FINARY if color_map == "finary" else self.ASSET_COLORS_CUSTOM
-
-        # Normalize results
-        # total = np.sum([result[k]["total"] for k in result.keys()])
-        # if total:
-        #     for k in result.keys():
-        #         for sk in result[k]["subclasses"].keys():
-        #             if result[k]["total"]:
-        #                 result[k]["subclasses"][sk] = round(100 * result[k]["subclasses"][sk] / result[k]["total"])
-        #         result[k]["total"] = round(100 * result[k]["total"] / total)
 
         return {
             "chart": {"plotBackgroundColor": None, "plotBorderWidth": None, "plotShadow": False, "type": "pie"},
@@ -127,7 +121,7 @@ class AnalyzeAssetClasses(Analyzer):
                     "size": "55%",
                     "data": [
                         {
-                            "name": class_name if class_dict["total"] > 1000 else "",
+                            "name": class_name if class_dict["total"] / total > 0.03 else "",
                             "y": class_dict["total"],
                             "color": colors[class_name],
                         }

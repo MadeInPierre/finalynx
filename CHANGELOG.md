@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.2 (2023-05-10)
+### Fix
+* **imports:** Forgot to expose AssetSubclass import ([`eaf3e99`](https://github.com/MadeInPierre/finalynx/commit/eaf3e99a59496376686bfc2413b17c2f7812e5d7))
+
 ## v1.14.1 (2023-05-10)
 ### Fix
 * **fetch:** Skip fetched lines with no amount invested ([`05adaa1`](https://github.com/MadeInPierre/finalynx/commit/05adaa1650b77965553ab387ab5c1ca7eca1c18c))

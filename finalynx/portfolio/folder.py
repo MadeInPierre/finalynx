@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 from ..console import console
 from .bucket import Bucket
 from .constants import AssetClass
+from .constants import AssetSubclass
 from .envelope import Envelope
 from .line import Line
 from .line import LinePerf
@@ -43,6 +44,7 @@ class Folder(Node):
         self,
         name: str,
         asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         children: Optional[List["Node"]] = None,
@@ -74,13 +76,22 @@ class Folder(Node):
         self.children = [] if children is None else children
         self.display = display
         self.asset_class = asset_class
+        self.asset_subclass = asset_subclass
         self.perf = perf
         self.currency = currency
         self.envelope = envelope
 
         for child in self.children:
             child.set_parent(self)
-            self.set_child_attribs(child, asset_class, perf, currency, envelope)
+
+            self.set_child_attribs(
+                child,
+                self.asset_class,
+                self.asset_subclass,
+                self.perf,
+                self.currency,
+                self.envelope,
+            )
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -89,7 +100,7 @@ class Folder(Node):
         """
         child.set_parent(self)
         self.children.append(child)
-        self.set_child_attribs(child, self.asset_class, self.perf, self.currency, self.envelope)
+        self.set_child_attribs(child, self.asset_class, self.asset_subclass, self.perf, self.currency, self.envelope)
 
     def get_amount(self) -> float:
         """Get the total amount contained in this folder.
@@ -229,6 +240,7 @@ class Folder(Node):
         self,
         child: Node,
         asset_class: AssetClass,
+        asset_subclass: AssetSubclass,
         perf: Optional[LinePerf],
         currency: Optional[str],
         envelope: Optional[Envelope],
@@ -236,13 +248,16 @@ class Folder(Node):
         """Used by Folders to set attributes once in the Folder instead of setting it in each child.
         Called at initialization time and when a child is manually added to the folder."""
         if isinstance(child, Line):
-            child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
+            child.asset_class = asset_class if child.asset_class == AssetClass.UNKNOWN else child.asset_class
+            child.asset_subclass = (
+                asset_subclass if child.asset_subclass == AssetSubclass.UNKNOWN else child.asset_subclass
+            )
             child.perf = perf if perf and child.perf.expected == 0 else child.perf
             child.currency = currency if currency else child.currency
             child.envelope = envelope if envelope else child.envelope
         elif isinstance(child, Folder):
             for c in child.children:
-                child.set_child_attribs(c, asset_class, perf, currency, envelope)
+                child.set_child_attribs(c, asset_class, asset_subclass, perf, currency, envelope)
         else:
             raise ValueError("Unrecognized node type.")
 
@@ -311,13 +326,14 @@ class SharedFolder(Folder):
         name: str,
         bucket: Bucket,
         asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         target_amount: float = np.inf,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         newline: bool = False,
         display: FolderDisplay = FolderDisplay.EXPANDED,
     ):
-        super().__init__(name, asset_class, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
+        super().__init__(name, asset_class, asset_subclass, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket

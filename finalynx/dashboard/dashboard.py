@@ -204,6 +204,7 @@ class Dashboard:
         # Update chart with the selected node's info
         new_config = AnalyzeAssetClasses(self.selected_node).chart(self.color_map)
         self.chart_asset_classes.options["series"][0]["data"][:] = new_config["series"][0]["data"]
+        self.chart_asset_classes.options["series"][1]["data"][:] = new_config["series"][1]["data"]
         self.chart_asset_classes.update()
 
         new_config = AnalyzeInvestmentStates(self.selected_node).chart(date.today())

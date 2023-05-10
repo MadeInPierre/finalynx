@@ -26,6 +26,7 @@ are available.
 from ..console import console
 from .bucket import Bucket
 from .constants import AssetClass
+from .constants import AssetSubclass
 from .constants import EnvelopeClass
 from .envelope import *
 from .folder import Folder

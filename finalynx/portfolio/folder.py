@@ -3,13 +3,18 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 from rich.tree import Tree
 
+if TYPE_CHECKING:
+    from finalynx.fetch.fetch_line import FetchLine
+
 from ..console import console
 from .bucket import Bucket
 from .constants import AssetClass
+from .constants import AssetSubclass
 from .envelope import Envelope
 from .line import Line
 from .line import LinePerf
@@ -39,6 +44,7 @@ class Folder(Node):
         self,
         name: str,
         asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         children: Optional[List["Node"]] = None,
@@ -46,6 +52,7 @@ class Folder(Node):
         display: FolderDisplay = FolderDisplay.EXPANDED,
         perf: Optional[LinePerf] = None,
         currency: Optional[str] = None,
+        envelope: Optional[Envelope] = None,
     ):
         """
         This class handles the orchestration of rendering of its children.
@@ -69,13 +76,22 @@ class Folder(Node):
         self.children = [] if children is None else children
         self.display = display
         self.asset_class = asset_class
+        self.asset_subclass = asset_subclass
         self.perf = perf
         self.currency = currency
+        self.envelope = envelope
 
         for child in self.children:
             child.set_parent(self)
 
-        self.set_children_attribs(asset_class, perf, currency)
+            self.set_child_attribs(
+                child,
+                self.asset_class,
+                self.asset_subclass,
+                self.perf,
+                self.currency,
+                self.envelope,
+            )
 
     def add_child(self, child: Node) -> None:
         """Manually add a child at the end of the existing children in this folder.
@@ -84,7 +100,7 @@ class Folder(Node):
         """
         child.set_parent(self)
         self.children.append(child)
-        self.set_child_attribs(child, self.asset_class, self.perf, self.currency)
+        self.set_child_attribs(child, self.asset_class, self.asset_subclass, self.perf, self.currency, self.envelope)
 
     def get_amount(self) -> float:
         """Get the total amount contained in this folder.
@@ -195,47 +211,55 @@ class Folder(Node):
         if total_ratio != 0 and total_ratio != 100:
             console.log(f"[yellow][bold]WARNING:[/] Folder '{self.name}' total ratio should sum to 100.")
 
-    def set_child_amount(self, key: str, amount: float) -> bool:
+    def match_lines(self, fetch_line: "FetchLine") -> List[Line]:
         """Used by the `fetch` subpackage to
 
-        This method passes down the vey:value pair corresponding to an investment fetched online
-        (e.g. in your Finary account) to its children until a match is found.
+        This method passes down the instance corresponding to an investment fetched online
+        (e.g. in your Finary account) to its children and returns a constructed list of matching lines.
 
-        :param key: Name of the line in the online account.
-        :param amount: Fetched amount in the online account.
+        :param fetch_line: FetchLine instance created that represents an investment found online.
+        :returns: A list of nodes that match with the online investment based on name, key, envelope, etc.
         """
-        success = False
+        matched: List[Line] = []
+
+        # Automatically match lines with the Folder's envelope
+        if self.envelope and fetch_line.account in [self.envelope.key, self.envelope.name]:
+            generated_line = fetch_line.generate_line()
+            self.add_child(generated_line)
+            matched.append(generated_line)
+
+        # Default behavior: return children lines that fully matched
         for child in self.children:
-            if isinstance(child, Line) and child.key == key:
-                child.amount += amount
-                success = True
-            elif isinstance(child, Folder) and child.set_child_amount(key, amount):
-                success = True
-        return success
+            if isinstance(child, Line) and fetch_line.matches_line(child):
+                matched.append(child)
+            elif isinstance(child, Folder):
+                matched += child.match_lines(fetch_line)
+        return matched
 
     def set_child_attribs(
         self,
-        child,
+        child: Node,
         asset_class: AssetClass,
+        asset_subclass: AssetSubclass,
         perf: Optional[LinePerf],
         currency: Optional[str],
+        envelope: Optional[Envelope],
     ) -> None:
         """Used by Folders to set attributes once in the Folder instead of setting it in each child.
         Called at initialization time and when a child is manually added to the folder."""
         if isinstance(child, Line):
-            child.asset_class = asset_class if child.asset_class is AssetClass.UNKNOWN else child.asset_class
+            child.asset_class = asset_class if child.asset_class == AssetClass.UNKNOWN else child.asset_class
+            child.asset_subclass = (
+                asset_subclass if child.asset_subclass == AssetSubclass.UNKNOWN else child.asset_subclass
+            )
             child.perf = perf if perf and child.perf.expected == 0 else child.perf
             child.currency = currency if currency else child.currency
+            child.envelope = envelope if envelope else child.envelope
         elif isinstance(child, Folder):
-            child.set_children_attribs(asset_class, perf, currency)
+            for c in child.children:
+                child.set_child_attribs(c, asset_class, asset_subclass, perf, currency, envelope)
         else:
             raise ValueError("Unrecognized node type.")
-
-    def set_children_attribs(self, asset_class: AssetClass, perf: Optional[LinePerf], currency: Optional[str]) -> None:
-        """Used at initialization time by Folders to set attributes once in the Folder
-        instead of setting it in each child."""
-        for child in self.children:
-            self.set_child_attribs(child, asset_class, perf, currency)
 
     def _render_name_color(self) -> str:
         """Internal method that overrides the superclass' render method to display
@@ -302,13 +326,14 @@ class SharedFolder(Folder):
         name: str,
         bucket: Bucket,
         asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         target_amount: float = np.inf,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         newline: bool = False,
         display: FolderDisplay = FolderDisplay.EXPANDED,
     ):
-        super().__init__(name, asset_class, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
+        super().__init__(name, asset_class, asset_subclass, parent, target, bucket.lines, newline=False, display=display)  # type: ignore # TODO couldn't fix the mypy error
         self.target_amount = target_amount
         self.newline = newline
         self.bucket = bucket
@@ -322,24 +347,6 @@ class SharedFolder(Folder):
 
         if self.children:
             self.children[-1].newline = self.newline
-
-    def set_child_amount(self, key: str, amount: float) -> bool:
-        """Used by the `fetch` subpackage to
-
-        This method passes down the vey:value pair corresponding to an investment fetched online
-        (e.g. in your Finary account) to its children until a match is found.
-
-        :param key: Name of the line in the online account.
-        :param amount: Fetched amount in the online account.
-        """
-        success = False
-        for child in self.children:
-            if isinstance(child, Line) and child.key == key:
-                child.amount = amount
-                success = True
-            elif isinstance(child, Folder) and child.set_child_amount(key, amount):
-                success = True
-        return success
 
     def to_dict(self) -> Dict[str, Any]:
         return {

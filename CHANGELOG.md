@@ -2,6 +2,45 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.4 (2023-05-10)
+### Fix
+* **dashboard:** Hide amounts if specified by user ([`440f8c1`](https://github.com/MadeInPierre/finalynx/commit/440f8c134297b22be538826ca4b221d61aab003f))
+
+## v1.14.3 (2023-05-10)
+### Fix
+* **install:** Bump nicegui version dependency ([`8b5c7ad`](https://github.com/MadeInPierre/finalynx/commit/8b5c7ad71c0939da187749c29477508f2c33dd1d))
+
+## v1.14.2 (2023-05-10)
+### Fix
+* **imports:** Forgot to expose AssetSubclass import ([`eaf3e99`](https://github.com/MadeInPierre/finalynx/commit/eaf3e99a59496376686bfc2413b17c2f7812e5d7))
+
+## v1.14.1 (2023-05-10)
+### Fix
+* **fetch:** Skip fetched lines with no amount invested ([`05adaa1`](https://github.com/MadeInPierre/finalynx/commit/05adaa1650b77965553ab387ab5c1ca7eca1c18c))
+
+## v1.14.0 (2023-05-10)
+### Feature
+* **assets:** Create asset subclass definitions & visualizations ([#64](https://github.com/MadeInPierre/finalynx/issues/64)) ([`14a1d3d`](https://github.com/MadeInPierre/finalynx/commit/14a1d3d3d1923235a13f35406dbb490705a0ce58))
+
+### Documentation
+* Add envelope docstrings ([`f9317fb`](https://github.com/MadeInPierre/finalynx/commit/f9317fb30ca073e7d468df01eaf50e23cc963ecf))
+* **envelope:** Add envelope docstrings ([`b7f5989`](https://github.com/MadeInPierre/finalynx/commit/b7f5989a1ecbe846e22654b3c018a2a222caa716))
+
+## v1.13.1 (2023-05-09)
+### Fix
+* **fetch:** Fixed filter to skip malformed line ([`279abaf`](https://github.com/MadeInPierre/finalynx/commit/279abaff1526a020101ba428ab42e4a78eb442d1))
+
+## v1.13.0 (2023-05-08)
+### Feature
+* **fetch:** Set folder envelope to autofill children ([`87fc64b`](https://github.com/MadeInPierre/finalynx/commit/87fc64bdda556bfa386d9e5df34335f427cd262a))
+* **fetch:** Add & match envelope keys, connected new logic ([`6049225`](https://github.com/MadeInPierre/finalynx/commit/6049225455f7ca98965d94061ebff849ebe2ae8e))
+* **fetch:** Refactor, fetch account & currency [WIP] ([`c876d42`](https://github.com/MadeInPierre/finalynx/commit/c876d4237fe0f642001ac182285717de6baacac1))
+* **fetch:** Create FetchKey & FetchLine pair ([`7b7bd16`](https://github.com/MadeInPierre/finalynx/commit/7b7bd162f74a266718e97f69aca94888f9c8b8e8))
+
+### Fix
+* **fetch:** Fond euro amount mistake ([`6bb1555`](https://github.com/MadeInPierre/finalynx/commit/6bb155518ec7a884e8cf424e78eaca06da782913))
+* **fetch:** Solve warning for buckets ([`36d4ea6`](https://github.com/MadeInPierre/finalynx/commit/36d4ea6b597745cc47abb06c4e8f65d2e30507ff))
+
 ## v1.12.1 (2023-05-01)
 ### Fix
 * **fetch:** Ignore invalid elements from API response ([#66](https://github.com/MadeInPierre/finalynx/issues/66)) ([`fcfa91a`](https://github.com/MadeInPierre/finalynx/commit/fcfa91ae4a56c6ce4bd0595cb19173f313ef3a8c))

@@ -33,15 +33,67 @@ class AssetClass(Enum):
     """Enumeration that defines the asset class for each line."""
 
     CASH = "Cash"
-    LIVRET = "Livrets"
-    FOND_EURO = "Fonds euro"
+    GUARANTEED = "Garanti"
     BOND = "Obligations"
     STOCK = "Actions"
     REAL_ESTATE = "Immobilier"
-    GOLD = "Or"
+    MATERIAL = "Métaux"
     CRYPTO = "Cryptos"
     PASSIVE = "Passifs"
+    EXOTIC = "Exotiques"
     UNKNOWN = "Inconnu"
+    DIVERSIFIED = "Diversifié"
+
+
+class AssetSubclass(Enum):
+    """Default collection of assets used as asset subclasses (for easier visualization and analysis)."""
+
+    # Cash
+    CCP = "Comptes courants"
+    MONETARY = "Monétaire"
+    LIQUIDITY = "Liquidités"
+
+    # Guaranteed investments (mostly french)
+    LIVRET = "Livrets"
+    LIVRET_TAXED = "Livrets imposables"
+    FOND_EURO = "Fonds euro"
+
+    # Bonds
+    BOND_DATED = "Fonds datés"
+
+    # Stocks
+    STOCK_SHARE = "Titres vifs"
+    ETF = "ETF"
+
+    # Real estate
+    PHYSICAL = "Immobilier physique"
+    SCPI = "SCPI"
+    SCI = "SCI"
+
+    # Metals
+    GOLD = "Or"
+    SILVER = "Argent"
+    RAW = "Matières premières"
+
+    # Cryptos
+    L1 = "L1"
+    STABLECOINS = "Stablecoins"
+    DEFI = "DeFi"
+
+    # Exotics
+    GFI = "Forêts"
+    ART = "Art"
+    WATCH = "Watches"
+
+    # Diversified
+    DIVERSIFIED = "Diversifié"
+    OPCVM = "OPCVM"
+
+    # Passives
+    VEHICLE = "Véhicule"
+
+    # Unknown (default)
+    UNKNOWN = "Unknown"
 
 
 class EnvelopeClass(Enum):  # TODO use or remove?

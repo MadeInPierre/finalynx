@@ -12,6 +12,7 @@ You can always get the latest version of this module at:
 from rich import inspect, print, pretty, traceback  # noqa
 from finalynx import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio  # noqa
 from finalynx import Folder, Line, Bucket, SharedFolder, Portfolio, FolderDisplay  # noqa
+from finalynx import AssetClass, AssetSubclass  # noqa
 from finalynx import Copilot, Simulator
 from finalynx import Assistant
 

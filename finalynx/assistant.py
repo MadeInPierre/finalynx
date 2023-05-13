@@ -186,7 +186,7 @@ class Assistant:
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:
             console.log("Launching dashboard.")
-            Dashboard().run(portfolio=self.portfolio)
+            Dashboard(hide_amounts=self.hide_amounts).run(portfolio=self.portfolio)
 
     def render_perf(self) -> Tree:
         """Print the current and ideal global expected performance."""
@@ -194,8 +194,8 @@ class Assistant:
         perf_ideal = self.portfolio.get_perf(ideal=True).expected
 
         tree = Tree("Global Performance", hide_root=True)
-        tree.add(f"Current: [bold green]{perf:.1f} %")
-        tree.add(f"Target: [bold green]{perf_ideal:.1f} % ")
+        tree.add(f"Current:  [bold][green]{perf:.1f} %[/] / year")
+        tree.add(f"Planned:  [bold][green]{perf_ideal:.1f} %[/] / year")
 
         console.log(
             f"""Your global portfolio's performance is {perf:.1f}%/yr, follow your targets to get {perf_ideal:.1f}%/yr."""

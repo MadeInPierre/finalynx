@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from ..config import DEFAULT_CURRENCY
 from .constants import AssetClass
+from .constants import AssetSubclass
 from .constants import LinePerf
 from .node import Node
 from .targets import Target
@@ -22,6 +23,7 @@ class Line(Node):
         self,
         name: str,
         asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         parent: Optional["Folder"] = None,
         target: Optional["Target"] = None,
         key: Optional[str] = None,
@@ -51,6 +53,7 @@ class Line(Node):
 
         super().__init__(name, parent, target, newline, agents=render_agents, currency=currency)
         self.asset_class = asset_class
+        self.asset_subclass = asset_subclass
         self.key = key if key is not None else name
         self.amount = amount
         self.envelope = envelope
@@ -77,6 +80,7 @@ class Line(Node):
             "type": "line",
             "name": self.name,
             "asset_class": self.asset_class.value,
+            "asset_subclass": self.asset_subclass.value,
             "key": self.key,
             "amount": self.amount,
             "target": self.target.to_dict(),
@@ -91,6 +95,9 @@ class Line(Node):
         return Line(
             name=dict["name"],
             asset_class=AssetClass(dict["asset_class"]),
+            asset_subclass=AssetSubclass(dict["asset_subclass"])
+            if "asset_subclass" in dict.keys()
+            else AssetSubclass.UNKNOWN,
             key=dict["key"],
             amount=dict["amount"],
             target=Target.from_dict(dict["target"]),

@@ -360,16 +360,15 @@ class FetchFinary(Fetch):  # TODO update docstrings
                 currency=e["display_currency"]["symbol"],
             )
 
-        # Credit accounts # TODO: when https://github.com/lasconic/finary/pull/68 is merged, use get_credit_accounts
+        # Credit accounts
         node = start_step("Credit accounts", tree)
-        credits = session.get(f"{finary_api.constants.API_ROOT}/users/me/views/credit_accounts").json()["result"]
-        for e in credits["data"]:
+        for e in ff.get_credit_accounts(session)["result"]["data"]:
             self._register_fetchline(
                 fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["name"],
                 id=e["id"],
-                account=e["account"]["name"],
+                account=e["name"],
                 amount=-e["display_balance"],
                 currency=e["display_currency"]["symbol"],
             )

@@ -113,10 +113,10 @@ class Dashboard:
         #     with ui.tab_panel("Analysis"):
         #         pass
 
-        with ui.column():
+        with ui.column().classes("w-full"):
             self.hey = ui.markdown(f"#### {self.selected_node.name}").classes("text-center")
 
-            with ui.splitter(value=50).classes("w-full") as splitter:
+            with ui.splitter(value=40).classes("w-full") as splitter:
                 with splitter.before:
                     self.portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio)
                     max_id = self._add_ids_to_tree(self.portfolio_dict)

@@ -1,4 +1,0 @@
-[submodule "finalynx/finary_api"]
-	path = finalynx/finary_api
-	url = https://github.com/lasconic/finary.git
-	ignore = dirty

@@ -8,15 +8,10 @@ You can always get the latest version of this module on
 [GitHub](https://github.com/madeinpierre/finalynx).
 """
 # flake8: noqa
-import os
-import sys
-
+# noreorder
 from .__meta__ import __author__  # noqa: F401
 from .__meta__ import __copyright__  # noqa: F401
 from .__meta__ import __version__  # noqa: F401
-
-# Add finary_api submodule to path to allow imports to work
-sys.path.append(os.path.join(os.path.dirname(__file__), "finary_api"))
 
 # Portfolio
 from .portfolio import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio

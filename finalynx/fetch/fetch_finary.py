@@ -6,15 +6,15 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
+import finary_uapi.__main__ as ff
+import finary_uapi.constants
+import finary_uapi.user_portfolio
 from finalynx.fetch.fetch_line import FetchLine
 from requests import Session
 from rich.prompt import Confirm
 from rich.tree import Tree
 from unidecode import unidecode
 
-import finary_api.__main__ as ff
-import finary_api.constants
-import finary_api.user_portfolio
 from ..console import console
 from ..portfolio.folder import Portfolio
 from ..portfolio.line import Line
@@ -22,7 +22,7 @@ from .fetch import Fetch
 
 
 class FetchFinary(Fetch):  # TODO update docstrings
-    """Wrapper class for the `finary_api` package."""
+    """Wrapper class for the `finary_uapi` package."""
 
     CACHE_FILENAME = "finary_data.json"
 
@@ -60,7 +60,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
         ```{note}
         Finalynx will ask you if you want to save two files:
         - `credentials.json`: This file would store your credentials in a plain text file, which might be used by
-        `finary_api` to refresh your session (to be confirmed). However, this is not recommended since only storing
+        `finary_uapi` to refresh your session (to be confirmed). However, this is not recommended since only storing
         the session is more secure and you can always enter your credentials again from occasionally.
         - `localCookiesMozilla.txt`: This file stores the session created after a successful login (without your
         plain credentials). It is recommended to save it if you don't want to enter your credentials on each run.
@@ -143,38 +143,40 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
         # Let the user reset its credentials and session
         if self.force_signin:
-            if os.path.exists(finary_api.constants.COOKIE_FILENAME):
-                os.remove(finary_api.constants.COOKIE_FILENAME)
-            if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
+            if os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
+                os.remove(finary_uapi.constants.COOKIE_FILENAME)
+            if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
                 if not Confirm.ask("Reuse saved credentials? Otherwise, they will also be deleted.", default=True):
-                    os.remove(finary_api.constants.CREDENTIAL_FILE)
+                    os.remove(finary_uapi.constants.CREDENTIAL_FILE)
 
         # Get the user credentials if there's no session yet (through environment variables or manual input)
-        if not os.path.exists(finary_api.constants.COOKIE_FILENAME):
+        if not os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
             # Skip credential input if it was already set in environment variables
             if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
                 console.log("Found credentials in environment variables, logging in.")
 
             # Ask for manual input if credentials and session are missing
             else:
-                console.log("Credentials in environment variables not set, asking for manual input.")
-
                 credentials = {}
-                if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
-                    cred_file = open(finary_api.constants.CREDENTIAL_FILE)
+                if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
+                    console.log("Found saved credentials, logging in.")
+
+                    cred_file = open(finary_uapi.constants.CREDENTIAL_FILE)
                     credentials = json.load(cred_file)
                 else:
+                    console.log("Credentials in environment variables not set, asking for manual input.")
+
                     credentials["email"] = console.input("Enter your Finary [yellow bold]email[/]: ")
                     credentials["password"] = console.input(
                         "Enter your Finary [yellow bold]password[/]: ", password=True
                     )
 
                     if Confirm.ask(
-                        f"Would like to save your credentials in [green]'{finary_api.constants.CREDENTIAL_FILE}'[/]?",
+                        f"Would like to save your credentials in [green]'{finary_uapi.constants.CREDENTIAL_FILE}'[/]?",
                         default=False,
                         show_default=True,
                     ):
-                        with open(finary_api.constants.CREDENTIAL_FILE, "w") as f:
+                        with open(finary_uapi.constants.CREDENTIAL_FILE, "w") as f:
                             f.write(json.dumps(credentials, indent=4))
 
                 os.environ["FINARY_EMAIL"] = credentials["email"]
@@ -190,12 +192,12 @@ class FetchFinary(Fetch):  # TODO update docstrings
                     console.log(
                         "[red][bold]Failed to signin to Finary![/] Deleting credentials and cookies, please try again.[/]"
                     )
-                    if os.path.exists(finary_api.constants.CREDENTIAL_FILE):
-                        os.remove(finary_api.constants.CREDENTIAL_FILE)
+                    if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
+                        os.remove(finary_uapi.constants.CREDENTIAL_FILE)
                     return None
 
-                console.log(f"Successfully signed in, saving session in '{finary_api.constants.COOKIE_FILENAME}'")
-            elif os.path.exists(finary_api.constants.COOKIE_FILENAME):
+                console.log(f"Successfully signed in, saving session in '{finary_uapi.constants.COOKIE_FILENAME}'")
+            elif os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
                 console.log("Found cookies file, retrieving session.")
             else:
                 console.log(
@@ -310,7 +312,7 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
         # Cryptos
         node = start_step("Cryptos", tree)
-        for account in finary_api.user_portfolio.get_portfolio_cryptos(session)["result"]["accounts"]:
+        for account in finary_uapi.user_portfolio.get_portfolio_cryptos(session)["result"]["accounts"]:
             node_account = node.add(f"[bold]Account: {account['name']}")
             for e in account["cryptos"]:
                 self._register_fetchline(

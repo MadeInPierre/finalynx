@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.5 (2023-05-23)
+### Fix
+* **fetch:** Use the new get_credit_accounts from API ([#85](https://github.com/MadeInPierre/finalynx/issues/85)) ([`cb8a4f1`](https://github.com/MadeInPierre/finalynx/commit/cb8a4f1c78a7ed3c6729eb3f44a0c2c3c606012a))
+
 ## v1.14.4 (2023-05-10)
 ### Fix
 * **dashboard:** Hide amounts if specified by user ([`440f8c1`](https://github.com/MadeInPierre/finalynx/commit/440f8c134297b22be538826ca4b221d61aab003f))

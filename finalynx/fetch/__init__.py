@@ -13,10 +13,10 @@ subpackage.
 import os
 import sys
 
-import finary_api.constants  # type: ignore # Set the credentials and cookies constants to a full path
+import finary_uapi.constants  # type: ignore # Set the credentials and cookies constants to a full path
 
-finary_api.constants.CREDENTIAL_FILE = os.path.join(os.path.dirname(__file__), "credentials.json")
-finary_api.constants.COOKIE_FILENAME = os.path.join(os.path.dirname(__file__), "localCookiesMozilla.txt")
+finary_uapi.constants.CREDENTIAL_FILE = os.path.join(os.path.dirname(__file__), "credentials.json")
+finary_uapi.constants.COOKIE_FILENAME = os.path.join(os.path.dirname(__file__), "localCookiesMozilla.txt")
 
 from .fetch_finary import FetchFinary
 from ..console import console

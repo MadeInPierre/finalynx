@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.6 (2023-05-23)
+### Fix
+* **dashboard:** Use full page width ([`a054dae`](https://github.com/MadeInPierre/finalynx/commit/a054dae61bcdbf831ae05625454e10c0132c0174))
+
 ## v1.14.5 (2023-05-23)
 ### Fix
 * **fetch:** Use the new get_credit_accounts from API ([#85](https://github.com/MadeInPierre/finalynx/issues/85)) ([`cb8a4f1`](https://github.com/MadeInPierre/finalynx/commit/cb8a4f1c78a7ed3c6729eb3f44a0c2c3c606012a))

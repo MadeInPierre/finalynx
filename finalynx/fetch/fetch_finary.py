@@ -375,6 +375,35 @@ class FetchFinary(Fetch):  # TODO update docstrings
                 currency=e["display_currency"]["symbol"],
             )
 
+        # Crowdlendings
+        node = start_step("Crowdlendings", tree)
+        for account in ff.get_portfolio_crowdlendings(session)["result"]["accounts"]:
+            node_account = node.add(f"[bold]Account: {account['name']}")
+            for e in account["crowdlendings"]:
+                self._register_fetchline(
+                    fetched_lines=fetched_lines,
+                    tree_node=node_account,
+                    name=e["name"],
+                    id=e["id"],
+                    account=account["name"],
+                    amount=e["display_current_value"],
+                    currency=e["currency"]["symbol"],
+                )
+
+        # Startups
+        node = start_step("Startups", tree)
+        real_estate = ff.get_user_startups(session)["result"]
+        for e in real_estate["startups"]:
+            self._register_fetchline(
+                fetched_lines=fetched_lines,
+                tree_node=node,
+                name=e["name"],
+                amount=e["current_value"],
+                id=e["slug"],
+                account=e["name"],
+                currency="€",  # no currency info available
+            )
+
         return fetched_lines
 
     def _register_fetchline(

@@ -84,6 +84,7 @@ class AssetSubclass(Enum):
     GFI = "Forêts"
     ART = "Art"
     WATCH = "Watches"
+    CROWDLENDING = "Crowdlending"
 
     # Diversified
     DIVERSIFIED = "Diversifié"

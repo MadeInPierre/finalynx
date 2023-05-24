@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.15.0 (2023-05-24)
+### Feature
+* **fetch:** Add crowdlending & startups, update asset subclass constant ([`261b752`](https://github.com/MadeInPierre/finalynx/commit/261b7520ad83dfb43b01bbc836c930e553ad0fb0))
+
 ## v1.14.6 (2023-05-23)
 ### Fix
 * **dashboard:** Use full page width ([`a054dae`](https://github.com/MadeInPierre/finalynx/commit/a054dae61bcdbf831ae05625454e10c0132c0174))

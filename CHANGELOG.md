@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.15.1 (2023-05-25)
+### Fix
+* **envelope:** Fix optional parameter default value ([`0307352`](https://github.com/MadeInPierre/finalynx/commit/0307352c1d3312b82010772d69e232175cd6ada9))
+
 ## v1.15.0 (2023-05-24)
 ### Feature
 * **fetch:** Add crowdlending & startups, update asset subclass constant ([`261b752`](https://github.com/MadeInPierre/finalynx/commit/261b7520ad83dfb43b01bbc836c930e553ad0fb0))

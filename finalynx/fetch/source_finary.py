@@ -11,10 +11,10 @@ from rich.tree import Tree
 
 from ..console import console
 from ..portfolio.folder import Portfolio
-from .fetch_base import FetchBase
+from .source_base import SourceBase
 
 
-class FetchFinary(FetchBase):
+class SourceFinary(SourceBase):
     """Wrapper class for the `finary_uapi` package."""
 
     SOURCE_NAME = "Finary"

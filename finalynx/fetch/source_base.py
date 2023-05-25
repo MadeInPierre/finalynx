@@ -15,7 +15,7 @@ from ..portfolio import Portfolio
 from .fetch_line import FetchLine
 
 
-class FetchBase:
+class SourceBase:
     """Abstract class to fetch data from multiple sources."""
 
     # Finalynx will use the cached data if it is younger than the specified time

@@ -20,7 +20,7 @@ from .portfolio import AssetClass, AssetSubclass, EnvelopeClass
 from .portfolio import Envelope, EnvelopeState, PEA, PEE, AV, PER
 
 # Fetch
-from .fetch import Fetch
+from .fetch import Fetch, SourceBase
 
 # Advisor
 from .copilot import Copilot

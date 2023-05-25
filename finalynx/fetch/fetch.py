@@ -4,6 +4,7 @@ from typing import Optional
 
 from rich.tree import Tree
 
+from ..console import console
 from ..portfolio.folder import Portfolio
 from .source_base import SourceBase
 
@@ -27,12 +28,16 @@ class Fetch:
     def fetch_from(self, active_source_names: List[str]) -> Tree:
         """Fetch from all sources specified in `active_sources` and return a `rich`
         tree used to render what has been fetched to the console."""
-        tree = Tree("Fetched data")
+        tree = Tree("Fetched data", hide_root=True)
 
         # Fill the portfolio with info from each activated source
-        for source_id, source in self._sources.items():
-            if source_id in active_source_names:
-                tree.add(source.fetch(self.portfolio))
+        for source_id in active_source_names:
+            if source_id not in self._sources.keys():
+                console.log(
+                    f"[red][bold]Error:[/] Source '{source_id}' not recognized, have you added it first? Skipping."
+                )
+                continue
+            tree.add(self._sources[source_id].fetch(self.portfolio))
 
         return tree
 

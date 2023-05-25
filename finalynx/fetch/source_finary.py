@@ -72,7 +72,8 @@ class SourceFinary(SourceBase):
         :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
         everything was correctly found.
         """
-        super().__init__(self.SOURCE_NAME, clear_cache, force_signin, ignore_orphans)
+        super().__init__(self.SOURCE_NAME, clear_cache, ignore_orphans)
+        self.force_signin = force_signin
 
     def _authenticate(self) -> Optional[Session]:
         """Internal method used to signin and retrieve a session from Finary.

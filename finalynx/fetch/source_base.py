@@ -25,7 +25,6 @@ class SourceBase:
         self,
         name: str,
         clear_cache: bool = False,
-        force_signin: bool = False,
         ignore_orphans: bool = False,
     ):
         """This is an abstract class to provide a common interface when fetching investments from
@@ -43,7 +42,6 @@ class SourceBase:
 
         # Flags set by user
         self.clear_cache = clear_cache
-        self.force_signin = force_signin
         self.ignore_orphans = ignore_orphans
 
         # This list will hold all fetched line objects.
@@ -53,6 +51,7 @@ class SourceBase:
         """Abstract method, requires to be overridden by subclasses.
         :returns: A `Tree` object from the `rich` package used to display what has been fetched.
         """
+        console.log(f"Starting fetching from {self.name}...")
 
         # Remove the cached data for this source if asked by the user
         if self.clear_cache and os.path.exists(self.cache_fullpath):

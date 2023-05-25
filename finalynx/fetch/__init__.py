@@ -19,3 +19,4 @@ finary_uapi.constants.COOKIE_FILENAME = os.path.join(os.path.dirname(__file__), 
 
 from ..console import console
 from .fetch import Fetch
+from .source_base import SourceBase

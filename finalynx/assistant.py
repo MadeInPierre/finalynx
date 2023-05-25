@@ -10,6 +10,7 @@ from finalynx import Dashboard
 from finalynx import Fetch
 from finalynx import Portfolio
 from finalynx.config import DEFAULT_CURRENCY
+from finalynx.fetch.source_base import SourceBase
 from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
@@ -94,6 +95,13 @@ class Assistant:
 
         self._parse_args()
 
+        # Create the fetching manager instance
+        self._fetch = Fetch(self.portfolio)
+
+    def add_fetch_source(self, source: SourceBase) -> None:
+        """Register a custom source defined by you."""
+        self._fetch.add_source(source)
+
     def _parse_args(self) -> None:
         """Internal method that parses the command-line options and activates the options
         in the corresponding modules.
@@ -144,24 +152,15 @@ class Assistant:
         run your simulation, generate recommendations, and format the output nicely to the console.
         """
 
-        # Create the fetching manager instance
-        fetch = Fetch(self.portfolio)
-
         # Add default sources based on user input
         if "finary" in self.active_sources:
-            fetch.add_source(SourceFinary(self.clear_cache, self.force_signin, self.ignore_orphans))
+            self._fetch.add_source(SourceFinary(self.clear_cache, self.force_signin, self.ignore_orphans))
 
-        # Fill tree with current valuations fetched from Finary
-        finary_tree = fetch.fetch_from(self.active_sources)
+        # Launch the fetching process and fill tree with current valuations fetched from Finary
+        fetched_tree = self._fetch.fetch_from(self.active_sources)
 
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()
-
-        # Simulate the portolio's evolution through the years by auto-investing each month
-        # simulation = self.scenario.rich_simulation(self.portfolio)  # noqa TODO
-
-        # Get recommendations for immediate investment operations
-        # recommentations = self.copilot.rich_recommendations(self.portfolio)  # noqa TODO
 
         # Items to be rendered as a row
         render = [
@@ -185,7 +184,7 @@ class Assistant:
 
         # Show the data fetched from Finary if specified
         if self.show_data:
-            panels.append(Panel(finary_tree, title="Finary data"))
+            panels.append(Panel(fetched_tree, title="Fetched data"))
 
         # Save the current portfolio to a file. Useful for statistics later
         if self.enable_export:
@@ -208,10 +207,6 @@ class Assistant:
         tree = Tree("Global Performance", hide_root=True)
         tree.add(f"Current:  [bold][green]{perf:.1f} %[/] / year")
         tree.add(f"Planned:  [bold][green]{perf_ideal:.1f} %[/] / year")
-
-        console.log(
-            f"Your global portfolio's performance is {perf:.1f}%/yr, follow your targets to get {perf_ideal:.1f}%/yr."
-        )
         return tree
 
     def render_envelopes(self) -> Tree:

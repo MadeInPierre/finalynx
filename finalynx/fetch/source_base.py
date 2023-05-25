@@ -23,8 +23,7 @@ class SourceBase:
 
     def __init__(
         self,
-        source_name: str,
-        portfolio: Portfolio,
+        name: str,
         clear_cache: bool = False,
         force_signin: bool = False,
         ignore_orphans: bool = False,
@@ -39,9 +38,8 @@ class SourceBase:
         :param portfolio: A fully configured `Porfolio` instance with your custom investment tree.
         :param cache_filename: Used by subclasses to create separate cache files.
         """
-        self.source_name = source_name
-        self.cache_fullpath = os.path.join(os.path.dirname(__file__), f"{source_name.lower()}_cache.json")
-        self.portfolio = portfolio
+        self.name = name
+        self.cache_fullpath = os.path.join(os.path.dirname(__file__), f"{self.id}_cache.json")
 
         # Flags set by user
         self.clear_cache = clear_cache
@@ -51,7 +49,7 @@ class SourceBase:
         # This list will hold all fetched line objects.
         self._fetched_lines: List[FetchLine] = []
 
-    def fetch(self) -> Tree:
+    def fetch(self, portfolio: Portfolio) -> Tree:
         """Abstract method, requires to be overridden by subclasses.
         :returns: A `Tree` object from the `rich` package used to display what has been fetched.
         """
@@ -63,7 +61,7 @@ class SourceBase:
 
         # This will hold a key:amount dictionary of all lines found in the source
         self._fetched_lines = self._get_cache()  # try to get the data in the cache first
-        tree = Tree(self.source_name, highlight=True, hide_root=True)
+        tree = Tree(self.name, highlight=True, hide_root=True)
 
         # If there's no valid cache, signin and fetch the data online
         if not self._fetched_lines:
@@ -81,7 +79,7 @@ class SourceBase:
         # If the cache is not empty, Match all lines to the portfolio hierarchy
         for fline in self._fetched_lines:
             name = fline.name if fline.name else "Unknown"
-            matched_lines: List[Line] = list(set(self.portfolio.match_lines(fline)))  # merge identical instances
+            matched_lines: List[Line] = list(set(portfolio.match_lines(fline)))  # merge identical instances
 
             # Set attributes to the first matched line
             if matched_lines:
@@ -99,10 +97,10 @@ class SourceBase:
                 console.log(
                     f"[yellow][bold]Warning:[/] Line '{name}' did not match with any portfolio node, attaching to root."
                 )
-                self.portfolio.add_child(Line(name, amount=fline.amount))
+                portfolio.add_child(Line(name, amount=fline.amount))
 
         # Return a rich tree to be displayed in the console as a recap of what has been fetched
-        console.log(f"Done fetching data from {self.source_name}.")
+        console.log(f"Done fetching data from {self.name}.")
         return tree
 
     def _fetch_data(self, tree: Tree) -> None:
@@ -174,3 +172,7 @@ class SourceBase:
         data = {"last_updated": current_time, "lines": [line.to_dict() for line in self._fetched_lines]}
         with open(self.cache_fullpath, "w") as f:
             json.dump(data, f, indent=4)
+
+    @property
+    def id(self) -> str:
+        return self.name.lower()

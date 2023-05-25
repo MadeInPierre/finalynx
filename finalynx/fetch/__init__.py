@@ -11,12 +11,11 @@ subpackage.
 """
 # flake8: noqa
 import os
-import sys
 
 import finary_uapi.constants  # type: ignore # Set the credentials and cookies constants to a full path
 
 finary_uapi.constants.CREDENTIAL_FILE = os.path.join(os.path.dirname(__file__), "finary_credentials.json")
 finary_uapi.constants.COOKIE_FILENAME = os.path.join(os.path.dirname(__file__), "finary_cookies.txt")
 
-from .source_finary import FetchFinary
 from ..console import console
+from .fetch import Fetch

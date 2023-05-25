@@ -10,13 +10,13 @@ from rich.prompt import Confirm
 from rich.tree import Tree
 
 from ..console import console
-from ..portfolio.folder import Portfolio
 from .source_base import SourceBase
 
 
 class SourceFinary(SourceBase):
     """Wrapper class for the `finary_uapi` package."""
 
+    # Used both in console prints and as the source identifier (transformed to lower-case)
     SOURCE_NAME = "Finary"
 
     _categories = [
@@ -35,7 +35,6 @@ class SourceFinary(SourceBase):
 
     def __init__(
         self,
-        portfolio: Portfolio,
         clear_cache: bool = False,
         force_signin: bool = False,
         ignore_orphans: bool = False,
@@ -73,10 +72,11 @@ class SourceFinary(SourceBase):
         :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
         everything was correctly found.
         """
-        super().__init__(self.SOURCE_NAME, portfolio, clear_cache, force_signin, ignore_orphans)
+        super().__init__(self.SOURCE_NAME, clear_cache, force_signin, ignore_orphans)
 
     def _authenticate(self) -> Optional[Session]:
         """Internal method used to signin and retrieve a session from Finary.
+        Called by `_fetch_data` once, only exists for better logic separation.
         :returns: A session for fetching data if everything worked, None otherwise.
         """
 
@@ -156,7 +156,7 @@ class SourceFinary(SourceBase):
             return session
 
     def _fetch_data(self, tree: Tree) -> None:
-        """Internal method used to fetch every investment in your Finary account.
+        """Overridden method used to fetch every investment in your Finary account.
         :returns: A dictionary of all fetched investments (name:amount format). This method
         also populates the `tree` instance with a hierarchical view of the fetched information.
         The `tree` instance can be displayed in the console to make sure everything was retrieved.

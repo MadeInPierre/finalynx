@@ -1,11 +1,16 @@
 # Define your own portfolio using this name if you plan to contribute
 assistant_config.py
+
+# Saved log files are personal and therefore ignored
 logs/
 
 # Ignore the cached files used for fetching
-finary_data.json
+*_cache.json
+*_credentials.json
+*_cookies.txt
 
-# Setup your finary credentials in this repo directly
+# Keep old file names to make sure no one uploads their credentials
+finary_data.json
 credentials.json
 localCookiesMozilla.txt
 

@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.16.2 (2023-05-26)
+### Fix
+* **fetch:** Spinner was hiding user prompts ([`8c5a78f`](https://github.com/MadeInPierre/finalynx/commit/8c5a78fc8df7e781783c1877b29b25589fe14bc3))
+
 ## v1.16.1 (2023-05-26)
 ### Performance
 * **finary:** Fetch all finary investments in only one call ([`f119c49`](https://github.com/MadeInPierre/finalynx/commit/f119c49967f8fc20dc591f1525a678e024cfabe3))

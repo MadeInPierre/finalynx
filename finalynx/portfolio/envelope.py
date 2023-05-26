@@ -54,7 +54,7 @@ class Envelope:
         self.code = code
         self.date_created = date_created
         self.date_unlock = date_unlock if date_unlock else date_created
-        self.date_untax = date_untax if date_untax else date_created
+        self.date_untax = date_untax if date_untax else self.date_unlock
         self.key = key
 
         if not (self.date_created <= self.date_unlock <= self.date_untax):

@@ -1,31 +1,47 @@
-import os
+from typing import Dict
+from typing import List
+from typing import Optional
 
 from rich.tree import Tree
 
-from ..portfolio import Portfolio
+from ..console import console
+from ..portfolio.folder import Portfolio
+from .source_base import SourceBase
 
 
 class Fetch:
-    """Abstract class to fetch data from multiple sources."""
+    """Entry point class that orchestrates fetching from multiple sources."""
 
-    MAX_CACHE_HOURS = 12
-
-    def __init__(self, portfolio: Portfolio, cache_filename: str):
-        """This is an abstract class to provide a common interface when fetching investments from
-        multiple sources.
-
-        ```{tip}
-        Contributions to add data from any format or source are warmly welcome!
-        ```
-
-        :param portfolio: A fully configured `Porfolio` instance with your custom investment tree.
-        :param cache_filename: Used by subclasses to create separate cache files.
-        """
-        self.cache_fullpath = os.path.join(os.path.dirname(__file__), cache_filename)
+    def __init__(
+        self,
+        portfolio: Portfolio,
+        sources: Optional[List[SourceBase]] = None,
+    ) -> None:
+        """This class orchestrates the fetching process from multiple sources."""
         self.portfolio = portfolio
+        self._sources: Dict[str, SourceBase] = {s.name: s for s in sources} if sources else {}
 
-    def fetch(self) -> Tree:
-        """Abstract method, requires to be overridden by subclasses.
-        :returns: A `Tree` object from the `rich` package used to display what has been fetched.
-        """
-        raise NotImplementedError("This abstract method must be overriden by all subclasses")
+    def add_source(self, source: SourceBase) -> None:
+        """Register a new source instance which must already be configured."""
+        self._sources[source.id] = source
+
+    def fetch_from(self, active_source_names: List[str]) -> Tree:
+        """Fetch from all sources specified in `active_sources` and return a `rich`
+        tree used to render what has been fetched to the console."""
+        tree = Tree("Fetched data", hide_root=True)
+
+        # Fill the portfolio with info from each activated source
+        for source_id in active_source_names:
+            if source_id not in self._sources.keys():
+                console.log(
+                    f"[red][bold]Error:[/] Source '{source_id}' not recognized, have you added it first? Skipping."
+                )
+                continue
+            tree.add(self._sources[source_id].fetch(self.portfolio))
+
+        return tree
+
+    def fetch_all(self) -> Tree:
+        """Fetch from all sources added and return a `rich` tree used
+        to render what has been fetched to the console."""
+        return self.fetch_from(list(self._sources.keys()))

@@ -7,9 +7,11 @@ from typing import TYPE_CHECKING
 
 from docopt import docopt
 from finalynx import Dashboard
-from finalynx import FetchFinary
+from finalynx import Fetch
 from finalynx import Portfolio
 from finalynx.config import DEFAULT_CURRENCY
+from finalynx.fetch.source_base import SourceBase
+from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
@@ -71,6 +73,7 @@ class Assistant:
         output_format: str = "[console]",
         enable_export: bool = True,
         export_dir: str = "logs",
+        active_sources: Optional[List[str]] = None,
     ):
         self.portfolio = portfolio
         self.buckets = buckets if buckets else []
@@ -88,14 +91,22 @@ class Assistant:
         self.hide_deltas = hide_deltas
         self.enable_export = enable_export
         self.export_dir = export_dir
+        self.active_sources = active_sources if active_sources else ["finary"]
 
         self._parse_args()
+
+        # Create the fetching manager instance
+        self._fetch = Fetch(self.portfolio)
+
+    def add_fetch_source(self, source: SourceBase) -> None:
+        """Register a custom source defined by you."""
+        self._fetch.add_source(source)
 
     def _parse_args(self) -> None:
         """Internal method that parses the command-line options and activates the options
         in the corresponding modules.
         """
-        args = docopt(__doc__, version=__version__)
+        args = docopt(__doc__, version=__version__)  # type: ignore
         if args["--ignore-orphans"]:
             self.ignore_orphans = True
         if args["--clear-cache"]:
@@ -131,25 +142,25 @@ class Assistant:
             self.enable_export = False
         if args["--export-dir"]:
             self.export_dir = args["--export-dir"]
+        if args["--sources"]:
+            self.active_sources = str(args["--sources"]).split(",")
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
 
-        This function will fetch the data from your Finary account, process the thr targets in the portfolio tree,
+        This function will fetch the data from your Finary account, process the targets in the portfolio tree,
         run your simulation, generate recommendations, and format the output nicely to the console.
         """
 
-        # Fill tree with current valuations fetched from Finary
-        finary_tree = FetchFinary(self.portfolio, self.clear_cache, self.force_signin, self.ignore_orphans).fetch()
+        # Add default sources based on user input
+        if "finary" in self.active_sources:
+            self._fetch.add_source(SourceFinary(self.clear_cache, self.force_signin, self.ignore_orphans))
+
+        # Launch the fetching process and fill tree with current valuations fetched from Finary
+        fetched_tree = self._fetch.fetch_from(self.active_sources)
 
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()
-
-        # Simulate the portolio's evolution through the years by auto-investing each month
-        # simulation = self.scenario.rich_simulation(self.portfolio)  # noqa TODO
-
-        # Get recommendations for immediate investment operations
-        # recommentations = self.copilot.rich_recommendations(self.portfolio)  # noqa TODO
 
         # Items to be rendered as a row
         render = [
@@ -173,7 +184,7 @@ class Assistant:
 
         # Show the data fetched from Finary if specified
         if self.show_data:
-            panels.append(Panel(finary_tree, title="Finary data"))
+            panels.append(Panel(fetched_tree, title="Fetched data"))
 
         # Save the current portfolio to a file. Useful for statistics later
         if self.enable_export:
@@ -196,10 +207,6 @@ class Assistant:
         tree = Tree("Global Performance", hide_root=True)
         tree.add(f"Current:  [bold][green]{perf:.1f} %[/] / year")
         tree.add(f"Planned:  [bold][green]{perf_ideal:.1f} %[/] / year")
-
-        console.log(
-            f"""Your global portfolio's performance is {perf:.1f}%/yr, follow your targets to get {perf_ideal:.1f}%/yr."""
-        )
         return tree
 
     def render_envelopes(self) -> Tree:
@@ -217,7 +224,7 @@ class Assistant:
                     Target.RESULT_TOLERATED,
                 ]:
                     env_delta += delta
-                    children.append(line._render_delta(children=env.lines) + line._render_name())
+                    children.append(line._render_delta(children=env.lines) + line._render_name())  # type: ignore
 
             if children:
                 env_delta = round(env_delta)
@@ -244,7 +251,7 @@ class Assistant:
             node = tree.add("[dodger_blue2 bold]Folders")
             for f in folders:
                 if f.get_delta() != 0:
-                    node.add(f._render_delta(children=folders) + f._render_name())
+                    node.add(f._render_delta(children=folders) + f._render_name())  # type: ignore
         return tree
 
     def export(self, dirpath: str) -> None:

@@ -125,8 +125,9 @@ class SourceFinary(SourceBase):
 
         # Login to Finary with the existing cookies file or credentials in environment variables and retrieve data
         if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
-            console.log("Signing in to Finary...")
-            result = ff.signin()
+            with console.status("[bold green]Signing in to Finary..."):
+                result = ff.signin()
+                console.log("Signed in to Finary.")
 
             if result is None or result["message"] != "Created":
                 console.log(
@@ -167,11 +168,11 @@ class SourceFinary(SourceBase):
             raise ValueError("Finary signin failed.")
 
         # Call the API and parse the response into `FetchLine` instances
-        console.log("Fetching investments...")
-        response = ff.get_holdings_accounts(session)
-        if response["message"] == "OK":
-            for dict_account in response["result"]:
-                self._process_account(dict_account, tree)
+        with console.status("[bold green]Fetching investments from Finary..."):
+            response = ff.get_holdings_accounts(session)
+            if response["message"] == "OK":
+                for dict_account in response["result"]:
+                    self._process_account(dict_account, tree)
 
     def _process_account(self, dict_account: Dict[str, Any], tree: Tree) -> None:
         account_name = dict_account["name"]

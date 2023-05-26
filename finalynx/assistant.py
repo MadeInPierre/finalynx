@@ -191,8 +191,13 @@ class Assistant:
             self.export(self.export_dir)
 
         # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(render, padding=(2, 2)), "\n")  # type: ignore
-        console.print(Columns(panels, padding=(2, 2)), "\n")
+        console.print(
+            "\n\n",
+            Columns(render, padding=(2, 2)),  # type: ignore
+            "\n\n",
+            Columns(panels, padding=(2, 2)),
+            "\n",
+        )
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:

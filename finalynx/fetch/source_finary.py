@@ -1,5 +1,7 @@
 import json
 import os
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 import finary_uapi.__main__ as ff
@@ -64,7 +66,6 @@ class SourceFinary(SourceBase):
         You can run Finalynx with the `-f` or `--force-signin` option to delete all files and start over.
         ```
 
-        :param portfolio: Your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>` tree (must be already fully defined).
         :param clear_cache: Delete cached data to immediately fetch data online, defaults to False
         :param force_signin: Delete all saved credentials, cookies and cache files before logging in again, defaults to False
         :param ignore_orphans: If a line in your account is not referenced in your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>`
@@ -123,38 +124,35 @@ class SourceFinary(SourceBase):
                 os.environ["FINARY_PASSWORD"] = credentials["password"]
 
         # Login to Finary with the existing cookies file or credentials in environment variables and retrieve data
-        with console.status("[bold green]Fetching data from Finary..."):
-            if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
-                console.log("Signing in to Finary...")
-                result = ff.signin()
+        if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
+            console.log("Signing in to Finary...")
+            result = ff.signin()
 
-                if result is None or result["message"] != "Created":
-                    console.log(
-                        "[red][bold]Failed to signin to Finary![/] Deleting credentials and cookies, please try again.[/]"
-                    )
-                    if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
-                        os.remove(finary_uapi.constants.CREDENTIAL_FILE)
-                    return None
-
-                console.log(f"Successfully signed in, saving session in '{finary_uapi.constants.COOKIE_FILENAME}'")
-            elif os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
-                console.log("Found cookies file, retrieving session.")
-            else:
+            if result is None or result["message"] != "Created":
                 console.log(
-                    "[bold red]No credentials file, environment variables, or cookies file. Skipping fetching.[/]"
+                    "[red][bold]Failed to signin to Finary![/] Deleting credentials and cookies, please try again.[/]"
                 )
+                if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
+                    os.remove(finary_uapi.constants.CREDENTIAL_FILE)
                 return None
 
-            # Get session stored in cookies file
-            session: Session = ff.prepare_session()
+            console.log(f"Successfully signed in, saving session in '{finary_uapi.constants.COOKIE_FILENAME}'")
+        elif os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
+            console.log("Found cookies file, retrieving session.")
+        else:
+            console.log("[bold red]No credentials file, environment variables, or cookies file. Skipping fetching.[/]")
+            return None
 
-            # Delete login variables just in case
-            if os.environ.get("FINARY_EMAIL"):
-                os.environ.pop("FINARY_EMAIL")
-            if os.environ.get("FINARY_PASSWORD"):
-                os.environ.pop("FINARY_PASSWORD")
+        # Get session stored in cookies file
+        session: Session = ff.prepare_session()
 
-            return session
+        # Delete login variables just in case
+        if os.environ.get("FINARY_EMAIL"):
+            os.environ.pop("FINARY_EMAIL")
+        if os.environ.get("FINARY_PASSWORD"):
+            os.environ.pop("FINARY_PASSWORD")
+
+        return session
 
     def _fetch_data(self, tree: Tree) -> None:
         """Overridden method used to fetch every investment in your Finary account.
@@ -168,168 +166,123 @@ class SourceFinary(SourceBase):
         if not session:
             raise ValueError("Finary signin failed.")
 
-        # Simple utility function because fetching Finary data takes multiple steps
-        def start_step(step_name: str, tree_node: Tree) -> Tree:
-            console.log(f"Fetching {step_name.lower()}...")
-            return tree_node.add(f"[bold]{step_name}")
+        # Call the API and parse the response into `FetchLine` instances
+        console.log("Fetching investments...")
+        response = ff.get_holdings_accounts(session)
+        if response["message"] == "OK":
+            for dict_account in response["result"]:
+                self._process_account(dict_account, tree)
 
-        # Checkings
-        node = start_step("Checkings", tree)
-        for e in ff.get_checking_accounts(session, "1w")["result"]["data"]:
+    def _process_account(self, dict_account: Dict[str, Any], tree: Tree) -> None:
+        account_name = dict_account["name"]
+        node = tree.add(account_name)
+
+        for item in dict_account["fiats"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["name"],
-                id=e["id"],
-                account=e["institution"]["name"],
-                amount=e["display_balance"],
-                currency=e["display_currency"]["symbol"],
+                name=account_name,
+                id=item["id"],
+                account=dict_account["institution"]["name"],
+                amount=item["display_current_value"],
+                currency=item["fiat"]["symbol"],
             )
 
-        # Savings
-        node = start_step("Savings", tree)
-        for e in ff.get_savings_accounts(session, "1w")["result"]["data"]:
+        for item in dict_account["securities"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["name"],
-                id=e["id"],
-                account=e["institution"]["name"],
-                amount=e["display_balance"],
-                currency=e["display_currency"]["symbol"],
+                name=item["security"]["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=item["security"]["display_currency"]["symbol"],
             )
 
-        # Fonds euro
-        node = start_step("Fonds euro", tree)
-        for e in ff.get_fonds_euro(session, "1w")["result"]["data"]:
+        for item in dict_account["crowdlendings"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["name"],
-                id=e["id"],
-                account=e["account"]["name"],
-                amount=e["display_current_value"],
-                currency=e["account"]["display_currency"]["symbol"],
+                name=item["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_price"],
+                currency=item["currency"]["symbol"],
             )
 
-        # Others
-        node = start_step("Others", tree)
-        for e in ff.get_other_assets(session, "1w")["result"]["data"]:
+        for item in dict_account["cryptos"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["name"],
-                id=e["id"],
-                account=e["account"]["name"],
-                amount=e["display_current_value"],
-                currency=e["account"]["display_currency"]["symbol"],
+                name=item["crypto"]["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=item["buying_price_currency"]["symbol"],
             )
 
-        # Precious metals
-        node = start_step("Precious metals", tree)
-        for e in ff.get_user_precious_metals(session)["result"]:
+        for item in dict_account["fonds_euro"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["precious_metal"]["name"],
-                id=e["id"],
-                account=e["account"]["name"],
-                amount=e["display_current_value"],
-                currency=e["precious_metal"]["display_currency"]["symbol"],
+                name=item["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=dict_account["display_currency"]["symbol"],
             )
 
-        # Investments
-        node = start_step("Investments", tree)
-        for account in ff.get_portfolio_investments(session)["result"]["accounts"]:
-            node_account = node.add(f"[bold]Account: {account['name']}")
-            for e in account["securities"]:
-                self._register_fetchline(
-                    tree_node=node_account,
-                    name=e["security"]["name"],
-                    id=e["id"],
-                    account=account["name"],
-                    amount=e["display_current_value"],
-                    currency=e["security"]["display_currency"]["symbol"],
-                )
-
-        # Cryptos
-        node = start_step("Cryptos", tree)
-        for account in finary_uapi.user_portfolio.get_portfolio_cryptos(session)["result"]["accounts"]:
-            node_account = node.add(f"[bold]Account: {account['name']}")
-            for e in account["cryptos"]:
-                self._register_fetchline(
-                    tree_node=node_account,
-                    name=e["crypto"]["name"],
-                    id=e["id"],
-                    account=account["name"],
-                    amount=e["display_current_value"],
-                    currency=e["buying_price_currency"]["symbol"],
-                )
-
-        # Real estate
-        node = start_step("Real estate", tree)
-        real_estate = ff.get_real_estates(session, "1w")["result"]["data"]
-        for e in real_estate["real_estates"]:
+        for item in dict_account["precious_metals"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["description"],
-                id=e["id"],
-                account=e["account"]["name"],
-                amount=e["display_current_value"],
-                currency=e["account"]["display_currency"]["symbol"],
-            )
-        for e in real_estate["scpis"]:
-            self._register_fetchline(
-                tree_node=node,
-                name=e["scpi"]["name"],
-                id=e["id"],
-                account=e["account"]["name"],
-                amount=e["display_current_value"],
-                currency=e["account"]["display_currency"]["symbol"],
+                name=item["precious_metal"]["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=item["precious_metal"]["display_currency"]["symbol"],
             )
 
-        # Loans
-        node = start_step("Loans", tree)
-        for e in ff.get_loans(session)["result"]["data"]:
+        for item in dict_account["startups"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["name"],
-                id=e["id"],
-                account=e["account"]["name"],
-                amount=-e["account"]["display_balance"],
-                currency=e["display_currency"]["symbol"],
+                name=item["startup"]["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=item["currency"]["symbol"],
             )
 
-        # Credit accounts
-        node = start_step("Credit accounts", tree)
-        for e in ff.get_credit_accounts(session)["result"]["data"]:
+        for item in dict_account["scpis"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["name"],
-                id=e["id"],
-                account=e["name"],
-                amount=-e["display_balance"],
-                currency=e["display_currency"]["symbol"],
+                name=item["scpi"]["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=item["scpi"]["display_currency"]["symbol"],
             )
 
-        # Crowdlendings
-        node = start_step("Crowdlendings", tree)
-        for account in ff.get_portfolio_crowdlendings(session)["result"]["accounts"]:
-            node_account = node.add(f"[bold]Account: {account['name']}")
-            for e in account["crowdlendings"]:
-                self._register_fetchline(
-                    tree_node=node_account,
-                    name=e["name"],
-                    id=e["id"],
-                    account=account["name"],
-                    amount=e["display_current_value"],
-                    currency=e["currency"]["symbol"],
-                )
-
-        # Startups
-        node = start_step("Startups", tree)
-        real_estate = ff.get_user_startups(session)["result"]
-        for e in real_estate["startups"]:
+        for item in dict_account["generic_assets"]:
             self._register_fetchline(
                 tree_node=node,
-                name=e["name"],
-                amount=e["current_value"],
-                id=e["slug"],
-                account=e["name"],
-                currency="€",  # no currency info available
+                name=item["name"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=item["currency"]["symbol"],
+            )
+
+        for item in dict_account["real_estates"]:
+            self._register_fetchline(
+                tree_node=node,
+                name=item["description"],
+                id=item["id"],
+                account=account_name,
+                amount=item["display_current_value"],
+                currency=dict_account["display_currency"]["symbol"],
+            )
+
+        for item in dict_account["loans"]:
+            self._register_fetchline(
+                tree_node=node,
+                name=account_name,
+                id=item["id"],
+                account=account_name,
+                amount=-round(dict_account["display_balance"]),
+                currency=dict_account["display_currency"]["symbol"],
             )

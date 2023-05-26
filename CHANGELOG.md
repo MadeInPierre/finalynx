@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.16.0 (2023-05-26)
+### Feature
+* Add startup for exotic investiment in constant file ([#100](https://github.com/MadeInPierre/finalynx/issues/100)) ([`598f0e0`](https://github.com/MadeInPierre/finalynx/commit/598f0e0a026080e30de8c43e4b778e4bd80600ef))
+* **fetch:** Add support for multiple fetch sources ([#97](https://github.com/MadeInPierre/finalynx/issues/97)) ([`903fc23`](https://github.com/MadeInPierre/finalynx/commit/903fc230b73c7a859a730b0faf83d51571485176))
+
 ## v1.15.1 (2023-05-25)
 ### Fix
 * **envelope:** Fix optional parameter default value ([`0307352`](https://github.com/MadeInPierre/finalynx/commit/0307352c1d3312b82010772d69e232175cd6ada9))

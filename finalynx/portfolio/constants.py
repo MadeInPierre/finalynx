@@ -85,6 +85,7 @@ class AssetSubclass(Enum):
     ART = "Art"
     WATCH = "Watches"
     CROWDLENDING = "Crowdlending"
+    STARTUP = "Startup"
 
     # Diversified
     DIVERSIFIED = "Diversifié"

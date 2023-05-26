@@ -42,6 +42,8 @@ Options:
   perf                 Shortcut to --format="[console_perf]" (show expected performances)
   text                 Shortcut to --format="[console_text]" (no colors)
 
+  -s --sources=string  Comma-separated list of sources to activate, defaults to "finary" only
+
   -i --ignore-orphans  Ignore fetched lines that you didn't reference in your portfolio
   -c --clear-cache     Delete any data from Finary that was cached locally
   -f --force-signin    Clear cache, cookies and credentials files to sign in again

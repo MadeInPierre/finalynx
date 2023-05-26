@@ -1,30 +1,23 @@
-import datetime
 import json
 import os
-from typing import Any
-from typing import Dict
-from typing import List
 from typing import Optional
 
 import finary_uapi.__main__ as ff
 import finary_uapi.constants
 import finary_uapi.user_portfolio
-from finalynx.fetch.fetch_line import FetchLine
 from requests import Session
 from rich.prompt import Confirm
 from rich.tree import Tree
-from unidecode import unidecode
 
 from ..console import console
-from ..portfolio.folder import Portfolio
-from ..portfolio.line import Line
-from .fetch import Fetch
+from .source_base import SourceBase
 
 
-class FetchFinary(Fetch):  # TODO update docstrings
+class SourceFinary(SourceBase):
     """Wrapper class for the `finary_uapi` package."""
 
-    CACHE_FILENAME = "finary_data.json"
+    # Used both in console prints and as the source identifier (transformed to lower-case)
+    SOURCE_NAME = "Finary"
 
     _categories = [
         "fiats",
@@ -41,13 +34,16 @@ class FetchFinary(Fetch):  # TODO update docstrings
     ]
 
     def __init__(
-        self, portfolio: Portfolio, clear_cache: bool = False, force_signin: bool = False, ignore_orphans: bool = False
+        self,
+        clear_cache: bool = False,
+        force_signin: bool = False,
+        ignore_orphans: bool = False,
     ) -> None:
         """This class manages all interactions with your Finary account, namely:
         1. **Authentication**: The function starts by signing you in with the following sequence of attempts:
             - First, the function looks for environment variables named `FINARY_EMAIL` and `FINARY_PASSWORD`
             containing your credentials. If those are set, they will take priority over all other signin methods.
-            - Second, if a file named `localCookiesMozilla.txt` already exists in this same directory (which
+            - Second, if a file named `finary_cookies.txt` already exists in this same directory (which
             contains the session of a previous signin), it will skip the login step and retrieve the saved sessions.
             - Third, if neither the environment variables nor the cookies file exist, the function will manually ask
             for the credentials in the console.
@@ -59,10 +55,10 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
         ```{note}
         Finalynx will ask you if you want to save two files:
-        - `credentials.json`: This file would store your credentials in a plain text file, which might be used by
-        `finary_uapi` to refresh your session (to be confirmed). However, this is not recommended since only storing
-        the session is more secure and you can always enter your credentials again from occasionally.
-        - `localCookiesMozilla.txt`: This file stores the session created after a successful login (without your
+        - `finary_credentials.json`: This file would store your credentials in a plain text file, which might be
+        used by `finary_uapi` to refresh your session (to be confirmed). However, this is not recommended since
+        only storing the session is more secure and you can always enter your credentials again from occasionally.
+        - `finary_cookies.txt`: This file stores the session created after a successful login (without your
         plain credentials). It is recommended to save it if you don't want to enter your credentials on each run.
 
         You can run Finalynx with the `-f` or `--force-signin` option to delete all files and start over.
@@ -76,68 +72,12 @@ class FetchFinary(Fetch):  # TODO update docstrings
         :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
         everything was correctly found.
         """
-        super().__init__(portfolio, self.CACHE_FILENAME)
-        self.clear_cache = clear_cache
+        super().__init__(self.SOURCE_NAME, clear_cache, ignore_orphans)
         self.force_signin = force_signin
-        self.ignore_orphans = ignore_orphans
-
-    def fetch(self) -> Tree:
-        """:returns: A `Tree` object from the `rich` package used to display what has been fetched."""
-
-        # Remove the cached Finary data if asked by the user
-        if self.clear_cache and os.path.exists(self.cache_fullpath):
-            console.log("Deleting cache per user request.")
-            os.remove(self.cache_fullpath)
-
-        # This will hold a key:amount dictionary of all lines found in the Finary account
-        fetched_lines: List[FetchLine] = self._get_cache()  # try to get the data in the cache first
-        tree = Tree("Finary API", highlight=True, hide_root=True)
-
-        # If there's no valid cache, signin and fetch the data online
-        if not fetched_lines:
-            session = self._authenticate()
-            if not session:
-                return Tree("Finary signin failed.")
-
-            try:
-                fetched_lines = self._fetch_data(session, tree)
-            except Exception as e:
-                console.log("[red bold]Error: Couldn't fetch data, please try using the `-f` option to signin again.")
-                console.log(f"[red][bold]Details:[/] {e}")
-                return tree
-
-            # Save what has been found in a cache file for offline use and better performance at next launch
-            self._save_cache(fetched_lines)
-
-        # If the cache is not empty, Match all lines to the portfolio hierarchy
-        for fline in fetched_lines:
-            name = fline.name if fline.name else "Unknown"
-            matched_lines: List[Line] = list(set(self.portfolio.match_lines(fline)))  # merge identical instances
-
-            # Set attributes to the first matched line
-            if matched_lines:
-                # Issue a warning if multiple lines matched, try to set a stricter key
-                if len(matched_lines) > 1:
-                    console.log(
-                        f"[yellow][bold]Warning:[/] Line '{name}' matched with multiple nodes, updating first only."
-                    )
-
-                # Update the first line's attributes based on whata has been found online
-                fline.update_line(matched_lines[0])
-
-            # If no line matched, attach a fake line to root (unless ignored)
-            elif not self.ignore_orphans:
-                console.log(
-                    f"[yellow][bold]Warning:[/] Line '{name}' did not match with any portfolio node, attaching to root."
-                )
-                self.portfolio.add_child(Line(name, amount=fline.amount))
-
-        # Return a rich tree to be displayed in the console as a recap of what has been fetched
-        console.log("Done fetching Finary data.")
-        return tree
 
     def _authenticate(self) -> Optional[Session]:
         """Internal method used to signin and retrieve a session from Finary.
+        Called by `_fetch_data` once, only exists for better logic separation.
         :returns: A session for fetching data if everything worked, None otherwise.
         """
 
@@ -216,16 +156,19 @@ class FetchFinary(Fetch):  # TODO update docstrings
 
             return session
 
-    def _fetch_data(self, session: Session, tree: Tree) -> List[FetchLine]:
-        """Internal method used to fetch every investment in your Finary account.
-        :returns: A dictionary of all fetched investments (name:amount format), and a `Tree`
-        instance which can be displayed in the console to make sure everything was retrieved.
+    def _fetch_data(self, tree: Tree) -> None:
+        """Overridden method used to fetch every investment in your Finary account.
+        :returns: A dictionary of all fetched investments (name:amount format). This method
+        also populates the `tree` instance with a hierarchical view of the fetched information.
+        The `tree` instance can be displayed in the console to make sure everything was retrieved.
         """
 
-        # Create a rich Tree to display the fetched data nicely
-        fetched_lines: List[FetchLine] = []
+        # Retrieve the user session from cache, environment variables, or manual login
+        session = self._authenticate()
+        if not session:
+            raise ValueError("Finary signin failed.")
 
-        # Simple utility function
+        # Simple utility function because fetching Finary data takes multiple steps
         def start_step(step_name: str, tree_node: Tree) -> Tree:
             console.log(f"Fetching {step_name.lower()}...")
             return tree_node.add(f"[bold]{step_name}")
@@ -234,7 +177,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         node = start_step("Checkings", tree)
         for e in ff.get_checking_accounts(session, "1w")["result"]["data"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["name"],
                 id=e["id"],
@@ -247,7 +189,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         node = start_step("Savings", tree)
         for e in ff.get_savings_accounts(session, "1w")["result"]["data"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["name"],
                 id=e["id"],
@@ -260,7 +201,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         node = start_step("Fonds euro", tree)
         for e in ff.get_fonds_euro(session, "1w")["result"]["data"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["name"],
                 id=e["id"],
@@ -273,7 +213,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         node = start_step("Others", tree)
         for e in ff.get_other_assets(session, "1w")["result"]["data"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["name"],
                 id=e["id"],
@@ -286,7 +225,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         node = start_step("Precious metals", tree)
         for e in ff.get_user_precious_metals(session)["result"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["precious_metal"]["name"],
                 id=e["id"],
@@ -301,7 +239,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
             node_account = node.add(f"[bold]Account: {account['name']}")
             for e in account["securities"]:
                 self._register_fetchline(
-                    fetched_lines=fetched_lines,
                     tree_node=node_account,
                     name=e["security"]["name"],
                     id=e["id"],
@@ -316,7 +253,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
             node_account = node.add(f"[bold]Account: {account['name']}")
             for e in account["cryptos"]:
                 self._register_fetchline(
-                    fetched_lines=fetched_lines,
                     tree_node=node_account,
                     name=e["crypto"]["name"],
                     id=e["id"],
@@ -330,7 +266,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         real_estate = ff.get_real_estates(session, "1w")["result"]["data"]
         for e in real_estate["real_estates"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["description"],
                 id=e["id"],
@@ -340,7 +275,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
             )
         for e in real_estate["scpis"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["scpi"]["name"],
                 id=e["id"],
@@ -353,7 +287,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         node = start_step("Loans", tree)
         for e in ff.get_loans(session)["result"]["data"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["name"],
                 id=e["id"],
@@ -366,7 +299,6 @@ class FetchFinary(Fetch):  # TODO update docstrings
         node = start_step("Credit accounts", tree)
         for e in ff.get_credit_accounts(session)["result"]["data"]:
             self._register_fetchline(
-                fetched_lines=fetched_lines,
                 tree_node=node,
                 name=e["name"],
                 id=e["id"],
@@ -375,69 +307,29 @@ class FetchFinary(Fetch):  # TODO update docstrings
                 currency=e["display_currency"]["symbol"],
             )
 
-        return fetched_lines
+        # Crowdlendings
+        node = start_step("Crowdlendings", tree)
+        for account in ff.get_portfolio_crowdlendings(session)["result"]["accounts"]:
+            node_account = node.add(f"[bold]Account: {account['name']}")
+            for e in account["crowdlendings"]:
+                self._register_fetchline(
+                    tree_node=node_account,
+                    name=e["name"],
+                    id=e["id"],
+                    account=account["name"],
+                    amount=e["display_current_value"],
+                    currency=e["currency"]["symbol"],
+                )
 
-    def _register_fetchline(
-        self,
-        fetched_lines: List[FetchLine],
-        tree_node: Tree,
-        name: str,
-        id: str,
-        account: str,
-        amount: int,
-        currency: str,
-        custom: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        """Internal method used to register a new investment found from Finary."""
-
-        # Skip malformed lines (or lines with 0 euros invested)
-        if not (name or id or account) or amount < 1.0:
-            return
-
-        # Discard non-ASCII characters in the fields
-        name, id, account, amount = unidecode(name), str(id), unidecode(account), round(float(amount))
-
-        # Add the line to the rendering tree
-        tree_node.add(f"{amount} {currency} {name} [dim white]{id=} {account=}")
-
-        # Form a FetLine instance from the information given and return it
-        fetched_lines.append(
-            FetchLine(name=name, id=id, account=account, custom=custom, amount=amount, currency=currency)
-        )
-
-    def _get_cache(self) -> List[FetchLine]:
-        """Attempt to retrieve the cached data. Check if more than an hour has passed since the last update.
-        :returns: A key:amount dictionary if the cache file is less than an hour old, None otherwise.
-        """
-
-        # Abort retrieving cache if the file doesn't exist
-        if not os.path.exists(self.cache_fullpath):
-            console.log("No cache file found, fetching data.")
-            return []
-
-        # Parse the JSON content
-        with open(self.cache_fullpath) as f:
-            data = json.load(f)
-
-        # Return the cached content if the cache file is less than the maximum age
-        last_updated = datetime.datetime.strptime(data["last_updated"], "%Y-%m-%d %H:%M:%S")
-        time_diff = datetime.datetime.now() - last_updated
-        hours_passed = int(time_diff.total_seconds() // 3600)
-
-        if hours_passed < self.MAX_CACHE_HOURS:
-            console.log(f"Using recently cached data (<{self.MAX_CACHE_HOURS}h max)")
-            return [FetchLine.from_dict(line_dict) for line_dict in data["lines"]]
-        console.log(f"Fetching data (cache file is {hours_passed}h old > {self.MAX_CACHE_HOURS}h max)")
-        return []
-
-    def _save_cache(self, fetched_lines: List[FetchLine]) -> None:
-        """Save the fetched data locally to work offline and reduce the amoutn of calls to the API.
-        :param tree: Generated tree object containing all information
-        """
-
-        # Save current date and time to a JSON file with the fetched data
-        console.log(f"Saving fetched data in '{self.cache_fullpath}'")
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        data = {"last_updated": current_time, "lines": [line.to_dict() for line in fetched_lines]}
-        with open(self.cache_fullpath, "w") as f:
-            json.dump(data, f, indent=4)
+        # Startups
+        node = start_step("Startups", tree)
+        real_estate = ff.get_user_startups(session)["result"]
+        for e in real_estate["startups"]:
+            self._register_fetchline(
+                tree_node=node,
+                name=e["name"],
+                amount=e["current_value"],
+                id=e["slug"],
+                account=e["name"],
+                currency="€",  # no currency info available
+            )

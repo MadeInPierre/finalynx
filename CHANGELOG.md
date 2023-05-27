@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v1.16.3 (2023-05-27)
+### Fix
+* **delta:** Align deltas when showing portfolio root ([`cb20954`](https://github.com/MadeInPierre/finalynx/commit/cb20954e2b6dfaea56c31394f58f4f977c647109))
+
 ## v1.16.2 (2023-05-26)
 ### Fix
 * **fetch:** Spinner was hiding user prompts ([`8c5a78f`](https://github.com/MadeInPierre/finalynx/commit/8c5a78fc8df7e781783c1877b29b25589fe14bc3))

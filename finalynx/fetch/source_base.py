@@ -51,8 +51,6 @@ class SourceBase:
         """Abstract method, requires to be overridden by subclasses.
         :returns: A `Tree` object from the `rich` package used to display what has been fetched.
         """
-        console.log(f"Starting fetching from {self.name}...")
-
         # Remove the cached data for this source if asked by the user
         if self.clear_cache and os.path.exists(self.cache_fullpath):
             console.log("Deleting cache per user request.")
@@ -100,6 +98,7 @@ class SourceBase:
 
         # Return a rich tree to be displayed in the console as a recap of what has been fetched
         console.log(f"Done fetching data from {self.name}.")
+
         return tree
 
     def _fetch_data(self, tree: Tree) -> None:
@@ -121,14 +120,14 @@ class SourceBase:
         """Internal method used to register a new investment found from Finary."""
 
         # Skip malformed lines (or lines with 0 euros invested)
-        if not (name or id or account) or amount < 1.0:
+        if not (name or id or account) or (amount >= -1.0 and amount < 1.0):
             return
 
         # Discard non-ASCII characters in the fields
         name, id, account, amount = unidecode(name), str(id), unidecode(account), round(float(amount))
 
         # Add the line to the rendering tree
-        tree_node.add(f"{amount} {currency} {name} [dim white]{id=} {account=}")
+        tree_node.add(f"{amount} {currency} {name} [dim white]{id=}")
 
         # Form a FetLine instance from the information given and return it
         self._fetched_lines.append(
@@ -166,7 +165,7 @@ class SourceBase:
         """
 
         # Save current date and time to a JSON file with the fetched data
-        console.log(f"Saving fetched data in '{self.cache_fullpath}'")
+        console.log(f"Saved fetched data to '{self.cache_fullpath}'")
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         data = {"last_updated": current_time, "lines": [line.to_dict() for line in self._fetched_lines]}
         with open(self.cache_fullpath, "w") as f:

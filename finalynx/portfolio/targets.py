@@ -49,11 +49,29 @@ class Target(Hierarchy):
 
     def prehint(self) -> str:
         """Virtual method for information to be printed between the amoutn and the name."""
-        return ""
+        ratio = round(self.get_ratio())
+        return f"{ratio:>2}%" if (self.parent.parent and ratio >= 0) else ""
 
     def hint(self) -> str:
         """Virtual method for information to be printed at the end of the parent's description."""
         return "- Invest!" if self.check() == Target.RESULT_START else ""
+
+    def get_ratio(self) -> float:
+        """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
+        total = self._get_parent_amount()
+        return 100 * self.get_amount() / total if total > 0 else 0
+
+    def _get_parent_amount(self) -> float:
+        """:returns: The value to be checked against (parent's amount)."""
+        if not self.parent.parent:
+            return 0
+
+        # If the parent also has a ratio target, propagate the reference amount
+        if isinstance(self.parent.parent.target, TargetRatio):
+            return self.parent.parent.target.get_ideal()
+
+        # Otherwise, simply get the parent's value
+        return self.parent.parent.get_amount()
 
     def render_amount(self, hide_amount: bool = False, n_characters: int = 0) -> str:
         """Check for the parent's amount against the target logic and format the amount based on the target recommendation.
@@ -169,7 +187,7 @@ class TargetRange(Target):
         return self.get_amount()
 
     def hint(self) -> str:
-        """:returns: A formatted description of the target."""
+        """:returns: A formatted description of the target (at the end of the line)."""
         return f"- Range {self.target_min}-{self.target_max} {self._render_currency()}"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -250,14 +268,9 @@ class TargetRatio(TargetRange):
         self.target_ratio = target_ratio
         self.zone = zone
 
-    def get_ratio(self) -> float:
-        """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
-        total = self._get_reference_amount()
-        return 100 * self.get_amount() / total if total > 0 else 0
-
     def get_ideal(self) -> int:
         """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
-        return round(self._get_reference_amount() * self.target_ratio / 100)
+        return round(self._get_parent_amount() * self.target_ratio / 100)
 
     def render_goal(self) -> str:
         """:returns: The target ratio as a string."""
@@ -267,33 +280,14 @@ class TargetRatio(TargetRange):
         """:returns: The value to be checked."""
         return self.get_ratio()
 
-    def _get_reference_amount(self) -> float:
-        """:returns: The value to be checked against (parent's amount)."""
-        if not self.parent.parent:
-            raise ValueError("Target's parent's parent must not be None.")
-
-        # If the parent also has a ratio target, propagate the reference amount
-        if isinstance(self.parent.parent.target, TargetRatio):
-            return self.parent.parent.target.get_ideal()
-
-        # Otherwise, simply get the parent's value
-        return self.parent.parent.get_amount()
-
-    def prehint(self) -> str:
-        """:returns: A rich-formatted view of the calculated percentage."""
-        if not self.parent or not self.parent.parent:
-            raise ValueError("Target's parent must be set.")
-
-        max_length = 0
-        for child in self.parent.parent.children:
-            if isinstance(child.target, TargetRatio):
-                max_length = max(max_length, len(str(round(child.target.get_ideal()))))
-
-        return f"→ {self.get_ideal():>{max_length}} {self._render_currency()}"
+    # TODO how to add an option to show the ideal amount next to the current amount?
+    # def hint(self) -> str:
+    #     """:returns: A rich-formatted view of the calculated percentage."""
+    #     return f"→  {self.get_ideal()} {self._render_currency()}"
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"{round(self.get_ratio())}% → {self.target_ratio}%"
+        return f"→  {self.target_ratio}%"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -316,7 +310,7 @@ class TargetGlobalRatio(TargetRatio):
         """
         super().__init__(target_ratio, zone, tolerance)
 
-    def _get_reference_amount(self) -> float:
+    def _get_parent_amount(self) -> float:
         """:returns: The value to be checked against (portfolio amount)."""
         root = self.parent
         while root.parent is not None:
@@ -325,7 +319,7 @@ class TargetGlobalRatio(TargetRatio):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"Global {round(self.get_ratio())}% → {self.target_ratio}%"
+        return f"→  {self.target_ratio}% (global)"
 
     def to_dict(self) -> Dict[str, Any]:
         return {

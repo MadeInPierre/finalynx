@@ -55,7 +55,7 @@ class Node(Hierarchy, Render):
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
-            "[console]": "[target] [account_code][name_color][name][/] [dim white][hint][/][newline]",
+            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
             "[console_ideal]": "[bold green][ideal][/][account_code][name_color][name][/][newline]",
             "[console_deltas]": "[delta][account_code][name_color][name][/][newline]",
             "[console_perf]": "[bold green][perf][/][account_code][name_color][name][/][newline]",
@@ -144,7 +144,7 @@ class Node(Hierarchy, Render):
 
     def _render_hint(self) -> str:
         """:returns: A formatted rendering of a hint message (at the end by default)."""
-        return self.target.hint() if self.target.check() != Target.RESULT_NONE else ""
+        return self.target.hint()
 
     def _render_prehint(self) -> str:
         """:returns: A formatted rendering of a pre-hint message (next to the amount by default)."""
@@ -188,7 +188,10 @@ class Node(Hierarchy, Render):
         max_length = max_length if align else 0
         if check == Target.RESULT_OK:
             return f"[green]{'✓':>{max_length+3}}[/] "
-        return f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} {self._render_currency()}[/] "
+        return (
+            f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} {self._render_currency()}[/] "
+            # f"[dim white]→  {self.get_ideal():>{max_length}} {self._render_currency()}[/] "
+        )
 
     def _render_perf(self) -> str:
         """:returns: A formatted rendering of the node's expected yearly performance."""

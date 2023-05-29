@@ -18,9 +18,6 @@ from .source_base import SourceBase
 class SourceFinary(SourceBase):
     """Wrapper class for the `finary_uapi` package."""
 
-    # Used both in console prints and as the source identifier (transformed to lower-case)
-    SOURCE_NAME = "Finary"
-
     _categories = [
         "fiats",
         "securities",
@@ -35,12 +32,7 @@ class SourceFinary(SourceBase):
         "crowdlendings",
     ]
 
-    def __init__(
-        self,
-        clear_cache: bool = False,
-        force_signin: bool = False,
-        ignore_orphans: bool = False,
-    ) -> None:
+    def __init__(self, force_signin: bool = False, name: str = "Finary") -> None:
         """This class manages all interactions with your Finary account, namely:
         1. **Authentication**: The function starts by signing you in with the following sequence of attempts:
             - First, the function looks for environment variables named `FINARY_EMAIL` and `FINARY_PASSWORD`
@@ -73,7 +65,7 @@ class SourceFinary(SourceBase):
         :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
         everything was correctly found.
         """
-        super().__init__(self.SOURCE_NAME, clear_cache, ignore_orphans)
+        super().__init__(name)
         self.force_signin = force_signin
 
     def _authenticate(self) -> Optional[Session]:
@@ -94,18 +86,18 @@ class SourceFinary(SourceBase):
         if not os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
             # Skip credential input if it was already set in environment variables
             if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
-                console.log("Found credentials in environment variables, logging in.")
+                self._log("Found credentials in environment variables, logging in.")
 
             # Ask for manual input if credentials and session are missing
             else:
                 credentials = {}
                 if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
-                    console.log("Found saved credentials, logging in.")
+                    self._log("Found saved credentials, logging in.")
 
                     cred_file = open(finary_uapi.constants.CREDENTIAL_FILE)
                     credentials = json.load(cred_file)
                 else:
-                    console.log("Credentials in environment variables not set, asking for manual input.")
+                    self._log("Credentials in environment variables not set, asking for manual input.")
 
                     credentials["email"] = console.input("Enter your Finary [yellow bold]email[/]: ")
                     credentials["password"] = console.input(
@@ -127,21 +119,21 @@ class SourceFinary(SourceBase):
         if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
             with console.status("[bold green]Signing in to Finary..."):
                 result = ff.signin()
-                console.log("Signed in to Finary.")
+                self._log("Signed in to Finary.")
 
             if result is None or result["message"] != "Created":
-                console.log(
+                self._log(
                     "[red][bold]Failed to signin to Finary![/] Deleting credentials and cookies, please try again.[/]"
                 )
                 if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
                     os.remove(finary_uapi.constants.CREDENTIAL_FILE)
                 return None
 
-            console.log(f"Successfully signed in, saving session in '{finary_uapi.constants.COOKIE_FILENAME}'")
+            self._log(f"Successfully signed in, saving session in '{finary_uapi.constants.COOKIE_FILENAME}'")
         elif os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
-            console.log("Found cookies file, retrieving session.")
+            self._log("Found cookies file, retrieving session.")
         else:
-            console.log("[bold red]No credentials file, environment variables, or cookies file. Skipping fetching.[/]")
+            self._log("[bold red]No credentials file, environment variables, or cookies file. Skipping fetching.[/]")
             return None
 
         # Get session stored in cookies file

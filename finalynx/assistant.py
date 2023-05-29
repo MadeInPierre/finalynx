@@ -12,7 +12,6 @@ from finalynx import Portfolio
 from finalynx.config import DEFAULT_CURRENCY
 from finalynx.fetch.source_base import SourceBase
 from finalynx.fetch.source_finary import SourceFinary
-from finalynx.fetch.source_realt import SourceRealT
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
@@ -97,9 +96,9 @@ class Assistant:
         self._parse_args()
 
         # Create the fetching manager instance
-        self._fetch = Fetch(self.portfolio)
+        self._fetch = Fetch(self.portfolio, self.clear_cache, self.ignore_orphans)
 
-    def add_fetch_source(self, source: SourceBase) -> None:
+    def add_source(self, source: SourceBase) -> None:
         """Register a custom source defined by you."""
         self._fetch.add_source(source)
 
@@ -155,9 +154,7 @@ class Assistant:
 
         # Add default sources based on user input
         if "finary" in self.active_sources:
-            self._fetch.add_source(SourceFinary(self.clear_cache, self.force_signin, self.ignore_orphans))
-        if "realt" in self.active_sources:
-            self._fetch.add_source(SourceRealT(self.clear_cache, self.ignore_orphans))
+            self._fetch.add_source(SourceFinary(self.force_signin))
 
         # Launch the fetching process and fill tree with current valuations fetched from Finary
         fetched_tree = self._fetch.fetch_from(self.active_sources)

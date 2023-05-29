@@ -21,12 +21,7 @@ class SourceBase:
     # Finalynx will use the cached data if it is younger than the specified time
     MAX_CACHE_HOURS = 12
 
-    def __init__(
-        self,
-        name: str,
-        clear_cache: bool = False,
-        ignore_orphans: bool = False,
-    ):
+    def __init__(self, name: str):
         """This is an abstract class to provide a common interface when fetching investments from
         multiple sources.
 
@@ -40,20 +35,23 @@ class SourceBase:
         self.name = name
         self.cache_fullpath = os.path.join(os.path.dirname(__file__), f"{self.id}_cache.json")
 
-        # Flags set by user
-        self.clear_cache = clear_cache
-        self.ignore_orphans = ignore_orphans
-
         # This list will hold all fetched line objects.
         self._fetched_lines: List[FetchLine] = []
 
-    def fetch(self, portfolio: Portfolio) -> Tree:
+    def fetch(
+        self,
+        portfolio: Portfolio,
+        clear_cache: bool,
+        ignore_orphans: bool,
+    ) -> Tree:
         """Abstract method, requires to be overridden by subclasses.
         :returns: A `Tree` object from the `rich` package used to display what has been fetched.
         """
+        console.log(f"Fetching data from {self.name}...")
+
         # Remove the cached data for this source if asked by the user
-        if self.clear_cache and os.path.exists(self.cache_fullpath):
-            console.log("Deleting cache per user request.")
+        if clear_cache and os.path.exists(self.cache_fullpath):
+            self._log("Deleting cache per user request.")
             os.remove(self.cache_fullpath)
 
         # This will hold a key:amount dictionary of all lines found in the source
@@ -66,8 +64,8 @@ class SourceBase:
                 # Go fetch the data online and populate self._fetched_lines through `_register_fetchline`
                 self._fetch_data(tree)
             except Exception as e:
-                console.log("[red bold]Error: Couldn't fetch data, please try using the `-f` option to signin again.")
-                console.log(f"[red][bold]Details:[/] {e}")
+                self._log("[red bold]Error: Couldn't fetch data, please try using the `-f` option to signin again.")
+                self._log(f"[red][bold]Details:[/] {e}")
                 return tree
 
             # Save what has been found in a cache file for offline use and better performance at next launch
@@ -82,23 +80,23 @@ class SourceBase:
             if matched_lines:
                 # Issue a warning if multiple lines matched, try to set a stricter key
                 if len(matched_lines) > 1:
-                    console.log(
-                        f"[yellow][bold]Warning:[/] Line '{name}' matched with multiple nodes, updating first only."
+                    self._log(
+                        f"[yellow][bold]Warning:[/] Line matched with multiple nodes, updating first only: {name}",
+                        highlight=False,
                     )
 
                 # Update the first line's attributes based on whata has been found online
                 fline.update_line(matched_lines[0])
 
             # If no line matched, attach a fake line to root (unless ignored)
-            elif not self.ignore_orphans:
-                console.log(
-                    f"[yellow][bold]Warning:[/] Line '{name}' did not match with any portfolio node, attaching to root."
+            elif not ignore_orphans:
+                self._log(
+                    f"[yellow][bold]Warning:[/] Line did not match with any portfolio node, attaching to root: {name}",
+                    highlight=False,
                 )
                 portfolio.add_child(Line(name, amount=fline.amount))
 
         # Return a rich tree to be displayed in the console as a recap of what has been fetched
-        console.log(f"Done fetching data from {self.name}.")
-
         return tree
 
     def _fetch_data(self, tree: Tree) -> None:
@@ -141,7 +139,7 @@ class SourceBase:
 
         # Abort retrieving cache if the file doesn't exist
         if not os.path.exists(self.cache_fullpath):
-            console.log("No cache file found, fetching data.")
+            self._log("No cache file found, fetching data.")
             return []
 
         # Parse the JSON content
@@ -154,9 +152,9 @@ class SourceBase:
         hours_passed = int(time_diff.total_seconds() // 3600)
 
         if hours_passed < self.MAX_CACHE_HOURS:
-            console.log(f"Using recently cached data (<{self.MAX_CACHE_HOURS}h max)")
+            self._log(f"Using recently cached data (<{self.MAX_CACHE_HOURS}h max)")
             return [FetchLine.from_dict(line_dict) for line_dict in data["lines"]]
-        console.log(f"Fetching data (cache file is {hours_passed}h old > {self.MAX_CACHE_HOURS}h max)")
+        self._log(f"Fetching data (cache file is {hours_passed}h old > {self.MAX_CACHE_HOURS}h max)")
         return []
 
     def _save_cache(self) -> None:
@@ -165,11 +163,14 @@ class SourceBase:
         """
 
         # Save current date and time to a JSON file with the fetched data
-        console.log(f"Saved fetched data to '{self.cache_fullpath}'")
+        self._log(f"Saved fetched data to '{self.cache_fullpath}'")
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         data = {"last_updated": current_time, "lines": [line.to_dict() for line in self._fetched_lines]}
         with open(self.cache_fullpath, "w") as f:
             json.dump(data, f, indent=4)
+
+    def _log(self, message: str, **kwargs: Any) -> None:
+        console.log(" " * 4 + message, **kwargs)
 
     @property
     def id(self) -> str:

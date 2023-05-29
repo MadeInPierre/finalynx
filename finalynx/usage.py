@@ -31,6 +31,8 @@ Options:
 {main_filter(main_options)}
   dashboard            Launch an interactive web dashboard!
 
+  -t --theme=string    Choose a predefined color theme for the console output (light or dark)
+
   --no-export          Don't export to JSON
   --export-dir=path    Path to a folder where the file will be saved
 

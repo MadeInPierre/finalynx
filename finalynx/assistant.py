@@ -5,11 +5,12 @@ from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
 
+import finalynx.config
+import finalynx.theme
 from docopt import docopt
 from finalynx import Dashboard
 from finalynx import Fetch
 from finalynx import Portfolio
-from finalynx.config import DEFAULT_CURRENCY
 from finalynx.fetch.source_base import SourceBase
 from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
@@ -26,6 +27,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 from rich.text import Text
 from rich.tree import Tree
+
 
 if TYPE_CHECKING:
     from rich.console import ConsoleRenderable
@@ -74,6 +76,7 @@ class Assistant:
         enable_export: bool = True,
         export_dir: str = "logs",
         active_sources: Optional[List[str]] = None,
+        theme: Optional[finalynx.theme.Theme] = None,
         ignore_argv: bool = False,
     ):
         self.portfolio = portfolio
@@ -93,6 +96,7 @@ class Assistant:
         self.enable_export = enable_export
         self.export_dir = export_dir
         self.active_sources = active_sources if active_sources else ["finary"]
+        finalynx.config.ACTIVE_THEME = theme if theme else finalynx.config.ACTIVE_THEME
 
         # Unless disabled, parse the command line options as an additional source of settings
         if not ignore_argv:
@@ -147,6 +151,11 @@ class Assistant:
             self.export_dir = args["--export-dir"]
         if args["--sources"]:
             self.active_sources = str(args["--sources"]).split(",")
+        if args["--theme"]:
+            theme_name = str(args["--theme"])
+            if theme_name not in finalynx.theme.AVAILABLE_THEMES:
+                raise ValueError("Theme name options: " + ", ".join(finalynx.theme.AVAILABLE_THEMES.keys()))
+            finalynx.config.ACTIVE_THEME = finalynx.theme.AVAILABLE_THEMES[theme_name]()
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -239,7 +248,7 @@ class Assistant:
 
             if children:
                 env_delta = round(env_delta)
-                render_delta = f"[{'green' if env_delta > 0 else 'red'}]{'+' if env_delta > 0 else ''}{env_delta} {DEFAULT_CURRENCY}"
+                render_delta = f"[{'green' if env_delta > 0 else 'red'}]{'+' if env_delta > 0 else ''}{env_delta} {finalynx.config.DEFAULT_CURRENCY}"
                 node = tree.add(f"{render_delta} [dodger_blue2 bold]{env.name}[/]")
                 for child in children:
                     node.add(child)

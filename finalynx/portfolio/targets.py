@@ -49,15 +49,12 @@ class Target(Hierarchy):
 
     def prehint(self) -> str:
         """Virtual method for information to be printed between the amoutn and the name."""
-        return ""
+        ratio = round(self.get_ratio())
+        return f"{ratio:>2}%" if (self.parent.parent and ratio >= 0) else ""
 
     def hint(self) -> str:
         """Virtual method for information to be printed at the end of the parent's description."""
-        if self.check() == Target.RESULT_START:
-            return "- Invest!"
-
-        ratio = round(self.get_ratio())
-        return f"{ratio}%" if ratio > 0 else ""
+        return "- Invest!" if self.check() == Target.RESULT_START else ""
 
     def get_ratio(self) -> float:
         """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
@@ -190,7 +187,7 @@ class TargetRange(Target):
         return self.get_amount()
 
     def hint(self) -> str:
-        """:returns: A formatted description of the target."""
+        """:returns: A formatted description of the target (at the end of the line)."""
         return f"- Range {self.target_min}-{self.target_max} {self._render_currency()}"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -283,21 +280,14 @@ class TargetRatio(TargetRange):
         """:returns: The value to be checked."""
         return self.get_ratio()
 
-    def prehint(self) -> str:
-        """:returns: A rich-formatted view of the calculated percentage."""
-        if not self.parent or not self.parent.parent:
-            raise ValueError("Target's parent must be set.")
-
-        max_length = 0
-        for child in self.parent.parent.children:
-            if isinstance(child.target, TargetRatio):
-                max_length = max(max_length, len(str(round(child.target.get_ideal()))))
-
-        return f"→ {self.get_ideal():>{max_length}} {self._render_currency()}"
+    # TODO how to add an option to show the ideal amount next to the current amount?
+    # def hint(self) -> str:
+    #     """:returns: A rich-formatted view of the calculated percentage."""
+    #     return f"→  {self.get_ideal()} {self._render_currency()}"
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"{round(self.get_ratio())}% → {self.target_ratio}%"
+        return f"→  {self.target_ratio}%"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -329,7 +319,7 @@ class TargetGlobalRatio(TargetRatio):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"Global {round(self.get_ratio())}% → {self.target_ratio}%"
+        return f"→  {self.target_ratio}% (global)"
 
     def to_dict(self) -> Dict[str, Any]:
         return {

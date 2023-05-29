@@ -56,6 +56,7 @@ class Node(Hierarchy, Render):
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
             "[console]": "[target] [account_code][name_color][name][/] [dim white][hint][/][newline]",
+            "[console_full]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
             "[console_ideal]": "[bold green][ideal][/][account_code][name_color][name][/][newline]",
             "[console_deltas]": "[delta][account_code][name_color][name][/][newline]",
             "[console_perf]": "[bold green][perf][/][account_code][name_color][name][/][newline]",
@@ -144,7 +145,7 @@ class Node(Hierarchy, Render):
 
     def _render_hint(self) -> str:
         """:returns: A formatted rendering of a hint message (at the end by default)."""
-        return self.target.hint() if self.target.check() != Target.RESULT_NONE else ""
+        return self.target.hint()
 
     def _render_prehint(self) -> str:
         """:returns: A formatted rendering of a pre-hint message (next to the amount by default)."""

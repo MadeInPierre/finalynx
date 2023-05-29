@@ -31,7 +31,7 @@ class SourceRealT(SourceBase):
         Use any logic you want here! Just use this method once you have fetched an investment:
         """
 
-        # Todo optimize API call with API key
+        # Todo optimize API call with API key and/or cached file
         # Get list of all Realtoken info needed from RealT
         realt_tokenlist = json.loads(requests.get(RealT_API_TokenList_URI).text)
         realt_tokeninfo = {}
@@ -67,7 +67,6 @@ class SourceRealT(SourceBase):
                     currency=realt_tokeninfo[str(item.get("symbol")).lower()]["currency"],
                 )
             if re.match(r"^armmR", str(item.get("symbol"))):
-                print(re.sub(r"armm", "", str(item.get("symbol"))))
                 self._register_fetchline(
                     tree_node=node,  # this line will display under the category, use `tree` for root
                     name=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["shortName"],

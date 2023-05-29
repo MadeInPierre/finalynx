@@ -42,6 +42,11 @@ jobs:
 
       - uses: pre-commit/action@v3.0.0
 
+      - name: Set demo Finary account credentials
+        run: |
+          export FINARY_EMAIL={{ secrets.FINARY_EMAIL }}
+          export FINARY_PASSWORD={{ secrets.FINARY_PASSWORD }}
+
       - name: Test with pytest
         run: python -m poetry run pytest
 

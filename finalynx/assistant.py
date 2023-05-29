@@ -74,6 +74,7 @@ class Assistant:
         enable_export: bool = True,
         export_dir: str = "logs",
         active_sources: Optional[List[str]] = None,
+        ignore_argv: bool = False,
     ):
         self.portfolio = portfolio
         self.buckets = buckets if buckets else []
@@ -93,7 +94,9 @@ class Assistant:
         self.export_dir = export_dir
         self.active_sources = active_sources if active_sources else ["finary"]
 
-        self._parse_args()
+        # Unless disabled, parse the command line options as an additional source of settings
+        if not ignore_argv:
+            self._parse_args()
 
         # Create the fetching manager instance
         self._fetch = Fetch(self.portfolio)

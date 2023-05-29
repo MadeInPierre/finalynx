@@ -177,7 +177,10 @@ class Assistant:
 
         # Display deltas only if not already printed in the main tree
         if not self.hide_deltas and "delta" not in self.output_format:
-            render.append(self.portfolio.tree_delta())
+            tree_delta = self.portfolio.tree_delta()
+            if not self.hide_root and tree_delta.children:  # align deltas if root is shown
+                tree_delta.children[0].label = "\n" + str(tree_delta.children[0].label)
+            render.append(tree_delta)
 
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
@@ -194,8 +197,13 @@ class Assistant:
             self.export(self.export_dir)
 
         # Display the entire portfolio and associated recommendations
-        console.print("\n", Columns(render, padding=(2, 2)), "\n")  # type: ignore
-        console.print(Columns(panels, padding=(2, 2)), "\n")
+        console.print(
+            "\n\n",
+            Columns(render, padding=(2, 2)),  # type: ignore
+            "\n\n",
+            Columns(panels, padding=(2, 2)),
+            "\n",
+        )
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:

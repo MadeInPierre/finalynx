@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.17.0 (2023-05-30)
+### Feature
+
+* **console:** Add support for light/dark/custom console themes ([#115](https://github.com/MadeInPierre/finalynx/issues/115)) ([`7722e29`](https://github.com/MadeInPierre/finalynx/commit/7722e296ec0f869469ca39e97848b88d426d941c))
+
 ## v1.16.3 (2023-05-27)
 ### Fix
 * **delta:** Align deltas when showing portfolio root ([`cb20954`](https://github.com/MadeInPierre/finalynx/commit/cb20954e2b6dfaea56c31394f58f4f977c647109))

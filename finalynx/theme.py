@@ -18,10 +18,10 @@ class Theme:
     HINT = "dim white"
     FOLDER_COLOR = "dodger_blue2"
     FOLDER_STYLE = "bold"
-    ENVELOPE_CODE = "dim white"  # TODO?
+    ENVELOPE_CODE = "dim white"
 
     # Targets
-    TARGET_NONE = TEXT
+    TARGET_NONE = "black"
     TARGET_START = "cyan"
     TARGET_OK = "green"
     TARGET_NOK = "red"
@@ -32,11 +32,11 @@ class Theme:
     # Deltas
     DELTA_POS = "green"
     DELTA_NEG = "red"
-    DELTA_OK = DELTA_POS
+    DELTA_OK = "green"
 
     # Decorations
     TREE_BRANCHES = "grey42"
-    PANEL = TEXT
+    PANEL = "black"
 
 
 # Shortcut for a more intuitive usage

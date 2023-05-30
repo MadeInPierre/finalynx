@@ -1,3 +1,8 @@
+"""
+DOCUMENTATION
+- See available colors: https://rich.readthedocs.io/en/stable/appendix/colors.html#appendix-colors
+- See available styles: https://rich.readthedocs.io/en/stable/style.html
+"""
 from dataclasses import dataclass
 from typing import Dict
 from typing import Type
@@ -41,6 +46,10 @@ LightTheme = Theme
 @dataclass
 class DarkTheme(Theme):
     TEXT = "white"
+    HINT = "bright black"
+    ENVELOPE_CODE = "bright black"
+    TARGET_NONE = "white"
+    PANEL = "white"
 
 
 # List predefined themes, used by `Assistant` to search for class definitions

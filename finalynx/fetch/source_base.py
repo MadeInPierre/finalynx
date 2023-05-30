@@ -9,7 +9,7 @@ from typing import Optional
 from rich.tree import Tree
 from unidecode import unidecode
 
-from ..config import ACTIVE_THEME as TH
+from ..config import get_active_theme as TH
 from ..console import console
 from ..portfolio import Line
 from ..portfolio import Portfolio
@@ -128,7 +128,7 @@ class SourceBase:
         name, id, account, amount = unidecode(name), str(id), unidecode(account), round(float(amount))
 
         # Add the line to the rendering tree
-        tree_node.add(f"{amount} {currency} {name} [{TH.HINT}]{id=}")
+        tree_node.add(f"{amount} {currency} {name} [{TH().HINT}]{id=}")
 
         # Form a FetLine instance from the information given and return it
         self._fetched_lines.append(

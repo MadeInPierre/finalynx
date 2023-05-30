@@ -1,5 +1,5 @@
 from ..assistant import Assistant
-from ..config import ACTIVE_THEME as TH
+from ..config import get_active_theme as TH
 from ..console import console
 
 
@@ -17,7 +17,7 @@ class Parser:
 
     def parse(self) -> Assistant:
         """Convert the input file to a fully configured `Assistant` instance."""
-        with console.status(f"[bold {TH.ACCENT}]Parsing input file...", spinner_style=TH.ACCENT):
+        with console.status(f"[bold {TH().ACCENT}]Parsing input file...", spinner_style=TH().ACCENT):
             return self._parse_data()
 
     def _parse_data(self) -> Assistant:

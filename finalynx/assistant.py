@@ -5,13 +5,14 @@ from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
 
-import finalynx.config
 import finalynx.theme
 from docopt import docopt
 from finalynx import Dashboard
 from finalynx import Fetch
 from finalynx import Portfolio
-from finalynx.config import ACTIVE_THEME as TH
+from finalynx.config import DEFAULT_CURRENCY
+from finalynx.config import get_active_theme as TH
+from finalynx.config import set_active_theme
 from finalynx.fetch.source_base import SourceBase
 from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
@@ -97,7 +98,10 @@ class Assistant:
         self.enable_export = enable_export
         self.export_dir = export_dir
         self.active_sources = active_sources if active_sources else ["finary"]
-        finalynx.config.ACTIVE_THEME = theme if theme else finalynx.config.ACTIVE_THEME
+
+        # Set the global color theme if specified
+        if theme:
+            set_active_theme(theme)
 
         # Unless disabled, parse the command line options as an additional source of settings
         if not ignore_argv:
@@ -156,7 +160,7 @@ class Assistant:
             theme_name = str(args["--theme"])
             if theme_name not in finalynx.theme.AVAILABLE_THEMES:
                 raise ValueError("Theme name options: " + ", ".join(finalynx.theme.AVAILABLE_THEMES.keys()))
-            finalynx.config.ACTIVE_THEME = finalynx.theme.AVAILABLE_THEMES[theme_name]()
+            set_active_theme(finalynx.theme.AVAILABLE_THEMES[theme_name]())
 
     def run(self) -> None:
         """Main function to run once your configuration is fully defined.
@@ -199,14 +203,14 @@ class Assistant:
                 title="Delta Investments",
                 padding=(1, 2),
                 expand=False,
-                border_style=TH.PANEL,
+                border_style=TH().PANEL,
             ),
             Panel(
                 self.render_perf(),
                 title="Performance",
                 padding=(1, 2),
                 expand=False,
-                border_style=TH.PANEL,
+                border_style=TH().PANEL,
             ),
         ]
 
@@ -238,14 +242,14 @@ class Assistant:
         perf_ideal = self.portfolio.get_perf(ideal=True).expected
 
         tree = Tree("Global Performance", hide_root=True)
-        tree.add(f"[{TH.TEXT}]Current:  [bold][{TH.ACCENT}]{perf:.1f} %[/] / year")
-        tree.add(f"[{TH.TEXT}]Planned:  [bold][{TH.ACCENT}]{perf_ideal:.1f} %[/] / year")
+        tree.add(f"[{TH().TEXT}]Current:  [bold][{TH().ACCENT}]{perf:.1f} %[/] / year")
+        tree.add(f"[{TH().TEXT}]Planned:  [bold][{TH().ACCENT}]{perf_ideal:.1f} %[/] / year")
         return tree
 
     def render_envelopes(self) -> Tree:
         """Sort lines with non-zero deltas by envelopes and display them as
         a summary of transfers to make."""
-        tree = Tree("Envelopes", hide_root=True, guide_style=TH.TREE_BRANCHES)
+        tree = Tree("Envelopes", hide_root=True, guide_style=TH().TREE_BRANCHES)
 
         for env in self.envelopes:
             children, env_delta = [], 0.0
@@ -257,12 +261,12 @@ class Assistant:
                     Target.RESULT_TOLERATED,
                 ]:
                     env_delta += delta
-                    children.append(f"[{TH.TEXT}]" + line._render_delta(children=env.lines) + line._render_name())  # type: ignore
+                    children.append(f"[{TH().TEXT}]" + line._render_delta(children=env.lines) + line._render_name())  # type: ignore
 
             if children:
                 env_delta = round(env_delta)
-                render_delta = f"[{TH.DELTA_POS if env_delta > 0 else TH.DELTA_NEG}]{'+' if env_delta > 0 else ''}{env_delta} {finalynx.config.DEFAULT_CURRENCY}"
-                node = tree.add(f"{render_delta} [{TH.FOLDER_COLOR} {TH.FOLDER_STYLE}]{env.name}[/]")
+                render_delta = f"[{TH().DELTA_POS if env_delta > 0 else TH().DELTA_NEG}]{'+' if env_delta > 0 else ''}{env_delta} {DEFAULT_CURRENCY}"
+                node = tree.add(f"{render_delta} [{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]{env.name}[/]")
                 for child in children:
                     node.add(child)
                 node.children[-1].label += "\n"  # type: ignore
@@ -281,10 +285,10 @@ class Assistant:
 
         folders = _get_folders(self.portfolio)
         if folders:
-            node = tree.add(f"[{TH.FOLDER_COLOR} {TH.FOLDER_STYLE}]Folders")
+            node = tree.add(f"[{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]Folders")
             for f in folders:
                 if f.get_delta() != 0:
-                    node.add(f"[{TH.TEXT}]" + f._render_delta(children=folders) + f._render_name())  # type: ignore
+                    node.add(f"[{TH().TEXT}]" + f._render_delta(children=folders) + f._render_name())  # type: ignore
         return tree
 
     def export(self, dirpath: str) -> None:

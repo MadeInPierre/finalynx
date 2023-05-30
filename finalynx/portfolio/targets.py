@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ..config import ACTIVE_THEME as TH
+from ..config import get_active_theme as TH
 from .hierarchy import Hierarchy
 
 if TYPE_CHECKING:
@@ -14,13 +14,13 @@ if TYPE_CHECKING:
 class Target(Hierarchy):
     """Abstract class that defines an objective for a `Node` in the Portfolio tree."""
 
-    RESULT_NOK = {"name": "NOK", "symbol": "×", "color": TH.TARGET_NOK}
-    RESULT_OK = {"name": "OK", "symbol": "✓", "color": TH.TARGET_OK}
-    RESULT_TOLERATED = {"name": "Tolerated", "symbol": "≈", "color": TH.TARGET_TOLERATED}
-    RESULT_INVEST = {"name": "Invest", "symbol": "↗", "color": TH.TARGET_INVEST}
-    RESULT_DEVEST = {"name": "Devest", "symbol": "↘", "color": TH.TARGET_DEVEST}
-    RESULT_START = {"name": "Start", "symbol": "↯", "color": TH.TARGET_START}
-    RESULT_NONE = {"name": "No target", "symbol": "‣", "color": TH.TARGET_NONE}
+    RESULT_NOK = {"name": "NOK", "symbol": "×"}
+    RESULT_OK = {"name": "OK", "symbol": "✓"}
+    RESULT_TOLERATED = {"name": "Tolerated", "symbol": "≈"}
+    RESULT_INVEST = {"name": "Invest", "symbol": "↗"}
+    RESULT_DEVEST = {"name": "Devest", "symbol": "↘"}
+    RESULT_START = {"name": "Start", "symbol": "↯"}
+    RESULT_NONE = {"name": "No target", "symbol": "‣"}
 
     def __init__(self) -> None:
         """Abstract Target class that holds the Node parent using this instance and provides
@@ -108,7 +108,15 @@ class Target(Hierarchy):
 
     def _render_target_color(self) -> str:
         """:returns: The color associated to the target recommentation."""
-        return self.check()["color"]
+        return {
+            Target.RESULT_NOK["name"]: TH().TARGET_NOK,
+            Target.RESULT_OK["name"]: TH().TARGET_OK,
+            Target.RESULT_TOLERATED["name"]: TH().TARGET_TOLERATED,
+            Target.RESULT_INVEST["name"]: TH().TARGET_INVEST,
+            Target.RESULT_DEVEST["name"]: TH().TARGET_DEVEST,
+            Target.RESULT_START["name"]: TH().TARGET_START,
+            Target.RESULT_NONE["name"]: TH().TARGET_NONE,
+        }[self.check()["name"]]
 
     def _render_currency(self) -> str:
         """:returns: This parent's currency symbol, used for target render methods."""

@@ -8,4 +8,15 @@ from .theme import Theme
 DEFAULT_CURRENCY = "€"
 
 # Hold the active theme used, defaults to light theme
-ACTIVE_THEME: Theme = LightTheme()
+_active_theme: Theme = LightTheme()
+
+
+def set_active_theme(theme: Theme) -> None:
+    """Setter method needed to pass elements by reference accross modules."""
+    global _active_theme
+    _active_theme = theme
+
+
+def get_active_theme() -> Theme:
+    """Getter method needed to pass elements by reference accross modules."""
+    return _active_theme

@@ -46,8 +46,8 @@ LightTheme = Theme
 @dataclass
 class DarkTheme(Theme):
     TEXT = "white"
-    HINT = "bright black"
-    ENVELOPE_CODE = "bright black"
+    HINT = "dim white"
+    ENVELOPE_CODE = "dim white"
     TARGET_NONE = "white"
     PANEL = "white"
 

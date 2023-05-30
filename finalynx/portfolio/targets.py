@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ..config import get_active_theme as TH
 from .hierarchy import Hierarchy
 
 if TYPE_CHECKING:
@@ -13,13 +14,13 @@ if TYPE_CHECKING:
 class Target(Hierarchy):
     """Abstract class that defines an objective for a `Node` in the Portfolio tree."""
 
-    RESULT_NOK = {"name": "NOK", "symbol": "×", "color": "red"}
-    RESULT_OK = {"name": "OK", "symbol": "✓", "color": "green"}
-    RESULT_TOLERATED = {"name": "Tolerated", "symbol": "≈", "color": "yellow"}
-    RESULT_INVEST = {"name": "Invest", "symbol": "↗", "color": "red"}
-    RESULT_DEVEST = {"name": "Devest", "symbol": "↘", "color": "magenta"}
-    RESULT_START = {"name": "Start", "symbol": "↯", "color": "cyan"}
-    RESULT_NONE = {"name": "No target", "symbol": "‣", "color": "black"}
+    RESULT_NOK = {"name": "NOK", "symbol": "×"}
+    RESULT_OK = {"name": "OK", "symbol": "✓"}
+    RESULT_TOLERATED = {"name": "Tolerated", "symbol": "≈"}
+    RESULT_INVEST = {"name": "Invest", "symbol": "↗"}
+    RESULT_DEVEST = {"name": "Devest", "symbol": "↘"}
+    RESULT_START = {"name": "Start", "symbol": "↯"}
+    RESULT_NONE = {"name": "No target", "symbol": "‣"}
 
     def __init__(self) -> None:
         """Abstract Target class that holds the Node parent using this instance and provides
@@ -73,18 +74,19 @@ class Target(Hierarchy):
         # Otherwise, simply get the parent's value
         return self.parent.parent.get_amount()
 
-    def render_amount(self, hide_amount: bool = False, n_characters: int = 0) -> str:
-        """Check for the parent's amount against the target logic and format the amount based on the target recommendation.
-        :param hide_amount: Replace the amounts by simple dots (easier to share the result), defaults to False.
-        :param n_characters: Used by `Node` objects to align the amount with other nodes' renders.
-        :returns: A string with a righ-formatted render of the parent's amount based on the target recommendation.
-        """
-        result = self.check()
-        result = result if result != True else Target.RESULT_START  # type: ignore # noqa: E712 TODO weird bug??? Workaround for now
-        number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
-        return (
-            f'[{result["color"]}]{result["symbol"]} {number} {self._render_currency()}[/][dim white]{self.prehint()}[/]'
-        )
+    # TODO deprecated?
+    # def render_amount(self, hide_amount: bool = False, n_characters: int = 0) -> str:
+    #     """Check for the parent's amount against the target logic and format the amount based on the target recommendation.
+    #     :param hide_amount: Replace the amounts by simple dots (easier to share the result), defaults to False.
+    #     :param n_characters: Used by `Node` objects to align the amount with other nodes' renders.
+    #     :returns: A string with a righ-formatted render of the parent's amount based on the target recommendation.
+    #     """
+    #     result = self.check()
+    #     result = result if result != True else Target.RESULT_START  # type: ignore # noqa: E712 TODO weird bug??? Workaround for now
+    #     number = f"{round(self.get_amount()):>{n_characters}}" if not hide_amount else "···"
+    #     return (
+    #         f'[{result["color"]}]{result["symbol"]} {number} {self._render_currency()}[/][dim white]{self.prehint()}[/]'
+    #     )
 
     def render_ideal(self) -> str:
         """Ideal amount to be reached based on the current target and node
@@ -106,7 +108,15 @@ class Target(Hierarchy):
 
     def _render_target_color(self) -> str:
         """:returns: The color associated to the target recommentation."""
-        return self.check()["color"]
+        return {
+            Target.RESULT_NOK["name"]: TH().TARGET_NOK,
+            Target.RESULT_OK["name"]: TH().TARGET_OK,
+            Target.RESULT_TOLERATED["name"]: TH().TARGET_TOLERATED,
+            Target.RESULT_INVEST["name"]: TH().TARGET_INVEST,
+            Target.RESULT_DEVEST["name"]: TH().TARGET_DEVEST,
+            Target.RESULT_START["name"]: TH().TARGET_START,
+            Target.RESULT_NONE["name"]: TH().TARGET_NONE,
+        }[self.check()["name"]]
 
     def _render_currency(self) -> str:
         """:returns: This parent's currency symbol, used for target render methods."""

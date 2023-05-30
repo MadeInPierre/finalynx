@@ -5,6 +5,7 @@ from typing import Optional
 from typing import TYPE_CHECKING
 
 from ..config import DEFAULT_CURRENCY
+from ..config import get_active_theme as TH
 from .constants import AssetClass
 from .constants import AssetSubclass
 from .constants import LinePerf
@@ -73,7 +74,7 @@ class Line(Node):
 
     def _render_account_code(self) -> str:
         """:returns: A formatted string representation of this line's envelope."""
-        return f"[{self.envelope.code}] " if self.envelope else ""
+        return f"[{TH().ENVELOPE_CODE}][{self.envelope.code}][/] " if self.envelope else ""
 
     def to_dict(self) -> Dict[str, Any]:
         return {

@@ -31,6 +31,8 @@ Options:
 {main_filter(main_options)}
   dashboard            Launch an interactive web dashboard!
 
+  -t --theme=string    Choose a predefined color theme for the console output (light or dark)
+
   --no-export          Don't export to JSON
   --export-dir=path    Path to a folder where the file will be saved
 
@@ -40,7 +42,6 @@ Options:
   targets              Shortcut to --format="[console_targets]" (show target values instead of amounts)
   deltas               Shortcut to --format="[console_deltas]" (show deltas instead of amounts)
   perf                 Shortcut to --format="[console_perf]" (show expected performances)
-  text                 Shortcut to --format="[console_text]" (no colors)
 
   -s --sources=string  Comma-separated list of sources to activate, defaults to "finary" only
 

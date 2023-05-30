@@ -42,7 +42,6 @@ Options:
   targets              Shortcut to --format="[console_targets]" (show target values instead of amounts)
   deltas               Shortcut to --format="[console_deltas]" (show deltas instead of amounts)
   perf                 Shortcut to --format="[console_perf]" (show expected performances)
-  text                 Shortcut to --format="[console_text]" (no colors)
 
   -s --sources=string  Comma-separated list of sources to activate, defaults to "finary" only
 

@@ -11,6 +11,7 @@ from requests import Session
 from rich.prompt import Confirm
 from rich.tree import Tree
 
+from ..config import ACTIVE_THEME as TH
 from ..console import console
 from .source_base import SourceBase
 
@@ -125,7 +126,7 @@ class SourceFinary(SourceBase):
 
         # Login to Finary with the existing cookies file or credentials in environment variables and retrieve data
         if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
-            with console.status("[bold green]Signing in to Finary..."):
+            with console.status(f"[bold {TH.ACCENT}]Signing in to Finary...", spinner_style=TH.ACCENT):
                 result = ff.signin()
                 console.log("Signed in to Finary.")
 
@@ -168,7 +169,7 @@ class SourceFinary(SourceBase):
             raise ValueError("Finary signin failed.")
 
         # Call the API and parse the response into `FetchLine` instances
-        with console.status("[bold green]Fetching investments from Finary..."):
+        with console.status(f"[bold {TH.ACCENT}]Fetching investments from Finary...", spinner_style=TH.ACCENT):
             response = ff.get_holdings_accounts(session)
             if response["message"] == "OK":
                 for dict_account in response["result"]:

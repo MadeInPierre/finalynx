@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from rich.tree import Tree
 
+from ..config import ACTIVE_THEME as TH
 from ..config import DEFAULT_CURRENCY
 from .constants import LinePerf
 from .hierarchy import Hierarchy
@@ -55,11 +56,11 @@ class Node(Hierarchy, Render):
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
-            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
-            "[console_ideal]": "[bold green][ideal][/][account_code][name_color][name][/][newline]",
+            "[console]": f"[target][{TH.HINT}][prehint][/] [account_code][name_color][name][/] [{TH.HINT}][hint][newline]",
+            "[console_ideal]": f"[bold {TH.ACCENT}][ideal][/][account_code][name_color][name][/][newline]",
             "[console_deltas]": "[delta][account_code][name_color][name][/][newline]",
-            "[console_perf]": "[bold green][perf][/][account_code][name_color][name][/][newline]",
-            "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
+            "[console_perf]": f"[bold {TH.ACCENT}][perf][/][account_code][name_color][name][/][newline]",
+            "[console_targets]": f"[bold {TH.ACCENT}][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",
             "[dashboard_console]": "[bold][target][/][bright_black][prehint][/] [name_color][name][/] [bright_black][hint][/][newline]",
@@ -182,12 +183,12 @@ class Node(Hierarchy, Render):
         delta, check = round(self.get_delta()), self.target.check()
         if delta == 0 or check == Target.RESULT_NONE:
             return ""
-        color = "green" if delta > 0 else "red"
+        color = TH.DELTA_POS if delta > 0 else TH.DELTA_NEG
         children = children if children else (self.parent.children if self.parent and self.parent.children else [])
         max_length = np.max([len(str(abs(round(c.get_delta())))) for c in children]) if children else 0
         max_length = max_length if align else 0
         if check == Target.RESULT_OK:
-            return f"[green]{'✓':>{max_length+3}}[/] "
+            return f"[{TH.DELTA_OK}]{'✓':>{max_length+3}}[/] "
         return (
             f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} {self._render_currency()}[/] "
             # f"[dim white]→  {self.get_ideal():>{max_length}} {self._render_currency()}[/] "
@@ -196,7 +197,7 @@ class Node(Hierarchy, Render):
     def _render_perf(self) -> str:
         """:returns: A formatted rendering of the node's expected yearly performance."""
         perf = self.get_perf()
-        return f"[{'strike ' if perf.skip else ''}bold green]{perf.expected:.1f} %[/] " if perf else ""
+        return f"[{'strike ' if perf.skip else ''}bold]{perf.expected:.1f} %[/] " if perf else ""
 
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""
@@ -204,7 +205,7 @@ class Node(Hierarchy, Render):
 
     def _render_name_color(self) -> str:
         """:returns: A formatted rendering of the node name's color."""
-        return "[black]"
+        return f"[{TH.TEXT}]"
 
     def _render_newline(self) -> str:
         """:returns: A rendering of the newline if set by the user."""

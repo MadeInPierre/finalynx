@@ -11,6 +11,7 @@ from docopt import docopt
 from finalynx import Dashboard
 from finalynx import Fetch
 from finalynx import Portfolio
+from finalynx.config import ACTIVE_THEME as TH
 from finalynx.fetch.source_base import SourceBase
 from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
@@ -193,8 +194,20 @@ class Assistant:
 
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
-            Panel(self.render_envelopes(), title="Delta Investments", padding=(1, 2), expand=False),
-            Panel(self.render_perf(), title="Performance", padding=(1, 2), expand=False),
+            Panel(
+                self.render_envelopes(),
+                title="Delta Investments",
+                padding=(1, 2),
+                expand=False,
+                border_style=TH.PANEL,
+            ),
+            Panel(
+                self.render_perf(),
+                title="Performance",
+                padding=(1, 2),
+                expand=False,
+                border_style=TH.PANEL,
+            ),
         ]
 
         # Show the data fetched from Finary if specified
@@ -225,14 +238,14 @@ class Assistant:
         perf_ideal = self.portfolio.get_perf(ideal=True).expected
 
         tree = Tree("Global Performance", hide_root=True)
-        tree.add(f"Current:  [bold][green]{perf:.1f} %[/] / year")
-        tree.add(f"Planned:  [bold][green]{perf_ideal:.1f} %[/] / year")
+        tree.add(f"[{TH.TEXT}]Current:  [bold][{TH.ACCENT}]{perf:.1f} %[/] / year")
+        tree.add(f"[{TH.TEXT}]Planned:  [bold][{TH.ACCENT}]{perf_ideal:.1f} %[/] / year")
         return tree
 
     def render_envelopes(self) -> Tree:
         """Sort lines with non-zero deltas by envelopes and display them as
         a summary of transfers to make."""
-        tree = Tree("Envelopes", hide_root=True)
+        tree = Tree("Envelopes", hide_root=True, guide_style=TH.TREE_BRANCHES)
 
         for env in self.envelopes:
             children, env_delta = [], 0.0
@@ -244,12 +257,12 @@ class Assistant:
                     Target.RESULT_TOLERATED,
                 ]:
                     env_delta += delta
-                    children.append(line._render_delta(children=env.lines) + line._render_name())  # type: ignore
+                    children.append(f"[{TH.TEXT}]" + line._render_delta(children=env.lines) + line._render_name())  # type: ignore
 
             if children:
                 env_delta = round(env_delta)
-                render_delta = f"[{'green' if env_delta > 0 else 'red'}]{'+' if env_delta > 0 else ''}{env_delta} {finalynx.config.DEFAULT_CURRENCY}"
-                node = tree.add(f"{render_delta} [dodger_blue2 bold]{env.name}[/]")
+                render_delta = f"[{TH.DELTA_POS if env_delta > 0 else TH.DELTA_NEG}]{'+' if env_delta > 0 else ''}{env_delta} {finalynx.config.DEFAULT_CURRENCY}"
+                node = tree.add(f"{render_delta} [{TH.FOLDER_COLOR} {TH.FOLDER_STYLE}]{env.name}[/]")
                 for child in children:
                     node.add(child)
                 node.children[-1].label += "\n"  # type: ignore
@@ -268,10 +281,10 @@ class Assistant:
 
         folders = _get_folders(self.portfolio)
         if folders:
-            node = tree.add("[dodger_blue2 bold]Folders")
+            node = tree.add(f"[{TH.FOLDER_COLOR} {TH.FOLDER_STYLE}]Folders")
             for f in folders:
                 if f.get_delta() != 0:
-                    node.add(f._render_delta(children=folders) + f._render_name())  # type: ignore
+                    node.add(f"[{TH.TEXT}]" + f._render_delta(children=folders) + f._render_name())  # type: ignore
         return tree
 
     def export(self, dirpath: str) -> None:

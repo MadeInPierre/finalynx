@@ -34,6 +34,9 @@ from .simulator import Simulator
 # Main
 from .assistant import Assistant
 
+# Themes
+from .theme import Theme, LightTheme, DarkTheme
+
 # Enable rich's features
 from rich import print, inspect, pretty, traceback
 from rich.tree import Tree

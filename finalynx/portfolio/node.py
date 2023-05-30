@@ -9,6 +9,7 @@ import numpy as np
 from rich.tree import Tree
 
 from ..config import DEFAULT_CURRENCY
+from ..config import get_active_theme as TH
 from .constants import LinePerf
 from .hierarchy import Hierarchy
 from .render import Render
@@ -55,11 +56,11 @@ class Node(Hierarchy, Render):
         # Setup custom aliases for node rendering
         render_aliases: Dict[str, str] = {
             "[text]": "[target_text][prehint] [name] [hint][newline]",
-            "[console]": "[target][dim white][prehint][/] [account_code][name_color][name][/] [dim white][hint][/][newline]",
-            "[console_ideal]": "[bold green][ideal][/][account_code][name_color][name][/][newline]",
+            "[console]": "[target][prehint] [account_code][name_color][name][/] [hint][newline]",
+            "[console_ideal]": "[bold][ideal][/][account_code][name_color][name][/][newline]",
             "[console_deltas]": "[delta][account_code][name_color][name][/][newline]",
-            "[console_perf]": "[bold green][perf][/][account_code][name_color][name][/][newline]",
-            "[console_targets]": "[bold green][goal][/][account_code][name_color][name][/][newline]",
+            "[console_perf]": "[bold][perf][/][account_code][name_color][name][/][newline]",
+            "[console_targets]": "[bold][goal][/][account_code][name_color][name][/][newline]",
             "[text_targets]": "[goal][name][newline]",
             "[dashboard_tree]": "[amount] [currency] [name]",
             "[dashboard_console]": "[bold][target][/][bright_black][prehint][/] [name_color][name][/] [bright_black][hint][/][newline]",
@@ -144,12 +145,12 @@ class Node(Hierarchy, Render):
 
     def _render_hint(self) -> str:
         """:returns: A formatted rendering of a hint message (at the end by default)."""
-        return self.target.hint()
+        return f"[{TH().HINT}]{self.target.hint()}[/]"
 
     def _render_prehint(self) -> str:
         """:returns: A formatted rendering of a pre-hint message (next to the amount by default)."""
         prehint = self.target.prehint()
-        return " " + prehint if prehint else ""
+        return f" [{TH().HINT}]{prehint}[/]" if prehint else ""
 
     def _render_amount(self, hide_amounts: bool = False) -> str:
         """:returns: A formatted rendering of the node amount aligned with the other
@@ -167,11 +168,11 @@ class Node(Hierarchy, Render):
     def _render_goal(self) -> str:
         """:returns: A formatted rendering of the target goal. This could either be an ideal
         amount or ratio to be reached."""
-        return self.target.render_goal()
+        return f"[{TH().ACCENT}]{self.target.render_goal()}"
 
     def _render_ideal(self) -> str:
         """:returns: A formatted rendering of the ideal amount to be invested based on the target."""
-        return self.target.render_ideal()
+        return f"[{TH().ACCENT}]{self.target.render_ideal()}"
 
     def _render_delta(self, align: bool = True, children: Optional[List["Node"]] = None) -> str:
         """Creates a formatted rendering of the delta investment needed to reach the target.
@@ -182,12 +183,12 @@ class Node(Hierarchy, Render):
         delta, check = round(self.get_delta()), self.target.check()
         if delta == 0 or check == Target.RESULT_NONE:
             return ""
-        color = "green" if delta > 0 else "red"
+        color = TH().DELTA_POS if delta > 0 else TH().DELTA_NEG
         children = children if children else (self.parent.children if self.parent and self.parent.children else [])
         max_length = np.max([len(str(abs(round(c.get_delta())))) for c in children]) if children else 0
         max_length = max_length if align else 0
         if check == Target.RESULT_OK:
-            return f"[green]{'✓':>{max_length+3}}[/] "
+            return f"[{TH().DELTA_OK}]{'✓':>{max_length+3}}[/] "
         return (
             f"[{color}]{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} {self._render_currency()}[/] "
             # f"[dim white]→  {self.get_ideal():>{max_length}} {self._render_currency()}[/] "
@@ -196,7 +197,7 @@ class Node(Hierarchy, Render):
     def _render_perf(self) -> str:
         """:returns: A formatted rendering of the node's expected yearly performance."""
         perf = self.get_perf()
-        return f"[{'strike ' if perf.skip else ''}bold green]{perf.expected:.1f} %[/] " if perf else ""
+        return f"[{'strike ' if perf.skip else ''}bold {TH().ACCENT}]{perf.expected:.1f} %[/] " if perf else ""
 
     def _render_name(self) -> str:
         """:returns: A formatted rendering of the node name."""
@@ -204,7 +205,7 @@ class Node(Hierarchy, Render):
 
     def _render_name_color(self) -> str:
         """:returns: A formatted rendering of the node name's color."""
-        return "[black]"
+        return f"[{TH().TEXT}]"
 
     def _render_newline(self) -> str:
         """:returns: A rendering of the newline if set by the user."""

@@ -11,6 +11,7 @@ from rich.tree import Tree
 if TYPE_CHECKING:
     from finalynx.fetch.fetch_line import FetchLine
 
+from ..config import get_active_theme as TH
 from ..console import console
 from .bucket import Bucket
 from .constants import AssetClass
@@ -168,7 +169,7 @@ class Folder(Node):
         :returns: A `Tree` instance containing the rendered titles for each `Node` object.
         """
         render = self.render(output_format, **render_args)
-        node = _tree.add(render) if _tree else Tree(render, guide_style="grey42", hide_root=hide_root)
+        node = _tree.add(render) if _tree else Tree(render, guide_style=TH().TREE_BRANCHES, hide_root=hide_root)
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
                 child.tree(output_format=output_format, _tree=node, **render_args)
@@ -266,9 +267,9 @@ class Folder(Node):
         the folder name with a bold font of different color.
         """
         if self.display == FolderDisplay.EXPANDED:
-            return "[dodger_blue2 bold]"
+            return f"[{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]"
         elif self.display == FolderDisplay.COLLAPSED:
-            return "[dodger_blue2]"
+            return f"[{TH().FOLDER_COLOR}]"
         elif self.display == FolderDisplay.LINE:
             return super()._render_name_color()
         else:

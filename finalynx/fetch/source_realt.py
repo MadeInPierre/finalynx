@@ -61,23 +61,26 @@ class SourceRealT(SourceBase):
 
         # Register the real investment information, will be cached and matched to the portfolio
         for item in gnosis_tokenlist.get("result"):
-            if re.match(r"^REALTOKEN", str(item.get("symbol"))):
-                self._register_fetchline(
-                    tree_node=node,  # this line will display under the category, use `tree` for root
-                    name=realt_tokeninfo[str(item.get("symbol")).lower()]["shortName"],
-                    id=realt_tokeninfo[str(item.get("symbol")).lower()]["uuid"],
-                    account="My RealT Portfolio",
-                    amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
-                    * realt_tokeninfo[str(item.get("symbol")).lower()]["tokenPrice"],
-                    currency=realt_tokeninfo[str(item.get("symbol")).lower()]["currency"],
-                )
-            if re.match(r"^armmR", str(item.get("symbol"))):
-                self._register_fetchline(
-                    tree_node=node,  # this line will display under the category, use `tree` for root
-                    name=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["shortName"],
-                    id=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["uuid"],
-                    account="My RealT Portfolio",
-                    amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
-                    * realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["tokenPrice"],
-                    currency=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["currency"],
-                )
+            try:
+                if re.match(r"^REALTOKEN", str(item.get("symbol"))):
+                    self._register_fetchline(
+                        tree_node=node,  # this line will display under the category, use `tree` for root
+                        name=realt_tokeninfo[str(item.get("symbol")).lower()]["shortName"],
+                        id=realt_tokeninfo[str(item.get("symbol")).lower()]["uuid"],
+                        account="My RealT Portfolio",
+                        amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
+                        * realt_tokeninfo[str(item.get("symbol")).lower()]["tokenPrice"],
+                        currency=realt_tokeninfo[str(item.get("symbol")).lower()]["currency"],
+                    )
+                if re.match(r"^armmR", str(item.get("symbol"))):
+                    self._register_fetchline(
+                        tree_node=node,  # this line will display under the category, use `tree` for root
+                        name=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["shortName"],
+                        id=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["uuid"],
+                        account="My RealT Portfolio",
+                        amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
+                        * realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["tokenPrice"],
+                        currency=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["currency"],
+                    )
+            except Exception as e:
+                self._log(f"[red][bold]Error:[/] failed to parse line, skipping: {e}")

@@ -11,32 +11,32 @@ from typing import Type
 @dataclass
 class Theme:
     # Main elements
-    TEXT = "black"
-    ACCENT = "deep_sky_blue2"
+    TEXT = "black"  # Line names, descriptions, default color
+    ACCENT = "deep_sky_blue2"  # Elements that must be highlighted (e.g. performances, goal amounts, ...)
 
     # Main tree elements
-    HINT = "dim white"
-    FOLDER_COLOR = "dodger_blue2"
-    FOLDER_STYLE = "bold"
-    ENVELOPE_CODE = "dim white"
+    HINT = "dim white"  # Target descriptions and line relative percentage
+    FOLDER_COLOR = "dodger_blue2"  # Folders (color only) when in expanded or collapsed display mode
+    FOLDER_STYLE = "bold"  # Folders style (no color here) when in expanded mode only
+    ENVELOPE_CODE = "dim white"  # Account abbreviation shown right before the line name
 
     # Targets
-    TARGET_NONE = "black"
-    TARGET_START = "cyan"
-    TARGET_OK = "green"
-    TARGET_NOK = "red"
-    TARGET_TOLERATED = "yellow"
-    TARGET_INVEST = "red"
-    TARGET_DEVEST = "magenta"
+    TARGET_NONE = "black"  # No target defined
+    TARGET_START = "cyan"  # 0€/$ for this line, start investing!
+    TARGET_OK = "green"  # Current amount is with the target
+    TARGET_TOLERATED = "yellow"  # Current amount is in the tolerated zone defined in the target
+    TARGET_NOK = "red"  # Current amount is outside the target (default)
+    TARGET_INVEST = "red"  # Current amount is outside the target, finalynx recommends to invest
+    TARGET_DEVEST = "magenta"  # Current amount is outside the target, finalynx recommends to sell
 
     # Deltas
-    DELTA_POS = "green"
-    DELTA_NEG = "red"
-    DELTA_OK = "green"
+    DELTA_POS = "green"  # Invest x€/$ to reach the ideal amount defined by the targets
+    DELTA_NEG = "red"  # Sell x€/$ to reach the ideal amount defined by the targets
+    DELTA_OK = "green"  # Node is already at the perfect amount
 
     # Decorations
-    TREE_BRANCHES = "grey42"
-    PANEL = "black"
+    TREE_BRANCH = "grey42"  # Tree structure color, see rich Tree for additional styles
+    PANEL = "black"  # Panel title and border colors
 
 
 # Shortcut for a more intuitive usage

@@ -46,6 +46,7 @@ class SourceRealT(SourceBase):
                             "fullName": item.get("fullName"),
                             "shortName": item.get("shortName"),
                             "tokenPrice": item.get("tokenPrice"),
+                            "uuid": item.get("uuid"),
                         }
                     }
                 )

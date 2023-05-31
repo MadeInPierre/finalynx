@@ -69,7 +69,7 @@ class SourceRealT(SourceBase):
                     account="My RealT Portfolio",
                     amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
                     * realt_tokeninfo[str(item.get("contractAddress")).lower()]["tokenPrice"],
-                    currency=realt_tokeninfo[str(item.get("contractAddress")).lower()]["currency"],
+                    currency="$",
                 )
             if re.match(r"^armmR", str(item.get("symbol"))):
                 original_contract_address = json.loads(
@@ -88,9 +88,7 @@ class SourceRealT(SourceBase):
                     * realt_tokeninfo[str(original_contract_address.get("result")[0].get("contractAddress")).lower()][
                         "tokenPrice"
                     ],
-                    currency=realt_tokeninfo[
-                        str(original_contract_address.get("result")[0].get("contractAddress")).lower()
-                    ]["currency"],
+                    currency="$",
                 )
             except Exception as e:
                 self._log(f"[red][bold]Error:[/] failed to parse line, skipping: {e}")

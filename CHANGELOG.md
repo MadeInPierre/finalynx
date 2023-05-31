@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.18.2 (2023-05-31)
+### Fix
+
+* **fetch:** Customizable per-source cache validity ([`964fd55`](https://github.com/MadeInPierre/finalynx/commit/964fd5557e3ed0cb1d9e478c053501198363bf5f))
+* **fetch:** Fetch from RealT using 'contractAddress/uuid' instead of 'symbol' ([#119](https://github.com/MadeInPierre/finalynx/issues/119)) ([`441fb66`](https://github.com/MadeInPierre/finalynx/commit/441fb66231155b36ba1bcdaa3e714277ff309c1c))
+
 ## v1.18.1 (2023-05-31)
 ### Fix
 

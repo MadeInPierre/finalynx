@@ -42,7 +42,7 @@ class SourceRealT(SourceBase):
             for item in realt_tokenlist:
                 realt_tokeninfo.update(
                     {
-                        item.get("symbol").lower(): {
+                        item.get("uuid").lower(): {
                             "fullName": item.get("fullName"),
                             "shortName": item.get("shortName"),
                             "tokenPrice": item.get("tokenPrice"),
@@ -53,7 +53,6 @@ class SourceRealT(SourceBase):
                 )
 
             # Get list of token own from Gnosis address
-            # TODO integrate user specific data into credentials.json file
             gnosis_tokenlist = json.loads(requests.get(GNOSIS_API_TOKENLIST_URI + self.wallet_address).text)
 
         # Display the lines found to the console, you can create a nested tree if you want
@@ -64,20 +63,31 @@ class SourceRealT(SourceBase):
             if re.match(r"^REALTOKEN", str(item.get("symbol"))):
                 self._register_fetchline(
                     tree_node=node,  # this line will display under the category, use `tree` for root
-                    name=realt_tokeninfo[str(item.get("symbol")).lower()]["shortName"],
-                    id=realt_tokeninfo[str(item.get("symbol")).lower()]["uuid"],
+                    name=realt_tokeninfo[str(item.get("contractAddress")).lower()]["shortName"],
+                    id=realt_tokeninfo[str(item.get("contractAddress")).lower()]["uuid"],
                     account="My RealT Portfolio",
                     amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
-                    * realt_tokeninfo[str(item.get("symbol")).lower()]["tokenPrice"],
-                    currency=realt_tokeninfo[str(item.get("symbol")).lower()]["currency"],
+                    * realt_tokeninfo[str(item.get("contractAddress")).lower()]["tokenPrice"],
+                    currency=realt_tokeninfo[str(item.get("contractAddress")).lower()]["currency"],
                 )
             if re.match(r"^armmR", str(item.get("symbol"))):
+                original_contract_address = json.loads(
+                    requests.get(GNOSIS_API_TOKENLIST_URI + str(item.get("contractAddress"))).text
+                )
                 self._register_fetchline(
                     tree_node=node,  # this line will display under the category, use `tree` for root
-                    name=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["shortName"],
-                    id=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["uuid"],
+                    name=realt_tokeninfo[
+                        str(original_contract_address.get("result")[0].get("contractAddress")).lower()
+                    ]["shortName"],
+                    id=realt_tokeninfo[str(original_contract_address.get("result")[0].get("contractAddress")).lower()][
+                        "uuid"
+                    ],
                     account="My RealT Portfolio",
                     amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
-                    * realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["tokenPrice"],
-                    currency=realt_tokeninfo[re.sub(r"armm", "", str(item.get("symbol"))).lower()]["currency"],
+                    * realt_tokeninfo[str(original_contract_address.get("result")[0].get("contractAddress")).lower()][
+                        "tokenPrice"
+                    ],
+                    currency=realt_tokeninfo[
+                        str(original_contract_address.get("result")[0].get("contractAddress")).lower()
+                    ]["currency"],
                 )

@@ -249,7 +249,7 @@ class Assistant:
     def render_envelopes(self) -> Tree:
         """Sort lines with non-zero deltas by envelopes and display them as
         a summary of transfers to make."""
-        tree = Tree("Envelopes", hide_root=True, guide_style=TH().TREE_BRANCHES)
+        tree = Tree("Envelopes", hide_root=True, guide_style=TH().TREE_BRANCH)
 
         for env in self.envelopes:
             children, env_delta = [], 0.0

@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.18.1 (2023-05-31)
+### Fix
+
+* **fetch:** Skip malformed realt lines for now ([`3b55c43`](https://github.com/MadeInPierre/finalynx/commit/3b55c4305d2eab2c1c8a7f862be05da4a8426eeb))
+
 ## v1.18.0 (2023-05-31)
 ### Feature
 

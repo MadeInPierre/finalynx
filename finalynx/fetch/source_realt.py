@@ -14,20 +14,15 @@ REALT_API_TOKENLIST_URI = "https://api.realt.community/v1/token"
 
 
 class SourceRealT(SourceBase):
-    def __init__(
-        self,
-        wallet_address: str,
-        name: str = "RealT",
-    ) -> None:
+    def __init__(self, wallet_address: str, name: str = "RealT", cache_validity: int = 120) -> None:
         """RealT wrapper to fetch an address' investments.
         :param wallet_address: Your wallet address.
         :param name: Set this source's name, can be changed when using multiple RealT sources
         for multiple RealT addresses.
-        :param clear_cache: Forces to clear the last fetch's saved results.
-        :param ignore_orphans: Don't create new lines at the root of the portfolio if some
-        investments have been fetched but have not been matched with any existing node.
+        :param cache_validity: Finalynx will save fetched results to a file and reuse them on
+        the next run if the cache age is less than the specified number of hours.
         """
-        super().__init__(name)
+        super().__init__(name, cache_validity)  # cache is valid for 5 days
         self.wallet_address = wallet_address
 
     def _fetch_data(self, tree: Tree) -> None:

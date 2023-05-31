@@ -19,10 +19,7 @@ from .fetch_line import FetchLine
 class SourceBase:
     """Abstract class to fetch data from multiple sources."""
 
-    # Finalynx will use the cached data if it is younger than the specified time
-    MAX_CACHE_HOURS = 12
-
-    def __init__(self, name: str):
+    def __init__(self, name: str, cache_validity: int = 12):
         """This is an abstract class to provide a common interface when fetching investments from
         multiple sources.
 
@@ -30,10 +27,13 @@ class SourceBase:
         Contributions to add data from any format or source are warmly welcome!
         ```
 
-        :param portfolio: A fully configured `Porfolio` instance with your custom investment tree.
-        :param cache_filename: Used by subclasses to create separate cache files.
+        :param name: a unique name to identify this source instance, the id used to
+        activate this source is the lower-case name.
+        :param cache_validity: Finalynx will save fetched results to a file and reuse them on
+        the next run if the cache age is less than the specified number of hours.
         """
         self.name = name
+        self.cache_validity = cache_validity
         self.cache_fullpath = os.path.join(os.path.dirname(__file__), f"{self.id}_cache.json")
 
         # This list will hold all fetched line objects.
@@ -46,6 +46,9 @@ class SourceBase:
         ignore_orphans: bool,
     ) -> Tree:
         """Abstract method, requires to be overridden by subclasses.
+        :param clear_cache: Delete cached data to immediately fetch data online, defaults to False
+        :param ignore_orphans: If a line in your account is not referenced in your `Portfolio` instance
+        then don't attach it to the root (used as a reminder), defaults to False
         :returns: A `Tree` object from the `rich` package used to display what has been fetched.
         """
         console.log(f"Fetching data from {self.name}...")
@@ -152,10 +155,10 @@ class SourceBase:
         time_diff = datetime.datetime.now() - last_updated
         hours_passed = int(time_diff.total_seconds() // 3600)
 
-        if hours_passed < self.MAX_CACHE_HOURS:
-            self._log(f"Using recently cached data (<{self.MAX_CACHE_HOURS}h max)")
+        if hours_passed < self.cache_validity:
+            self._log(f"Using recently cached data (<{self.cache_validity}h max)")
             return [FetchLine.from_dict(line_dict) for line_dict in data["lines"]]
-        self._log(f"Fetching data (cache file is {hours_passed}h old > {self.MAX_CACHE_HOURS}h max)")
+        self._log(f"Fetching data (cache file is {hours_passed}h old > {self.cache_validity}h max)")
         return []
 
     def _save_cache(self) -> None:

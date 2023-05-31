@@ -33,7 +33,12 @@ class SourceFinary(SourceBase):
         "crowdlendings",
     ]
 
-    def __init__(self, force_signin: bool = False, name: str = "Finary") -> None:
+    def __init__(
+        self,
+        force_signin: bool = False,
+        name: str = "Finary",
+        cache_validity: int = 12,
+    ) -> None:
         """This class manages all interactions with your Finary account, namely:
         1. **Authentication**: The function starts by signing you in with the following sequence of attempts:
             - First, the function looks for environment variables named `FINARY_EMAIL` and `FINARY_PASSWORD`
@@ -59,14 +64,13 @@ class SourceFinary(SourceBase):
         You can run Finalynx with the `-f` or `--force-signin` option to delete all files and start over.
         ```
 
-        :param clear_cache: Delete cached data to immediately fetch data online, defaults to False
         :param force_signin: Delete all saved credentials, cookies and cache files before logging in again, defaults to False
-        :param ignore_orphans: If a line in your account is not referenced in your {class}`Portfolio <finalynx.portfolio.portfolio.Portfolio>`
-        then don't attach it to the root (used as a reminder), defaults to False
+        :param cache_validity: Finalynx will save fetched results to a file and reuse them on
+        the next run if the cache age is less than the specified number of hours.
         :returns: Returns a tree view of all fetched investments, which can be printed to the console to make sure
         everything was correctly found.
         """
-        super().__init__(name)
+        super().__init__(name, cache_validity)
         self.force_signin = force_signin
 
     def _authenticate(self) -> Optional[Session]:

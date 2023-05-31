@@ -60,7 +60,8 @@ class SourceRealT(SourceBase):
 
         # Register the real investment information, will be cached and matched to the portfolio
         for item in gnosis_tokenlist.get("result"):
-            if re.match(r"^REALTOKEN", str(item.get("symbol"))):
+            try:
+                if re.match(r"^REALTOKEN", str(item.get("symbol"))):
                 self._register_fetchline(
                     tree_node=node,  # this line will display under the category, use `tree` for root
                     name=realt_tokeninfo[str(item.get("contractAddress")).lower()]["shortName"],
@@ -91,3 +92,6 @@ class SourceRealT(SourceBase):
                         str(original_contract_address.get("result")[0].get("contractAddress")).lower()
                     ]["currency"],
                 )
+            except Exception as e:
+                self._log(f"[red][bold]Error:[/] failed to parse line, skipping: {e}")
+

@@ -15,11 +15,17 @@ class Fetch:
     def __init__(
         self,
         portfolio: Portfolio,
+        clear_cache: bool = False,
+        ignore_orphans: bool = False,
         sources: Optional[List[SourceBase]] = None,
     ) -> None:
         """This class orchestrates the fetching process from multiple sources."""
         self.portfolio = portfolio
         self._sources: Dict[str, SourceBase] = {s.name: s for s in sources} if sources else {}
+
+        # Flags set by user
+        self.clear_cache = clear_cache
+        self.ignore_orphans = ignore_orphans
 
     def add_source(self, source: SourceBase) -> None:
         """Register a new source instance which must already be configured."""
@@ -37,7 +43,7 @@ class Fetch:
                     f"[red][bold]Error:[/] Source '{source_id}' not recognized, have you added it first? Skipping."
                 )
                 continue
-            tree.add(self._sources[source_id].fetch(self.portfolio))
+            tree.add(self._sources[source_id].fetch(self.portfolio, self.clear_cache, self.ignore_orphans))
 
         return tree
 

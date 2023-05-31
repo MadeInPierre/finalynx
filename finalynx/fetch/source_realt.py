@@ -46,8 +46,6 @@ class SourceRealT(SourceBase):
                             "fullName": item.get("fullName"),
                             "shortName": item.get("shortName"),
                             "tokenPrice": item.get("tokenPrice"),
-                            "currency": item.get("currency"),
-                            "uuid": item.get("uuid"),
                         }
                     }
                 )
@@ -62,33 +60,33 @@ class SourceRealT(SourceBase):
         for item in gnosis_tokenlist.get("result"):
             try:
                 if re.match(r"^REALTOKEN", str(item.get("symbol"))):
-                self._register_fetchline(
-                    tree_node=node,  # this line will display under the category, use `tree` for root
-                    name=realt_tokeninfo[str(item.get("contractAddress")).lower()]["shortName"],
-                    id=realt_tokeninfo[str(item.get("contractAddress")).lower()]["uuid"],
-                    account="My RealT Portfolio",
-                    amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
-                    * realt_tokeninfo[str(item.get("contractAddress")).lower()]["tokenPrice"],
-                    currency="$",
-                )
-            if re.match(r"^armmR", str(item.get("symbol"))):
-                original_contract_address = json.loads(
-                    requests.get(GNOSIS_API_TOKENLIST_URI + str(item.get("contractAddress"))).text
-                )
-                self._register_fetchline(
-                    tree_node=node,  # this line will display under the category, use `tree` for root
-                    name=realt_tokeninfo[
-                        str(original_contract_address.get("result")[0].get("contractAddress")).lower()
-                    ]["shortName"],
-                    id=realt_tokeninfo[str(original_contract_address.get("result")[0].get("contractAddress")).lower()][
-                        "uuid"
-                    ],
-                    account="My RealT Portfolio",
-                    amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
-                    * realt_tokeninfo[str(original_contract_address.get("result")[0].get("contractAddress")).lower()][
-                        "tokenPrice"
-                    ],
-                    currency="$",
-                )
+                    self._register_fetchline(
+                        tree_node=node,  # this line will display under the category, use `tree` for root
+                        name=realt_tokeninfo[str(item.get("contractAddress")).lower()]["shortName"],
+                        id=realt_tokeninfo[str(item.get("contractAddress")).lower()]["uuid"],
+                        account="My RealT Portfolio",
+                        amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
+                        * realt_tokeninfo[str(item.get("contractAddress")).lower()]["tokenPrice"],
+                        currency="$",
+                    )
+                if re.match(r"^armmR", str(item.get("symbol"))):
+                    original_contract_address = json.loads(
+                        requests.get(GNOSIS_API_TOKENLIST_URI + str(item.get("contractAddress"))).text
+                    )
+                    self._register_fetchline(
+                        tree_node=node,  # this line will display under the category, use `tree` for root
+                        name=realt_tokeninfo[
+                            str(original_contract_address.get("result")[0].get("contractAddress")).lower()
+                        ]["shortName"],
+                        id=realt_tokeninfo[
+                            str(original_contract_address.get("result")[0].get("contractAddress")).lower()
+                        ]["uuid"],
+                        account="My RealT Portfolio",
+                        amount=(float(item.get("balance")) / pow(10, int(item.get("decimals"))))
+                        * realt_tokeninfo[
+                            str(original_contract_address.get("result")[0].get("contractAddress")).lower()
+                        ]["tokenPrice"],
+                        currency="$",
+                    )
             except Exception as e:
                 self._log(f"[red][bold]Error:[/] failed to parse line, skipping: {e}")

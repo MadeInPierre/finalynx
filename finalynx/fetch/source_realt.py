@@ -94,4 +94,3 @@ class SourceRealT(SourceBase):
                 )
             except Exception as e:
                 self._log(f"[red][bold]Error:[/] failed to parse line, skipping: {e}")
-

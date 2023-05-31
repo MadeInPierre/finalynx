@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.18.0 (2023-05-31)
+### Feature
+
+* **fetch:** Add new RealT fetch source ([#106](https://github.com/MadeInPierre/finalynx/issues/106)) ([`ca00549`](https://github.com/MadeInPierre/finalynx/commit/ca0054980026980368da1addbc05f2e6dc5f6b4a))
+
 ## v1.17.0 (2023-05-30)
 ### Feature
 

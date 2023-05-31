@@ -95,7 +95,7 @@ class SourceBase:
                     f"[yellow][bold]Warning:[/] Line did not match with any portfolio node, attaching to root: {name}",
                     highlight=False,
                 )
-                portfolio.add_child(Line(name, amount=fline.amount))
+                portfolio.add_child(Line(name, amount=fline.amount, currency=fline.currency))
 
         # Return a rich tree to be displayed in the console as a recap of what has been fetched
         return tree

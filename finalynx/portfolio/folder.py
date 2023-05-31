@@ -169,7 +169,7 @@ class Folder(Node):
         :returns: A `Tree` instance containing the rendered titles for each `Node` object.
         """
         render = self.render(output_format, **render_args)
-        node = _tree.add(render) if _tree else Tree(render, guide_style=TH().TREE_BRANCHES, hide_root=hide_root)
+        node = _tree.add(render) if _tree else Tree(render, guide_style=TH().TREE_BRANCH, hide_root=hide_root)
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
                 child.tree(output_format=output_format, _tree=node, **render_args)

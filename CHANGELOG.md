@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.18.3 (2023-06-01)
+### Fix
+
+* **recommendations:** Redo delta render rules ([`d0fe97c`](https://github.com/MadeInPierre/finalynx/commit/d0fe97c62cfc910102054a42366fbc8f58848d33))
+
 ## v1.18.2 (2023-05-31)
 ### Fix
 

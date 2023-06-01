@@ -290,6 +290,16 @@ class Folder(Node):
         ideal = float(np.sum([c.get_ideal() for c in self.children]))
         return f"{round(ideal)} {self._render_currency()} " if ideal else ""
 
+    def _render_delta(self, align: bool = True, children: Optional[List["Node"]] = None) -> str:
+        """Creates a formatted rendering of the delta investment needed to reach the target.
+        :param align: Use the `children` parameter as a list of nodes to align all amounts vertically.
+        :param children: List of `Node` objects used for vertical alignemnt, defaults to this parent's children.
+        :returns: The rendered string.
+        """
+        if self.get_amount() == 0:
+            return ""
+        return super()._render_delta(align, children)
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "type": "folder",

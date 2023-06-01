@@ -32,7 +32,6 @@ class Theme:
     # Deltas
     DELTA_POS = "green"  # Invest x€/$ to reach the ideal amount defined by the targets
     DELTA_NEG = "red"  # Sell x€/$ to reach the ideal amount defined by the targets
-    DELTA_OK = "green"  # Node is already at the perfect amount
 
     # Decorations
     TREE_BRANCH = "grey42"  # Tree structure color, see rich Tree for additional styles

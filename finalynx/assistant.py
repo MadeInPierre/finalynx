@@ -1,6 +1,8 @@
 import json
 import os
 from datetime import date
+from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
@@ -20,6 +22,7 @@ from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.folder import FolderDisplay
 from finalynx.portfolio.folder import SharedFolder
+from finalynx.portfolio.node import Node
 from finalynx.portfolio.targets import Target
 from rich import inspect  # noqa F401
 from rich import pretty
@@ -199,8 +202,8 @@ class Assistant:
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
             Panel(
-                self.render_envelopes(),
-                title="Delta Investments",
+                self.render_recommendations(),
+                title="Recommendations",
                 padding=(1, 2),
                 expand=False,
                 border_style=TH().PANEL,
@@ -246,49 +249,74 @@ class Assistant:
         tree.add(f"[{TH().TEXT}]Planned:  [bold][{TH().ACCENT}]{perf_ideal:.1f} %[/] / year")
         return tree
 
-    def render_envelopes(self) -> Tree:
-        """Sort lines with non-zero deltas by envelopes and display them as
-        a summary of transfers to make."""
-        tree = Tree("Envelopes", hide_root=True, guide_style=TH().TREE_BRANCH)
+    def render_recommendations(self) -> Tree:
+        """Sort lines with non-zero deltas by envelopes and display them as a summary of transfers to make."""
+        dict_recommendations: Dict[str, Any] = {}
 
-        for env in self.envelopes:
-            children, env_delta = [], 0.0
-            for line in env.lines:
-                delta = line.get_delta()
-                if delta != 0 and line.target.check() not in [
-                    Target.RESULT_NONE,
-                    Target.RESULT_OK,
-                    Target.RESULT_TOLERATED,
-                ]:
-                    env_delta += delta
-                    children.append(f"[{TH().TEXT}]" + line._render_delta(children=env.lines) + line._render_name())  # type: ignore
-
-            if children:
-                env_delta = round(env_delta)
-                render_delta = f"[{TH().DELTA_POS if env_delta > 0 else TH().DELTA_NEG}]{'+' if env_delta > 0 else ''}{env_delta} {DEFAULT_CURRENCY}"
-                node = tree.add(f"{render_delta} [{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]{env.name}[/]")
-                for child in children:
-                    node.add(child)
-                node.children[-1].label += "\n"  # type: ignore
-
+        # Find all folders with non-zero deltas and non-zero amounts (to avoid empty shared folders)
         def _get_folders(node: Folder) -> List[Folder]:
             found: List[Folder] = []
             for child in node.children:
-                if isinstance(child, Folder):
-                    if isinstance(child, SharedFolder):
+                if isinstance(child, SharedFolder):
+                    if child.get_amount() > 0:
                         found.append(child)
-                    elif child.display == FolderDisplay.EXPANDED:
+                elif isinstance(child, Folder):
+                    if child.display == FolderDisplay.EXPANDED:
                         found += _get_folders(child)
                     else:
                         found.append(child)
             return found
 
-        folders = _get_folders(self.portfolio)
-        if folders:
-            node = tree.add(f"[{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]Folders")
-            for f in folders:
-                if f.get_delta() != 0:
-                    node.add(f"[{TH().TEXT}]" + f._render_delta(children=folders) + f._render_name())  # type: ignore
+        # Check if a folder has non-zero deltas to be displayed in the recommendations
+        def _check_node(node: Node) -> bool:
+            return node.get_delta() != 0 and node.target.check() not in [
+                Target.RESULT_NONE,
+                Target.RESULT_OK,
+                Target.RESULT_TOLERATED,
+            ]
+
+        # For each envelope, find all lines with non-zero deltas
+        for envelope in self.envelopes:
+            lines = [line for line in envelope.lines if _check_node(line)]
+            env_delta = round(sum([line.get_delta() for line in lines]))
+
+            # Only add the envelope if it has lines with non-zero deltas
+            if lines:
+                # Render the envelope name
+                render_delta = (
+                    f"[{TH().DELTA_POS if env_delta > 0 else TH().DELTA_NEG}]"
+                    f"{'+' if env_delta > 0 else ''}{env_delta} {DEFAULT_CURRENCY}"
+                )
+                render_envelope = f"{render_delta} [{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]{envelope.name}[/]"
+
+                # Render the lines with non-zero deltas
+                dict_recommendations[render_envelope] = [
+                    f"[{TH().TEXT}]{line._render_delta(children=lines)}{line._render_name()}"  # type: ignore
+                    for line in lines
+                ]
+
+        # Render folders with non-zero deltas
+        if folders := [f for f in _get_folders(self.portfolio) if _check_node(f)]:
+            dict_recommendations[f"[{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]Folders"] = [
+                f"[{TH().TEXT}]{f._render_delta(children=folders)}{f._render_name()}" for f in folders  # type: ignore
+            ]
+
+        # Render the tree with folders containing lines with non-zero deltas
+        tree = Tree("Envelopes", hide_root=True, guide_style=TH().TREE_BRANCH)
+        for i_env, envelope_name in enumerate(dict_recommendations):
+            node = tree.add(envelope_name)
+            for i_line, r in enumerate(dict_recommendations[envelope_name]):
+                newline = (
+                    "\n"
+                    if i_line == len(dict_recommendations[envelope_name]) - 1
+                    and i_env < len(dict_recommendations.keys()) - 1
+                    else ""
+                )
+                node.add(r + newline)
+
+        # If no envelopes are displayed, show a nice message instead
+        if not tree.children:
+            tree.add("You're on track! 🎉")
         return tree
 
     def export(self, dirpath: str) -> None:
@@ -311,10 +339,7 @@ class Assistant:
                 f.write(json.dumps(final_dict, indent=4))
             console.log(f"Saved current portfolio to '{full_path}'")
         except FileNotFoundError:
-            console.log(
-                """[red][bold]Error:[/] Can't find the folder to save the portfolio to JSON. Three options:
-1. Disable export using --no-export
-2. Create a folder called logs/ in this folder (default folder)
-3. Set your own export directory using --export-dir=your/path/to/dir/
-            """
-            )
+            console.log("[red][bold]Error:[/] Can't find the folder to save the portfolio to JSON. Three options:")
+            console.log("[red]  1. Disable export using --no-export")
+            console.log("[red]  2. Create a folder called logs/ in this folder (default folder)")
+            console.log("[red]  3. Set your own export directory using --export-dir=your/path/to/dir/")

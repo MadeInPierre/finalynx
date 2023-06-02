@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.19.0 (2023-06-02)
+
+### Feature
+
+* **export:** Export the portfolio tree to PNG ([`f35606a`](https://github.com/MadeInPierre/finalynx/commit/f35606aa7a38c9d849b02c160b608f46a89a361c))
+
 ## v1.18.4 (2023-06-02)
 
 ### Fix

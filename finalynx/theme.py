@@ -10,6 +10,8 @@ from typing import Type
 
 @dataclass
 class Theme:
+    """Default theme with sensible values for light terminal backgrounds."""
+
     # Main elements
     TEXT = "black"  # Line names, descriptions, default color
     ACCENT = "deep_sky_blue2"  # Elements that must be highlighted (e.g. performances, goal amounts, ...)
@@ -44,11 +46,20 @@ LightTheme = Theme
 
 @dataclass
 class DarkTheme(Theme):
+    """Default theme with sensible values for dark terminal backgrounds."""
+
     TEXT = "white"
     HINT = "dim white"
     ENVELOPE_CODE = "dim white"
     TARGET_NONE = "white"
     PANEL = "white"
+
+
+@dataclass
+class DashboardTheme(Theme):
+    """Used when showing the rich output in the dashboard or when exporting to PNG."""
+
+    HINT = "grey62"
 
 
 # List predefined themes, used by `Assistant` to search for class definitions

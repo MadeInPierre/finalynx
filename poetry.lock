@@ -580,6 +580,18 @@ files = [
 ]
 
 [[package]]
+name = "html2image"
+version = "2.0.3"
+description = "Package acting as a wrapper around the headless mode of existing web browsers to generate images from URLs and from HTML+CSS strings or files."
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+files = [
+    {file = "html2image-2.0.3-py3-none-any.whl", hash = "sha256:2dcc01a36eaa0887b35c87f847628e57e830fcbc03852079e9e8812af26c78bc"},
+    {file = "html2image-2.0.3.tar.gz", hash = "sha256:fd6c6b867c1b1ebcdab25b3847f1dd2271e11c1cddb8b5b11b09b25e09b1f1d0"},
+]
+
+[[package]]
 name = "httptools"
 version = "0.5.0"
 description = "A collection of framework independent HTTP protocol utils."
@@ -2986,4 +2998,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "666bfb24c83bab6a47d93a87c91aac8009ad0166c9b838823b75c616765d4bf2"
+content-hash = "43994cb184f5297f1c6e7e5ff52843673c5c51a74810b7bfdc8c40284d2075a8"

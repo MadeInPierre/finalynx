@@ -3,6 +3,8 @@ assistant_config.py
 
 # Saved log files are personal and therefore ignored
 logs/
+portfolio.png
+portfolio.html
 
 # Ignore the cached files used for fetching
 *_cache.json

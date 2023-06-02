@@ -34,7 +34,7 @@ Options:
   -t --theme=string    Choose a predefined color theme for the console output (light or dark)
 
   --no-export          Don't export to JSON
-  --export-dir=path    Path to a folder where the file will be saved
+  --export-dir=path    Path to a folder where the JSON file will be saved
 
   --hide-deltas        Don't show delta investment recommendations next to the tree
   --format=string      Customize the output format to your own style and information

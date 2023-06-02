@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.18.4 (2023-06-02)
+
+### Fix
+
+* **portfolio:** Folder attributes weren't propagating to all successors ([`4a0cbf3`](https://github.com/MadeInPierre/finalynx/commit/4a0cbf3a6dfbe3a862a0eba3a92c3c300a939f0b))
+
 ## v1.18.3 (2023-06-01)
 ### Fix
 

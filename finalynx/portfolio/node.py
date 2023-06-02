@@ -10,12 +10,15 @@ from rich.tree import Tree
 
 from ..config import DEFAULT_CURRENCY
 from ..config import get_active_theme as TH
+from .constants import AssetClass
+from .constants import AssetSubclass
 from .constants import LinePerf
 from .hierarchy import Hierarchy
 from .render import Render
 from .targets import Target
 
 if TYPE_CHECKING:
+    from .envelope import Envelope
     from .folder import Folder
 
 
@@ -25,12 +28,16 @@ class Node(Hierarchy, Render):
     def __init__(
         self,
         name: str,
+        asset_class: AssetClass = AssetClass.UNKNOWN,
+        asset_subclass: AssetSubclass = AssetSubclass.UNKNOWN,
         parent: Optional["Folder"] = None,
         target: Optional[Target] = None,
         newline: bool = False,
+        perf: Optional[LinePerf] = None,
+        currency: Optional[str] = None,
+        envelope: Optional["Envelope"] = None,
         aliases: Optional[Dict[str, str]] = None,
         agents: Optional[Dict[str, Callable[..., str]]] = None,
-        currency: Optional[str] = None,
     ):
         """This is an abstract class used by the `Line` and `Folder` subclasses.
 
@@ -49,6 +56,10 @@ class Node(Hierarchy, Render):
         self.target = target if target is not None else Target()
         self.target.set_parent(self)
         self.currency = currency if currency else DEFAULT_CURRENCY
+        self.asset_class = asset_class
+        self.asset_subclass = asset_subclass
+        self.perf = perf
+        self.envelope = envelope
 
         if target is not None:
             target.set_parent(self)
@@ -172,7 +183,7 @@ class Node(Hierarchy, Render):
 
     def _render_ideal(self) -> str:
         """:returns: A formatted rendering of the ideal amount to be invested based on the target."""
-        return f"[{TH().ACCENT}]{self.target.render_ideal()}"
+        return f"[{TH().ACCENT}]{self.target.render_ideal()}[/]"
 
     def _render_delta(self, align: bool = True, children: Optional[List["Node"]] = None) -> str:
         """Creates a formatted rendering of the delta investment needed to reach the target.

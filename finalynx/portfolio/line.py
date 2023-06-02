@@ -30,9 +30,9 @@ class Line(Node):
         key: Optional[str] = None,
         amount: float = 0,
         newline: bool = False,
-        envelope: Optional["Envelope"] = None,
         perf: Optional[LinePerf] = None,
         currency: Optional[str] = None,
+        envelope: Optional["Envelope"] = None,
     ):
         """
         This is a subclass of `Node` that adds an `amount` and `key` property.
@@ -52,13 +52,20 @@ class Line(Node):
             "account_code": self._render_account_code,
         }
 
-        super().__init__(name, parent, target, newline, agents=render_agents, currency=currency)
-        self.asset_class = asset_class
-        self.asset_subclass = asset_subclass
+        super().__init__(
+            name,
+            asset_class,
+            asset_subclass,
+            parent,
+            target,
+            newline,
+            perf if perf else LinePerf(0),
+            currency,
+            envelope,
+            agents=render_agents,
+        )
         self.key = key if key is not None else name
         self.amount = amount
-        self.envelope = envelope
-        self.perf = perf if perf else LinePerf(0)
 
         # Let the envelope know that this is a child line
         if self.envelope:
@@ -70,6 +77,7 @@ class Line(Node):
 
     def get_perf(self) -> LinePerf:
         """:returns: The expected yearly performance of this line (set by user)."""
+        assert self.perf is not None
         return self.perf
 
     def _render_account_code(self) -> str:

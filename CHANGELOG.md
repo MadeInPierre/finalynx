@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.19.1 (2023-06-03)
+
+### Fix
+
+* **target:** More intuitive displayed node ratio ([`20da9c8`](https://github.com/MadeInPierre/finalynx/commit/20da9c892d96c4cf7f165c306d1778e1c448c4c5))
+
 ## v1.19.0 (2023-06-02)
 
 ### Feature

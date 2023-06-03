@@ -379,4 +379,5 @@ class Assistant:
 
         # Restore theme and return the image path
         set_active_theme(previous_theme)
+        console.print(f"Saved portfolio PNG to '{full_path + file_name}'")
         return full_path + file_name

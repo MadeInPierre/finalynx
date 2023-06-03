@@ -51,7 +51,7 @@ class Target(Hierarchy):
     def prehint(self) -> str:
         """Virtual method for information to be printed between the amoutn and the name."""
         ratio = round(self.get_ratio())
-        return f"{ratio:>2}%" if (self.parent.parent and ratio >= 0) else ""
+        return f"{ratio:>2}%" if (self.parent.parent and 0 <= ratio <= 100) else ""
 
     def hint(self) -> str:
         """Virtual method for information to be printed at the end of the parent's description."""
@@ -64,14 +64,8 @@ class Target(Hierarchy):
 
     def _get_parent_amount(self) -> float:
         """:returns: The value to be checked against (parent's amount)."""
-        if not self.parent.parent:
+        if not self.parent or not self.parent.parent:
             return 0
-
-        # If the parent also has a ratio target, propagate the reference amount
-        if isinstance(self.parent.parent.target, TargetRatio):
-            return self.parent.parent.target.get_ideal()
-
-        # Otherwise, simply get the parent's value
         return self.parent.parent.get_amount()
 
     # TODO deprecated?
@@ -297,7 +291,7 @@ class TargetRatio(TargetRange):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"→  {self.target_ratio}%"
+        return f"→ {self.target_ratio}%"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -329,7 +323,7 @@ class TargetGlobalRatio(TargetRatio):
 
     def hint(self) -> str:
         """:returns: A formatted description of the target."""
-        return f"→  {self.target_ratio}% (global)"
+        return f"→ {self.target_ratio}% (global)"
 
     def to_dict(self) -> Dict[str, Any]:
         return {

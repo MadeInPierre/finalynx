@@ -10,8 +10,9 @@ Setup steps:
 
     3. Set the constant variables:
         > TOKEN is the Telegram bot token given when you created your bot with @FatherBot
-        > BOT_USERNAME is the bot username you chose for
-        > CONFIG_PATH
+        > BOT_USERNAME is the bot username you chose when you created your bot
+        > CONFIG_PATH is either a relative path from this file location to your config,
+          or an absolute path to your python config.
 
     4. Search for your own bot username on Telegram and start a conversation
 
@@ -55,7 +56,7 @@ async def command_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def command_portfolio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Generating your portfolio...")
     full_path = os.path.join(os.path.dirname(__file__), CONFIG_PATH)
-    os.system(f"python3 {full_path} -c")
+    os.system(f"python3 {full_path} --no-export -c")
     await update.message.reply_photo("portfolio.png")
 
 

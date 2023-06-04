@@ -186,8 +186,8 @@ class Assistant:
         self.portfolio.process()
 
         # Items to be rendered as a row
-        render = [
-            Text(" "),
+        main_tree = [
+            Text("   "),
             self.portfolio.tree(
                 output_format=self.output_format,
                 hide_root=self.hide_root,
@@ -197,10 +197,8 @@ class Assistant:
 
         # Display deltas only if not already printed in the main tree
         if not self.hide_deltas and "delta" not in self.output_format:
-            tree_delta = self.portfolio.tree_delta()
-            if not self.hide_root and tree_delta.children:  # align deltas if root is shown
-                tree_delta.children[0].label = "\n" + str(tree_delta.children[0].label)
-            render.append(tree_delta)
+            main_tree.append(self.portfolio.render_sidecar("     [ideal]", hide_root=self.hide_root))
+            main_tree.append(self.portfolio.render_sidecar("[delta]", hide_root=self.hide_root))
 
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
@@ -231,7 +229,7 @@ class Assistant:
         # Display the entire portfolio and associated recommendations
         console.print(
             "\n\n",
-            Columns(render, padding=(2, 2)),  # type: ignore
+            Columns(main_tree, padding=(0, 0)),  # type: ignore
             "\n\n",
             Columns(panels, padding=(2, 2)),
             "\n",

@@ -138,11 +138,6 @@ class Node(Hierarchy, Render):
         render = self.render(output_format, **render_args)
         return _tree.add(render) if _tree else Tree(render, hide_root=hide_root)
 
-    def tree_delta(self, _tree: Optional[Tree] = None) -> Tree:
-        """Generates a tree with delta amounts to be invested to reach the ideal portfolio allocation."""
-        render = self._render_delta(align=False) + ("\n" if self.newline else "")
-        return _tree.add(render) if _tree else Tree(render, hide_root=True)
-
     def process(self) -> None:
         """Some `Node` or `Target` objects might need to process some data once the investment
         values have been fetched from Finary. Here, this method is left as esmpty but can be
@@ -205,7 +200,6 @@ class Node(Hierarchy, Render):
         return (
             f"[{TH().DELTA_POS if delta > 0 else TH().DELTA_NEG}]"
             f"{'+' if delta > 0 else '-'}{abs(delta):>{max_length}} {self._render_currency()}[/] "
-            # f"[dim white]→  {self.get_ideal():>{max_length}} {self._render_currency()}[/] "
         )
 
     def _render_perf(self) -> str:

@@ -28,7 +28,7 @@ class Envelope:
         self,
         name: str,
         code: str,
-        date_created: date,
+        date_created: Optional[date] = None,
         date_unlock: Optional[date] = None,
         date_untax: Optional[date] = None,
         key: Optional[str] = None,
@@ -52,8 +52,8 @@ class Envelope:
         """
         self.name = name
         self.code = code
-        self.date_created = date_created
-        self.date_unlock = date_unlock if date_unlock else date_created
+        self.date_created = date_created if date_created else date(1900, 1, 1)
+        self.date_unlock = date_unlock if date_unlock else self.date_created
         self.date_untax = date_untax if date_untax else self.date_unlock
         self.key = key
 

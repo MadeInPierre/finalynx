@@ -187,6 +187,10 @@ class Assistant:
         # Mandatory step after fetching to process some targets and buckets
         self.portfolio.process()
 
+        # Validate processing results
+        for _ in [b for b in self.buckets if b.get_used_amount() != b.get_max_amount()]:
+            console.log("[yellow][bold]Warning:[/] Bucket's total amount was not fully used.")
+
         # Items to be rendered as a row
         main_frame = [
             Text("   "),

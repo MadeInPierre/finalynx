@@ -95,7 +95,8 @@ class SourceBase:
             # If no line matched, attach a fake line to root (unless ignored)
             elif not ignore_orphans:
                 self._log(
-                    f"[yellow][bold]Warning:[/] Line did not match with any portfolio node, attaching to root: {name}",
+                    f"[yellow][bold]Warning:[/] Line did not match with any node, attaching to root: {name}"
+                    " (ignore with --ignore-orphans)",
                     highlight=False,
                 )
                 portfolio.add_child(Line(name, amount=fline.amount, currency=fline.currency))

@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.20.1 (2023-06-04)
+
+### Fix
+
+* **recommendations:** Classify folders by parent name ([`d2e4d22`](https://github.com/MadeInPierre/finalynx/commit/d2e4d2218dcf8f22ed8eb4598a480c6610aa4bb4))
+
 ## v1.20.0 (2023-06-04)
 
 ### Feature

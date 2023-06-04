@@ -6,7 +6,7 @@ Do not manually change this information.
 Metadata information about Finalynx. This file is used by Fynalinx and updated by the CI/CD pipeline.
 """
 
-__version__ = "1.19.1"
+__version__ = "1.20.0"
 
 __author__ = "Pierre Laclau (MadeInPierre)"
 

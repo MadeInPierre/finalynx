@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v1.20.0 (2023-06-04)
+
+### Feature
+
+* **sidecar:** Add configurable sidecar title ([`59ded22`](https://github.com/MadeInPierre/finalynx/commit/59ded22b7efadcdd7a863cd76c3fe348cbe11385))
+* **sidecar:** Add support for multiple sidecars ([`81df340`](https://github.com/MadeInPierre/finalynx/commit/81df34028f80b34304b0a9e56298b05c5382a53f))
+* **sidecar:** Customizable sidecar formats ([`6c4759a`](https://github.com/MadeInPierre/finalynx/commit/6c4759a1c070814ae409a9e2921d3372853c55c4))
+
+### Fix
+
+* **envelope:** Make created date optional ([`18d5873`](https://github.com/MadeInPierre/finalynx/commit/18d5873d84f6f078f1fd558f0bf4b388aee4daf3))
+* Notify user if a bucket was not fully used ([`1709068`](https://github.com/MadeInPierre/finalynx/commit/17090688cb7331b939ca7b4d1d7f1894e00377f2))
+* **target:** Fix the previous fix... ([`0ad360a`](https://github.com/MadeInPierre/finalynx/commit/0ad360a33ba2fe7afde437995f9f603f498c930b))
+
 ## v1.19.1 (2023-06-03)
 
 ### Fix

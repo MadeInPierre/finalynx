@@ -315,31 +315,33 @@ class Assistant:
                 Target.RESULT_TOLERATED,
             ]
 
+        # Render each envelope of folder's parent with a custom style along with the
+        def _render_title(children: List[Any], name: str) -> str:
+            delta = round(sum([c.get_delta() for c in children]))
+            return (
+                f"[{TH().DELTA_POS if delta > 0 else TH().DELTA_NEG}]"
+                f"{'+' if delta > 0 else ''}{delta} {DEFAULT_CURRENCY}"
+                f" [{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]{name}[/]"
+            )
+
         # For each envelope, find all lines with non-zero deltas
         for envelope in self.envelopes:
-            lines = [line for line in envelope.lines if _check_node(line)]
-            env_delta = round(sum([line.get_delta() for line in lines]))
-
             # Only add the envelope if it has lines with non-zero deltas
-            if lines:
-                # Render the envelope name
-                render_delta = (
-                    f"[{TH().DELTA_POS if env_delta > 0 else TH().DELTA_NEG}]"
-                    f"{'+' if env_delta > 0 else ''}{env_delta} {DEFAULT_CURRENCY}"
-                )
-                render_envelope = f"{render_delta} [{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]{envelope.name}[/]"
-
-                # Render the lines with non-zero deltas
-                dict_recommendations[render_envelope] = [
+            if lines := [line for line in envelope.lines if _check_node(line)]:
+                dict_recommendations[_render_title(lines, envelope.name)] = [
                     f"[{TH().TEXT}]{line._render_delta(children=lines)}{line._render_name()}"  # type: ignore
                     for line in lines
                 ]
 
-        # Render folders with non-zero deltas
+        # Render folders with non-zero deltas, classify them by parent name
         if folders := [f for f in _get_folders(self.portfolio) if _check_node(f)]:
-            dict_recommendations[f"[{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]Folders"] = [
-                f"[{TH().TEXT}]{f._render_delta(children=folders)}{f._render_name()}" for f in folders  # type: ignore
-            ]
+            parent_names = {f.parent.name for f in folders if f.parent is not None}
+            for parent_name in parent_names:
+                children_folders = [f for f in folders if f.parent and f.parent.name == parent_name]
+                dict_recommendations[_render_title(children_folders, parent_name)] = [
+                    f"[{TH().TEXT}]{f._render_delta(children=children_folders)}{f._render_name()}"  # type: ignore
+                    for f in children_folders
+                ]
 
         # Render the tree with folders containing lines with non-zero deltas
         tree = Tree("Envelopes", hide_root=True, guide_style=TH().TREE_BRANCH)

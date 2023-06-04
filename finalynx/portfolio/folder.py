@@ -174,6 +174,7 @@ class Folder(Node):
         self,
         output_format: str = "[delta]",
         condition_format: str = "",
+        title: Optional[str] = None,
         hide_root: Optional[bool] = None,
         _tree: Optional[Tree] = None,
     ) -> Tree:
@@ -181,6 +182,7 @@ class Folder(Node):
         :param output_format: The output format to be rendered for each node.
         :param condition_format: Only show this node's `output_format` if the rendered
         `condition_format` is not empty (useful to match multiple sidecars together).
+        :param title: Name of this sidecar, displayed only if root is not hidden.
         :param hide_root: Need to specify if the main tree's root is hidden.
         """
 
@@ -189,9 +191,8 @@ class Folder(Node):
                 return node.render(output_format, align=False)  # type: ignore
             return ""
 
-        render = _render_node(self)
-
         # Follow the same print policy as the main tree
+        render = _render_node(self)
         if self.display != FolderDisplay.EXPANDED and self.newline:
             render += "\n"
 
@@ -211,7 +212,8 @@ class Folder(Node):
 
         # Align deltas if root is shown (necessary hack for bugfix #105)
         if hide_root is False and _tree.children:
-            _tree.children[0].label = "\n" + str(_tree.children[0].label)
+            title = title if title else output_format.replace("[", "").replace("]", "").upper()
+            _tree.children[0].label = f"[bold {TH().TEXT}]{title}[/]\n" + str(_tree.children[0].label)
 
         return _tree
 

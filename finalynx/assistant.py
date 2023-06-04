@@ -84,7 +84,7 @@ class Assistant:
         export_dir: str = "logs",
         active_sources: Optional[List[str]] = None,
         theme: Optional[finalynx.theme.Theme] = None,
-        sidecar_formats: Optional[List[str]] = None,
+        sidecars: Optional[List[str]] = None,
         ignore_argv: bool = False,
     ):
         self.portfolio = portfolio
@@ -103,7 +103,7 @@ class Assistant:
         self.enable_export = enable_export
         self.export_dir = export_dir
         self.active_sources = active_sources if active_sources else ["finary"]
-        self.sidecar_formats = sidecar_formats if sidecar_formats else []
+        self.sidecars = sidecars if sidecars else []
 
         # Set the global color theme if specified
         if theme:
@@ -143,19 +143,19 @@ class Assistant:
         if args["--format"]:
             self.output_format = args["--format"]
         if args["--sidecar"]:
-            self.sidecar_formats += [str(element) for element in args["--sidecar"]]
+            self.sidecars += list(args["--sidecar"])
         if args["delta"]:
             self.output_format = "[console_delta]"
-            self.sidecar_formats.remove("[delta]") if "[delta]" in self.sidecar_formats else None
+            self.sidecars.remove("[delta]") if "[delta]" in self.sidecars else None
         if args["perf"]:
             self.output_format = "[console_perf]"
-            self.sidecar_formats.remove("[perf]") if "[perf]" in self.sidecar_formats else None
+            self.sidecars.remove("[perf]") if "[perf]" in self.sidecars else None
         if args["ideal"]:
             self.output_format = "[console_ideal]"
-            self.sidecar_formats.remove("[ideal]") if "[ideal]" in self.sidecar_formats else None
+            self.sidecars.remove("[ideal]") if "[ideal]" in self.sidecars else None
         if args["target"]:
             self.output_format = "[console_target]"
-            self.sidecar_formats.remove("[target]") if "[target]" in self.sidecar_formats else None
+            self.sidecars.remove("[target]") if "[target]" in self.sidecars else None
         if args["text"]:
             self.output_format = "[text]"
         if args["--no-export"]:
@@ -188,7 +188,7 @@ class Assistant:
         self.portfolio.process()
 
         # Items to be rendered as a row
-        main_tree = [
+        main_frame = [
             Text("   "),
             self.portfolio.tree(
                 output_format=self.output_format,
@@ -198,13 +198,15 @@ class Assistant:
         ]
 
         # Display deltas only if not already printed in the main tree
-        main_tree.append(Text("     "))
-        for sidecar_format in self.sidecar_formats:
-            output, condition = (
-                tuple(sidecar_format.split(",")) if "," in sidecar_format else tuple((sidecar_format, ""))
-            )
-            sidecar = self.portfolio.render_sidecar(output, condition, hide_root=self.hide_root)
-            main_tree.append(sidecar)
+        main_frame.append(Text("     "))
+        for sidecar in self.sidecars:
+            if sidecar.count(",") > 2:
+                console.log(
+                    "[red]Error: invalid sidecar format, skipping. Use at most 2 ',' to define format, condition and/or title.",
+                    highlight=False,
+                )
+                continue
+            main_frame.append(self.portfolio.render_sidecar(*sidecar.split(","), hide_root=self.hide_root))  # type: ignore
 
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
@@ -235,7 +237,7 @@ class Assistant:
         # Display the entire portfolio and associated recommendations
         console.print(
             "\n\n",
-            Columns(main_tree, padding=(0, 0)),  # type: ignore
+            Columns(main_frame, padding=(0, 0)),  # type: ignore
             "\n\n",
             Columns(panels, padding=(2, 2)),
             "\n",

@@ -1,6 +1,6 @@
 # 🔧 Installation
 
-If you don't plan on touching the code, simply run (with python >=3.8 and pip installed):
+If you don't plan on touching the code, simply run (with python >=3.10 and pip installed):
 ```sh
 pip install finalynx  # run again with --upgrade to update
 ```

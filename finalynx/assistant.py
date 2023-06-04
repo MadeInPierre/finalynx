@@ -184,40 +184,22 @@ class Assistant:
 
         # Render the console elements
         main_frame = self.render_mainframe()
-
-        # Final set of results to be displayed
-        panels: List[ConsoleRenderable] = [
-            Text(" "),
-            Panel(
-                self.render_recommendations(),
-                title="Recommendations",
-                padding=(1, 2),
-                expand=False,
-                border_style=TH().PANEL,
-            ),
-            Panel(
-                self.render_performance_report(),
-                title="Performance",
-                padding=(1, 2),
-                expand=False,
-                border_style=TH().PANEL,
-            ),
-        ]
-
-        # Show the data fetched from Finary if specified
-        if self.show_data:
-            panels.append(Panel(fetched_tree, title="Fetched data"))
+        panels = self.render_panels()
 
         # Save the current portfolio to a file. Useful for statistics later
         if self.enable_export:
             self.export_json(self.export_dir)
 
+        # Show the data fetched from Finary if specified
+        if self.show_data:
+            console.print(Panel(fetched_tree, title="Fetched data"))
+
         # Display the entire portfolio and associated recommendations
         console.print(
             "\n\n",
-            Columns(main_frame, padding=(0, 0)),
+            main_frame,
             "\n\n",
-            Columns(panels, padding=(2, 2)),
+            panels,
             "\n",
         )
 
@@ -245,7 +227,7 @@ class Assistant:
 
         return fetched_tree
 
-    def render_mainframe(self) -> List[Any]:
+    def render_mainframe(self) -> Columns:
         """Renders the main tree and sidecars together. Call either run() or initialize() first."""
 
         # Items to be rendered as a row
@@ -269,7 +251,31 @@ class Assistant:
                 continue
             main_frame.append(self.portfolio.render_sidecar(*sidecar.split(","), hide_root=self.hide_root))  # type: ignore
 
-        return main_frame
+        return Columns(main_frame, padding=(0, 0))  # type: ignore
+
+    def render_panels(self) -> Columns:
+        """Renders the default set of panels used in the default console view when calling run()."""
+
+        # Final set of results to be displayed
+        panels: List[ConsoleRenderable] = [
+            Text(" "),
+            Panel(
+                self.render_recommendations(),
+                title="Recommendations",
+                padding=(1, 2),
+                expand=False,
+                border_style=TH().PANEL,
+            ),
+            Panel(
+                self.render_performance_report(),
+                title="Performance",
+                padding=(1, 2),
+                expand=False,
+                border_style=TH().PANEL,
+            ),
+        ]
+
+        return Columns(panels, padding=(2, 2))
 
     def render_performance_report(self) -> Tree:
         """Print the current and ideal global expected performance. Call either run() or initialize() first."""
@@ -407,7 +413,8 @@ class Assistant:
 
         # Export the entire portfolio tree to HTML and set the zoom
         dashboard_console = Console(record=True, file=open(os.devnull, "w"))
-        dashboard_console.print(self.portfolio.tree(output_format="[dashboard_console]", hide_root=False))
+        dashboard_console.print(self.render_mainframe())
+        dashboard_console.print(self.render_panels())
         output_html = dashboard_console.export_html().replace("body {", f"body {{\n    zoom: {zoom};")
 
         # Convert the HTML to PNG

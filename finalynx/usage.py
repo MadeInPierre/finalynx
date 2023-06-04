@@ -21,7 +21,7 @@ def main_filter(message: str) -> str:
 __doc__ = f"""
 Finalynx command line v{__version__}
 Usage:
-  finalynx {main_filter(main_usage)}[ideal | targets | deltas | perf | text | --format=string] [--no-export | --export-dir=path] [dashboard] [options]
+  finalynx {main_filter(main_usage)}[ideal | target | delta | perf | text | --format=string] [--no-export | --export-dir=path] [--sidecar=format]... [dashboard] [options]
   finalynx (-h | --help)
   finalynx (-v | --version)
 
@@ -36,12 +36,13 @@ Options:
   --no-export          Don't export to JSON
   --export-dir=path    Path to a folder where the JSON file will be saved
 
-  --hide-deltas        Don't show delta investment recommendations next to the tree
   --format=string      Customize the output format to your own style and information
   ideal                Shortcut to --format="[console_ideal]" (show ideal amounts to follow all targets)
-  targets              Shortcut to --format="[console_targets]" (show target values instead of amounts)
-  deltas               Shortcut to --format="[console_deltas]" (show deltas instead of amounts)
+  target               Shortcut to --format="[console_target]" (show target values instead of amounts)
+  delta                Shortcut to --format="[console_delta]" (show deltas instead of amounts)
   perf                 Shortcut to --format="[console_perf]" (show expected performances)
+
+  --sidecar=format     Output format for each sidecar (can be repeated), defaults to "[delta]"
 
   -s --sources=string  Comma-separated list of sources to activate, defaults to "finary" only
 

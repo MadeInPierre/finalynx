@@ -171,13 +171,25 @@ class Folder(Node):
         return node
 
     def render_sidecar(
-        self, output_format: str = "[delta]", hide_root: Optional[bool] = None, _tree: Optional[Tree] = None
+        self,
+        output_format: str = "[delta]",
+        condition_format: str = "",
+        hide_root: Optional[bool] = None,
+        _tree: Optional[Tree] = None,
     ) -> Tree:
         """Generates a vertical tree with the specified output format for each node.
         :param output_format: The output format to be rendered for each node.
+        :param condition_format: Only show this node's `output_format` if the rendered
+        `condition_format` is not empty (useful to match multiple sidecars together).
         :param hide_root: Need to specify if the main tree's root is hidden.
         """
-        render = self.render(output_format, align=False) if self.render("[delta]") else ""  # type: ignore
+
+        def _render_node(node: Node) -> str:
+            if not condition_format or node.render(condition_format).strip():
+                return node.render(output_format, align=False)  # type: ignore
+            return ""
+
+        render = _render_node(self)
 
         # Follow the same print policy as the main tree
         if self.display != FolderDisplay.EXPANDED and self.newline:
@@ -193,10 +205,9 @@ class Folder(Node):
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
                 if isinstance(child, Folder):
-                    child.render_sidecar(output_format, _tree=_tree)
+                    child.render_sidecar(output_format, condition_format, _tree=_tree)
                 else:
-                    render = child.render(output_format, align=False) if self.render("[delta]") else ""  # type: ignore
-                    _tree.add(render + ("\n" if child.newline else ""))
+                    _tree.add(_render_node(child) + ("\n" if child.newline else ""))
 
         # Align deltas if root is shown (necessary hack for bugfix #105)
         if hide_root is False and _tree.children:

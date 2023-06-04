@@ -91,7 +91,7 @@ class Assistant:
         self.buckets = buckets if buckets else []
         self.envelopes = envelopes if envelopes else []
 
-        # Options that can either be set in the constructor or from the command line
+        # Options that can either be set in the constructor or from the command line options, type --help
         self.ignore_orphans = ignore_orphans
         self.clear_cache = clear_cache
         self.force_signin = force_signin
@@ -117,7 +117,8 @@ class Assistant:
         self._fetch = Fetch(self.portfolio, self.clear_cache, self.ignore_orphans)
 
     def add_source(self, source: SourceBase) -> None:
-        """Register a custom source defined by you."""
+        """Register a source, either defined in your own config or from the available Finalynx sources
+        using `from finalynx.fetch.source_any import SourceAny`."""
         self._fetch.add_source(source)
 
     def _parse_args(self) -> None:
@@ -171,11 +172,62 @@ class Assistant:
             set_active_theme(finalynx.theme.AVAILABLE_THEMES[theme_name]())
 
     def run(self) -> None:
-        """Main function to run once your configuration is fully defined.
+        """Main method to run (once your configuration is fully defined). This method orchestrates the call
+        to the other available methods in this class. This methods displays a nice default output.
 
-        This function will fetch the data from your Finary account, process the targets in the portfolio tree,
+        This method will fetch the data from your Finary account, process the targets in the portfolio tree,
         run your simulation, generate recommendations, and format the output nicely to the console.
         """
+
+        # Fetch from the online sources and process the portfolio
+        fetched_tree = self.initialize()
+
+        # Render the console elements
+        main_frame = self.render_mainframe()
+
+        # Final set of results to be displayed
+        panels: List[ConsoleRenderable] = [
+            Text(" "),
+            Panel(
+                self.render_recommendations(),
+                title="Recommendations",
+                padding=(1, 2),
+                expand=False,
+                border_style=TH().PANEL,
+            ),
+            Panel(
+                self.render_performance_report(),
+                title="Performance",
+                padding=(1, 2),
+                expand=False,
+                border_style=TH().PANEL,
+            ),
+        ]
+
+        # Show the data fetched from Finary if specified
+        if self.show_data:
+            panels.append(Panel(fetched_tree, title="Fetched data"))
+
+        # Save the current portfolio to a file. Useful for statistics later
+        if self.enable_export:
+            self.export_json(self.export_dir)
+
+        # Display the entire portfolio and associated recommendations
+        console.print(
+            "\n\n",
+            Columns(main_frame, padding=(0, 0)),
+            "\n\n",
+            Columns(panels, padding=(2, 2)),
+            "\n",
+        )
+
+        # Host a local webserver with the running dashboard
+        if self.launch_dashboard:
+            self.dashboard()
+
+    def initialize(self) -> Tree:
+        """Fetch investments online from all sources and process the portfolio internally.
+        Call this method first if you're not using run()."""
 
         # Add default sources based on user input
         if "finary" in self.active_sources:
@@ -190,6 +242,11 @@ class Assistant:
         # Validate processing results
         for _ in [b for b in self.buckets if b.get_used_amount() != b.get_max_amount()]:
             console.log("[yellow][bold]Warning:[/] Bucket's total amount was not fully used.")
+
+        return fetched_tree
+
+    def render_mainframe(self) -> List[Any]:
+        """Renders the main tree and sidecars together. Call either run() or initialize() first."""
 
         # Items to be rendered as a row
         main_frame = [
@@ -212,48 +269,10 @@ class Assistant:
                 continue
             main_frame.append(self.portfolio.render_sidecar(*sidecar.split(","), hide_root=self.hide_root))  # type: ignore
 
-        # Final set of results to be displayed
-        panels: List[ConsoleRenderable] = [
-            Panel(
-                self._render_recommendations(),
-                title="Recommendations",
-                padding=(1, 2),
-                expand=False,
-                border_style=TH().PANEL,
-            ),
-            Panel(
-                self._render_perf(),
-                title="Performance",
-                padding=(1, 2),
-                expand=False,
-                border_style=TH().PANEL,
-            ),
-        ]
+        return main_frame
 
-        # Show the data fetched from Finary if specified
-        if self.show_data:
-            panels.append(Panel(fetched_tree, title="Fetched data"))
-
-        # Save the current portfolio to a file. Useful for statistics later
-        if self.enable_export:
-            self.export_json(self.export_dir)
-
-        # Display the entire portfolio and associated recommendations
-        console.print(
-            "\n\n",
-            Columns(main_frame, padding=(0, 0)),  # type: ignore
-            "\n\n",
-            Columns(panels, padding=(2, 2)),
-            "\n",
-        )
-
-        # Host a local webserver with the running dashboard
-        if self.launch_dashboard:
-            console.log("Launching dashboard.")
-            Dashboard(hide_amounts=self.hide_amounts).run(portfolio=self.portfolio)
-
-    def _render_perf(self) -> Tree:
-        """Print the current and ideal global expected performance."""
+    def render_performance_report(self) -> Tree:
+        """Print the current and ideal global expected performance. Call either run() or initialize() first."""
         perf = self.portfolio.get_perf(ideal=False).expected
         perf_ideal = self.portfolio.get_perf(ideal=True).expected
 
@@ -262,8 +281,10 @@ class Assistant:
         tree.add(f"[{TH().TEXT}]Planned:  [bold][{TH().ACCENT}]{perf_ideal:.1f} %[/] / year")
         return tree
 
-    def _render_recommendations(self) -> Tree:
-        """Sort lines with non-zero deltas by envelopes and display them as a summary of transfers to make."""
+    def render_recommendations(self) -> Tree:
+        """Sort lines with non-zero deltas by envelopes and display them as a summary of transfers to make.
+        Call either run() or initialize() first.
+        """
         dict_recommendations: Dict[str, Any] = {}
 
         # Find all folders with non-zero deltas and non-zero amounts (to avoid empty shared folders)
@@ -331,6 +352,11 @@ class Assistant:
         if not tree.children:
             tree.add("You're on track! 🎉")
         return tree
+
+    def dashboard(self) -> None:
+        """Launch an interactive web dashboard! Call either run() or initialize() first."""
+        console.log("Launching dashboard.")
+        Dashboard(hide_amounts=self.hide_amounts).run(portfolio=self.portfolio)
 
     def export_json(self, dirpath: str) -> None:
         """Save everything in a JSON file. Can be used for data analysis in future

@@ -193,6 +193,11 @@ class Folder(Node):
 
         # Follow the same print policy as the main tree
         render = _render_node(self)
+
+        # TODO nicer style maybe?
+        # if self.display == FolderDisplay.EXPANDED:
+        #     render = f"[{TH().FOLDER_STYLE}]{render}[/]"
+
         if self.display != FolderDisplay.EXPANDED and self.newline:
             render += "\n"
 

@@ -57,15 +57,27 @@ class Target(Hierarchy):
         """Virtual method for information to be printed at the end of the parent's description."""
         return "- Invest!" if self.check() == Target.RESULT_START else ""
 
-    def get_ratio(self) -> float:
-        """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
-        total = self._get_parent_amount()
+    def get_ratio(self, absolute: bool = False) -> float:
+        """Returns how much this amount represents agains the reference in percentage (0-100%).
+        :param absolute: If false, gives the relative percentage of this line to the parent folder.
+        If true, gives the ratio between the current and ideal amount.
+        """
+        if absolute:
+            total = self._get_parent_amount()
+        else:
+            total = self.parent.parent.get_amount() if self.parent.parent else 0
         return 100 * self.get_amount() / total if total > 0 else 0
 
     def _get_parent_amount(self) -> float:
         """:returns: The value to be checked against (parent's amount)."""
         if not self.parent or not self.parent.parent:
             return 0
+
+        # If the parent also has a ratio target, propagate the reference amount
+        if isinstance(self.parent.parent.target, TargetRatio):
+            return self.parent.parent.target.get_ideal()
+
+        # Otherwise, simply get the parent's value
         return self.parent.parent.get_amount()
 
     # TODO deprecated?
@@ -282,7 +294,7 @@ class TargetRatio(TargetRange):
 
     def _get_variable(self) -> float:
         """:returns: The value to be checked."""
-        return self.get_ratio()
+        return self.get_ratio(absolute=True)
 
     # TODO how to add an option to show the ideal amount next to the current amount?
     # def hint(self) -> str:

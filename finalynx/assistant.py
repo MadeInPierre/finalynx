@@ -23,6 +23,7 @@ from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.folder import FolderDisplay
 from finalynx.portfolio.folder import SharedFolder
+from finalynx.portfolio.folder import Sidecar
 from finalynx.portfolio.node import Node
 from finalynx.portfolio.targets import Target
 from html2image import Html2Image
@@ -84,7 +85,7 @@ class Assistant:
         export_dir: str = "logs",
         active_sources: Optional[List[str]] = None,
         theme: Optional[finalynx.theme.Theme] = None,
-        sidecars: Optional[List[str]] = None,
+        sidecars: Optional[List[Sidecar]] = None,
         ignore_argv: bool = False,
     ):
         self.portfolio = portfolio
@@ -144,19 +145,27 @@ class Assistant:
         if args["--format"]:
             self.output_format = args["--format"]
         if args["--sidecar"]:
-            self.sidecars += list(args["--sidecar"])
+            for sidecar in list(args["--sidecar"]):
+                if sidecar.count(",") > 3:
+                    console.log(
+                        "[red]Error: invalid sidecar format, skipping. Use at most 3 ',' to"
+                        " define format, condition, title and/or folder rendering.",
+                        highlight=False,
+                    )
+                    continue
+                self.sidecars.append(Sidecar(*sidecar.split(",")))
         if args["delta"]:
             self.output_format = "[console_delta]"
-            self.sidecars.remove("[delta]") if "[delta]" in self.sidecars else None
+            self.sidecars = [s for s in self.sidecars if s.output_format != "[delta]"]
         if args["perf"]:
             self.output_format = "[console_perf]"
-            self.sidecars.remove("[perf]") if "[perf]" in self.sidecars else None
+            self.sidecars = [s for s in self.sidecars if s.output_format != "[perf]"]
         if args["ideal"]:
             self.output_format = "[console_ideal]"
-            self.sidecars.remove("[ideal]") if "[ideal]" in self.sidecars else None
+            self.sidecars = [s for s in self.sidecars if s.output_format != "[ideal]"]
         if args["target"]:
             self.output_format = "[console_target]"
-            self.sidecars.remove("[target]") if "[target]" in self.sidecars else None
+            self.sidecars = [s for s in self.sidecars if s.output_format != "[target]"]
         if args["text"]:
             self.output_format = "[text]"
         if args["--no-export"]:
@@ -241,16 +250,7 @@ class Assistant:
         ]
 
         # Display deltas only if not already printed in the main tree
-        main_frame.append(Text("     "))
-        for sidecar in self.sidecars:
-            if sidecar.count(",") > 3:
-                console.log(
-                    "[red]Error: invalid sidecar format, skipping. Use at most 3 ',' to"
-                    " define format, condition, title and/or folder rendering.",
-                    highlight=False,
-                )
-                continue
-            main_frame.append(self.portfolio.render_sidecar(*sidecar.split(","), hide_root=self.hide_root))  # type: ignore
+        main_frame += [Text("     ")] + [self.portfolio.render_sidecar(s, self.hide_root) for s in self.sidecars]
 
         return Columns(main_frame, padding=(0, 0))  # type: ignore
 

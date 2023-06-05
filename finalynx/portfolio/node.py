@@ -189,7 +189,7 @@ class Node(Hierarchy, Render):
         delta, check, max_length = round(self.get_delta()), self.target.check(), 0
 
         # Skip nodes where everything is fine, or if the node is empty
-        if delta == 0 or check in [Target.RESULT_NONE, Target.RESULT_OK]:
+        if delta == 0 or check in [Target.RESULT_NONE, Target.RESULT_TOLERATED, Target.RESULT_OK]:
             return ""
 
         # Align all amounts vertically if needed

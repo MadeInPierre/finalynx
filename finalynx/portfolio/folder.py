@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from typing import Union
 
 import numpy as np
+from attr import dataclass
 from rich.tree import Tree
 
 if TYPE_CHECKING:
@@ -37,6 +38,14 @@ class FolderDisplay(Enum):
     EXPANDED = 0
     COLLAPSED = 1
     LINE = 2
+
+
+@dataclass
+class Sidecar:
+    output_format: str = "[delta]"
+    condition_format: str = ""
+    title: Optional[str] = None
+    render_folders: Union[bool, str] = True
 
 
 class Folder(Node):
@@ -171,15 +180,7 @@ class Folder(Node):
                 child.tree(output_format=output_format, _tree=node, **render_args)
         return node
 
-    def render_sidecar(
-        self,
-        output_format: str = "[delta]",
-        condition_format: str = "",
-        title: Optional[str] = None,
-        render_folders: Union[bool, str] = True,
-        hide_root: Optional[bool] = None,
-        _tree: Optional[Tree] = None,
-    ) -> Tree:
+    def render_sidecar(self, sidecar: Sidecar, hide_root: Optional[bool] = None, _tree: Optional[Tree] = None) -> Tree:
         """Generates a vertical tree with the specified output format for each node.
         :param output_format: The output format to be rendered for each node.
         :param condition_format: Only show this node's `output_format` if the rendered
@@ -189,22 +190,20 @@ class Folder(Node):
         """
 
         def _render_node(node: Node) -> str:
-            if not condition_format or node.render(condition_format).strip():
-                return node.render(output_format, align=False)  # type: ignore
+            if not sidecar.condition_format or node.render(sidecar.condition_format).strip():
+                return node.render(sidecar.output_format, align=False)  # type: ignore
             return ""
 
         # Follow the same print policy as the main tree
-        render = _render_node(self)
-        if (
-            render_folders in [False, "False", "false"]
-            and not isinstance(self, SharedFolder)
-            and self.display == FolderDisplay.EXPANDED
-        ):
-            render = ""
-
-        # TODO nicer style maybe?
-        # if self.display == FolderDisplay.EXPANDED:
-        #     render = f"[{TH().FOLDER_STYLE}]{render}[/]"
+        render = (
+            _render_node(self)
+            if not (
+                sidecar.render_folders in [False, "False", "false"]
+                and not isinstance(self, SharedFolder)
+                and self.display == FolderDisplay.EXPANDED
+            )
+            else ""
+        )
 
         if self.display != FolderDisplay.EXPANDED and self.newline:
             render += "\n"
@@ -219,13 +218,13 @@ class Folder(Node):
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
                 if isinstance(child, Folder):
-                    child.render_sidecar(output_format, condition_format, title, render_folders, _tree=_tree)
+                    child.render_sidecar(sidecar, _tree=_tree)
                 else:
                     _tree.add(_render_node(child) + ("\n" if child.newline else ""))
 
         # Align deltas if root is shown (necessary hack for bugfix #105)
         if hide_root is False and _tree.children:
-            title = title if title else output_format.replace("[", "").replace("]", "").upper()
+            title = sidecar.title if sidecar.title else sidecar.output_format.replace("[", "").replace("]", "").upper()
             _tree.children[0].label = f"[bold {TH().TEXT}]{title}[/]\n" + str(_tree.children[0].label)
 
         return _tree

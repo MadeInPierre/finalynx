@@ -15,7 +15,7 @@ from .__meta__ import __version__  # noqa: F401
 
 # Portfolio
 from .portfolio import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio
-from .portfolio import Line, LinePerf, Folder, Bucket, SharedFolder, Portfolio, FolderDisplay
+from .portfolio import Line, LinePerf, Sidecar, Folder, Bucket, SharedFolder, Portfolio, FolderDisplay
 from .portfolio import AssetClass, AssetSubclass, EnvelopeClass
 from .portfolio import Envelope, EnvelopeState, PEA, PEE, AV, PER
 

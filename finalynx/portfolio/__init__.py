@@ -33,6 +33,7 @@ from .folder import Folder
 from .folder import FolderDisplay
 from .folder import Portfolio
 from .folder import SharedFolder
+from .folder import Sidecar
 from .hierarchy import Hierarchy
 from .line import Line
 from .line import LinePerf

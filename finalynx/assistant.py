@@ -243,9 +243,10 @@ class Assistant:
         # Display deltas only if not already printed in the main tree
         main_frame.append(Text("     "))
         for sidecar in self.sidecars:
-            if sidecar.count(",") > 2:
+            if sidecar.count(",") > 3:
                 console.log(
-                    "[red]Error: invalid sidecar format, skipping. Use at most 2 ',' to define format, condition and/or title.",
+                    "[red]Error: invalid sidecar format, skipping. Use at most 3 ',' to"
+                    " define format, condition, title and/or folder rendering.",
                     highlight=False,
                 )
                 continue

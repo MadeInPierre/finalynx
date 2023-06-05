@@ -4,6 +4,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
+from typing import Union
 
 import numpy as np
 from rich.tree import Tree
@@ -175,6 +176,7 @@ class Folder(Node):
         output_format: str = "[delta]",
         condition_format: str = "",
         title: Optional[str] = None,
+        render_folders: Union[bool, str] = True,
         hide_root: Optional[bool] = None,
         _tree: Optional[Tree] = None,
     ) -> Tree:
@@ -193,6 +195,12 @@ class Folder(Node):
 
         # Follow the same print policy as the main tree
         render = _render_node(self)
+        if (
+            render_folders in [False, "False", "false"]
+            and not isinstance(self, SharedFolder)
+            and self.display == FolderDisplay.EXPANDED
+        ):
+            render = ""
 
         # TODO nicer style maybe?
         # if self.display == FolderDisplay.EXPANDED:
@@ -211,7 +219,7 @@ class Folder(Node):
         if self.display == FolderDisplay.EXPANDED:
             for child in self.children:
                 if isinstance(child, Folder):
-                    child.render_sidecar(output_format, condition_format, _tree=_tree)
+                    child.render_sidecar(output_format, condition_format, title, render_folders, _tree=_tree)
                 else:
                     _tree.add(_render_node(child) + ("\n" if child.newline else ""))
 
@@ -314,16 +322,6 @@ class Folder(Node):
             return super()._render_ideal()
         ideal = float(np.sum([c.get_ideal() for c in self.children]))
         return f"[{TH().ACCENT}]{round(ideal)} {self._render_currency()}[/] " if ideal else ""
-
-    def _render_delta(self, align: bool = True, children: Optional[List["Node"]] = None) -> str:
-        """Creates a formatted rendering of the delta investment needed to reach the target.
-        :param align: Use the `children` parameter as a list of nodes to align all amounts vertically.
-        :param children: List of `Node` objects used for vertical alignemnt, defaults to this parent's children.
-        :returns: The rendered string.
-        """
-        if self.get_amount() == 0:
-            return ""
-        return super()._render_delta(align, children)
 
     def to_dict(self) -> Dict[str, Any]:
         return {

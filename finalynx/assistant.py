@@ -291,7 +291,7 @@ class Assistant:
         """Sort lines with non-zero deltas by envelopes and display them as a summary of transfers to make.
         Call either run() or initialize() first.
         """
-        dict_recommendations: Dict[str, Any] = {}
+        dict_envs: Dict[str, Any] = {}
 
         # Find all folders with non-zero deltas and non-zero amounts (to avoid empty shared folders)
         def _get_folders(node: Folder) -> List[Folder]:
@@ -316,45 +316,36 @@ class Assistant:
             ]
 
         # Render each envelope of folder's parent with a custom style along with the
-        def _render_title(children: List[Any], name: str) -> str:
-            delta = round(sum([c.get_delta() for c in children]))
-            return (
-                f"[{TH().DELTA_POS if delta > 0 else TH().DELTA_NEG}]"
-                f"{'+' if delta > 0 else ''}{delta} {DEFAULT_CURRENCY}"
-                f" [{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]{name}[/]"
+        def _render_title(children: List[Any], name: str) -> Tuple[int, str]:
+            total_delta = round(sum([c.get_delta() for c in children]))
+            return total_delta, (
+                f"[{TH().DELTA_POS if total_delta > 0 else TH().DELTA_NEG}]"
+                f"{'+' if total_delta > 0 else ''}{total_delta} {DEFAULT_CURRENCY} "
+                f"[{TH().FOLDER_COLOR} {TH().FOLDER_STYLE}]{name}[/]"
             )
 
         # For each envelope, find all lines with non-zero deltas
         for envelope in self.envelopes:
-            # Only add the envelope if it has lines with non-zero deltas
             if lines := [line for line in envelope.lines if _check_node(line)]:
-                dict_recommendations[_render_title(lines, envelope.name)] = [
-                    f"[{TH().TEXT}]{line._render_delta(children=lines)}{line._render_name()}"  # type: ignore
-                    for line in lines
-                ]
+                delta, title = _render_title(lines, envelope.name)
+                dict_envs[title] = (delta, lines)
 
         # Render folders with non-zero deltas, classify them by parent name
         if folders := [f for f in _get_folders(self.portfolio) if _check_node(f)]:
-            parent_names = {f.parent.name for f in folders if f.parent is not None}
-            for parent_name in parent_names:
-                children_folders = [f for f in folders if f.parent and f.parent.name == parent_name]
-                dict_recommendations[_render_title(children_folders, parent_name)] = [
-                    f"[{TH().TEXT}]{f._render_delta(children=children_folders)}{f._render_name()}"  # type: ignore
-                    for f in children_folders
-                ]
+            for parent_name in {f.parent.name for f in folders if f.parent}:
+                items = [f for f in folders if f.parent and f.parent.name == parent_name]
+                delta, title = _render_title(items, parent_name)
+                dict_envs[title] = (delta, items)
 
-        # Render the tree with folders containing lines with non-zero deltas
+        # Render the tree with folders containing lines with non-zero deltas (sorted by delta)
         tree = Tree("Envelopes", hide_root=True, guide_style=TH().TREE_BRANCH)
-        for i_env, envelope_name in enumerate(dict_recommendations):
+        dict_sorted = {k: v[1] for k, v in sorted(dict_envs.items(), key=lambda item: item[1][0])}  # type: ignore
+        for i_env, envelope_name in enumerate(dict_sorted):
             node = tree.add(envelope_name)
-            for i_line, r in enumerate(dict_recommendations[envelope_name]):
-                newline = (
-                    "\n"
-                    if i_line == len(dict_recommendations[envelope_name]) - 1
-                    and i_env < len(dict_recommendations.keys()) - 1
-                    else ""
-                )
-                node.add(r + newline)
+            for i_line, line in enumerate(dict_sorted[envelope_name]):
+                render = f"[{TH().TEXT}]{line._render_delta(children=dict_sorted[envelope_name])}{line._render_name()}"  # type: ignore
+                newline = bool(i_line == len(dict_sorted[envelope_name]) - 1 and i_env < len(dict_envs.keys()) - 1)
+                node.add(render + ("\n" if newline else ""))
 
         # If no envelopes are displayed, show a nice message instead
         if not tree.children:

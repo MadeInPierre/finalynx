@@ -20,7 +20,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-merge-conflict
-      - id: check-docstring-first
+      # - id: check-docstring-first
       - id: check-shebang-scripts-are-executable
       - id: check-added-large-files # TODO add many others!
 

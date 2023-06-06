@@ -28,6 +28,13 @@ Usage:
 Options:
   -h --help            Show this help message and exit
   -v --version         Display the current version and exit
+
+  -i --ignore-orphans  Ignore fetched lines that you didn't reference in your portfolio
+  -c --clear-cache     Delete any data from Finary that was cached locally
+  -f --force-signin    Clear cache, cookies and credentials files to sign in again
+  -a --hide-amounts    Display your portfolio with dots instead of the real values (easier to share)
+  -d --show-data       Show what has been fetched online (e.g. from your Finary account)
+  -r --hide-root       Display your portfolio without the root (cosmetic preference)
 {main_filter(main_options)}
   dashboard            Launch an interactive web dashboard!
 
@@ -36,21 +43,13 @@ Options:
   --no-export          Don't export to JSON
   --export-dir=path    Path to a folder where the JSON file will be saved
 
-  --format=string      Customize the output format to your own style and information
+  --sidecar=string     Output format for each sidecar (can be repeated), defaults to "[delta]"
+  --format=string      Customize the maint tree's output format to your own style and information
   ideal                Shortcut to --format="[console_ideal]" (show ideal amounts to follow all targets)
   target               Shortcut to --format="[console_target]" (show target values instead of amounts)
   delta                Shortcut to --format="[console_delta]" (show deltas instead of amounts)
   perf                 Shortcut to --format="[console_perf]" (show expected performances)
 
-  --sidecar=format     Output format for each sidecar (can be repeated), defaults to "[delta]"
-
   -s --sources=string  Comma-separated list of sources to activate, defaults to "finary" only
-
-  -i --ignore-orphans  Ignore fetched lines that you didn't reference in your portfolio
-  -c --clear-cache     Delete any data from Finary that was cached locally
-  -f --force-signin    Clear cache, cookies and credentials files to sign in again
-  -a --hide-amounts    Display your portfolio with dots instead of the real values (easier to share)
-  -d --show-data       Show what has been fetched online (e.g. from your Finary account)
-  -r --hide-root       Display your portfolio without the root (cosmetic preference)
 
 """

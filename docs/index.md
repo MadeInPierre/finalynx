@@ -5,10 +5,20 @@
 :hidden:
 :maxdepth: 3
 
-tutorials/installation
-tutorials/getting_started
-tutorials/customization
+quickstart/installation
+quickstart/getting_started
+tutorials/tutorials
+quickstart/customization
 ```
+
+<!-- ```{toctree}
+:caption: '📙 Tutorials'
+:hidden:
+:maxdepth: 3
+
+tutorials/1_config_structure
+tutorials/2_define_portfolio
+``` -->
 
 ```{toctree}
 :caption: '📚 API Reference'

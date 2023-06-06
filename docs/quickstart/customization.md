@@ -4,44 +4,27 @@
 There are three ways to configure options in Finalynx:
 
 A. **From the `Assistant` class:**
-```py
-Assistant(option1=value1, ...)
+```python
+portfolio = Portfolio(...)  # <- your config
+Assistant(portfolio, option1=value1, ...).run()
 ```
 B. **From a custom Python script:**
-```sh
+```bash
 python your_config.py [options]
 ```
 C. **From Finalynx's standalone mode:**
-```sh
+```bash
 python -m finalynx --json=your_config.json [options]
 ```
 
-See the full list of available options below:
-```md
-Usage:
-  finalynx [--json=input-file] [--format=string] [dashboard] [options]
-  finalynx (-h | --help)
-  finalynx (-v | --version)
-
-Options:
-  -h --help            Show this help message and exit
-  -v --version         Display the current version and exit
-
-  # Only valid when calling `python -m finalynx`
-  --json=input-file    When calling Finalynx in standalone mode, JSON file is mandatory
-
-  --format=string      Customize the output format to your own style and information
-
-  -i --ignore-orphans  Ignore fetched lines that you didn't reference in your portfolio
-  -c --clear-cache     Delete any data from Finary that was cached locally
-  -f --force-signin    Clear cache, cookies and credentials files to sign in again
-  -a --hide-amounts    Display your portfolio with dots instead of the real values
-  -r --hide-root       Display your portfolio without the root (cosmetic preference)
+See the full list of available options by running:
+```bash
+python your_config.py --help
 ```
 
 ## 🌈 Output format
 It is possible to specify a custom print format to customize the look of your tree:
-```sh
+```bash
 python your_config.py --format="your format"                 # shell
 python -m finalynx --json=input.json --format="your format"  # shell
 Assistant(output_format="your format", other_arguments...)   # python
@@ -64,7 +47,7 @@ Assistant(output_format="your format", other_arguments...)   # python
 ```
 
 Here are some examples of valid formats:
-```sh
+```bash
 python your_config.py --format="[console]"  # Default, prints the full colored tree
 python your_config.py --format="[text]"  # Print the full tree but colorless
 python your_config.py --format="[blue][amount] [name][/]"  # Use [/] to reset the color
@@ -99,3 +82,36 @@ class Node(Render):
         return self.target.render(format)
 ```
 </details>
+
+## ⛓ Sidecars
+
+What if you could show additional information along with your main tree with columns on the right that show customizable information, like ideal investment amounts, expected yearly performance, delta investments, and so on?
+
+![full screenshot](https://github.com/MadeInPierre/finalynx/blob/main/docs/_static/screenshot.png)
+
+Meet _sidecars_: each sidecar is a column on the right of the main tree that displays any information about the node on the same console line. It uses the same output format structure defined above.
+
+A sidecar is defined by 4 parameters:
+- **Output format:** Specify what you want to render in this column (aka. sidecar). This uses the same format as the "output format" explained above, except it will be rendered in a separate column on the right of the tree.
+- **Condition format:** Specify any output format. Only show the output format for each node it this render returns a non-empty string. This is useful to make multiple sidecars work together (e.g. only show ideal amounts if the node requires a non-zero delta transaction).
+- **Title:** customize the column (aka. sidecar) title. By default, a title is generated from the output format.
+- **Show folders:** A boolean to choose if you want to only show elements for `Line` objects and not `Folder` objects. When set to `False`, only expanded folders will not have any information displayed.
+
+Define your own sidecars using one of two options:
+1. From your Python configuration:
+
+```python
+assistant = Assistant(
+    portfolio,
+    sidecars=[
+        Sidecar("[ideal]", ["delta"], "HELLO", False),
+        Sidecar("[delta]", show_folders=False),
+    ],
+).run()
+```
+
+1. From the command line (comma-separated values):
+
+```bash
+python your_config.py --sidecar="[ideal],[delta],HELLO,False" --sidecar="[delta],,,False"
+```

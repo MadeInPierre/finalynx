@@ -87,7 +87,7 @@ class Node(Render):
 
 What if you could show additional information along with your main tree with columns on the right that show customizable information, like ideal investment amounts, expected yearly performance, delta investments, and so on?
 
-![full screenshot](https://github.com/MadeInPierre/finalynx/blob/main/docs/_static/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_full.png)
 
 Meet _sidecars_: each sidecar is a column on the right of the main tree that displays any information about the node on the same console line. It uses the same output format structure defined above.
 

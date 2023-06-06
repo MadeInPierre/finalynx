@@ -239,4 +239,4 @@ if __name__ in {"__main__", "__mp_main__"}:
     """
     Optionally, you can launch a web dashboard to get an interactive view!
     """
-    assistant.dashboard()
+    # assistant.dashboard()

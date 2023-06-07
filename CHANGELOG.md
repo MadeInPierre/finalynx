@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v1.20.3 (2023-06-07)
+
+### Fix
+
+* Import error caused crash in v1.20.2 ([`bcd0171`](https://github.com/MadeInPierre/finalynx/commit/bcd01715929a2e28721339b4a41ea9b3574aa953))
+
+### Documentation
+
+* Write tutorial for targets, tweaks ([`3dd0883`](https://github.com/MadeInPierre/finalynx/commit/3dd08837c66d103301d16b9b26038a47f09a38c4))
+* Update readme tutorial links ([`c4beabf`](https://github.com/MadeInPierre/finalynx/commit/c4beabf6be961da5150170c544c39c983938ac92))
+
 ## v1.20.2 (2023-06-06)
 
 ### Fix

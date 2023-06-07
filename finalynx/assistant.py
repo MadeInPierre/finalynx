@@ -294,6 +294,15 @@ class Assistant:
         """
         dict_envs: Dict[str, Any] = {}
 
+        # Guide the user to set envelopes if not already done
+        if not self.envelopes:
+            return Tree(
+                f"[dim {TH().TEXT}]"
+                "To activate recommendations, set\n"
+                "envelopes to your lines and give\n"
+                "them to Assistant (tutorial #11)"
+            )
+
         # Find all folders with non-zero deltas and non-zero amounts (to avoid empty shared folders)
         def _get_folders(node: Folder) -> List[Folder]:
             found: List[Folder] = []

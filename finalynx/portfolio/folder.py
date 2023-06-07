@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 from typing import Dict
@@ -7,7 +8,6 @@ from typing import TYPE_CHECKING
 from typing import Union
 
 import numpy as np
-from attr import dataclass
 from rich.tree import Tree
 
 if TYPE_CHECKING:

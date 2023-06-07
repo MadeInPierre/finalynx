@@ -71,4 +71,4 @@ portfolio = Portfolio(
 
 # Run the assistant with the dashboard to see the result graph, then visit the URL:
 # > http://127.0.0.1:8000
-Assistant(portfolio, launch_dashboard=True).run()
+Assistant(portfolio, launch_dashboard=True, ignore_orphans=True).run()

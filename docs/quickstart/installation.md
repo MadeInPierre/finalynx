@@ -13,11 +13,6 @@ And you're done! Now create your own copy of the [`demo.py`](https://github.com/
 **Pro Tip 💡:** Why not setup a script to autorun your config in a new terminal on startup? Could be a nice view 🤭
 ```
 
-```{note}
-**Want to help this project grow?** Checkout the [**contribution guidelines**](https://finalynx.readthedocs.io/en/latest/project/contributing.html) to learn how to install this project in
-development mode 🧑‍💻
-```
-
 ## Detailed instructions
 
 If you need a bit more details, here is a summary of all commands to need to run to make Finalynx work with a basic configuration. First, make sure you have a recent Python version (must be 3.10 or above) by running:
@@ -27,7 +22,7 @@ python3 --version  # Must be >=3.10
 ```
 
 ```{note}
-**Note:** If you have any questions or difficulty, please [**open an issue**](https://github.com/MadeInPierre/finalynx/issues/new), we'll be happy to help, teach and learn together! No matter the level, there are no dumb questions right? 🤝
+**Note:** If you have any questions or difficulty, please [**open an issue**](https://github.com/MadeInPierre/finalynx/issues/new), we'll be happy to help, teach, and learn together! No matter the level, there are no dumb questions right? 🤝
 ```
 
 There are two options to install Finalynx:
@@ -40,7 +35,7 @@ touch assistant_config.py    # Create your configuration file and past the conte
 python3 assistant_config.py  # Run your configuration file to make sure everything works, then customize it!
 ```
 
-1. Install using `git clone`, lets you modify the code yourself, contribute to this project, and get the latest code to avoid waiting for new releases:
+2. Install using `git clone`, lets you modify the code yourself, contribute to this project, and get the latest code to avoid waiting for new releases:
 ```bash
 cd somewhere/like/Documents/  # Choose any folder to download Finalynx's code, must be outside of system folders
 git clone https://github.com/MadeInPierre/finalynx.git  # Download the code as a git repository (easy to update)
@@ -52,4 +47,8 @@ python3 examples/demo.py  # Try out the demo example to make sure everything wor
 cp examples/demo.py assistant_config.py  # Create your own copy of the demo, this will be your personal config
 # Customize your config now to create your own portfolio!
 python3 assistant_config.py --help  # Run your own config (use --help to see customizable options)
+```
+
+```{note}
+**Want to help this project grow?** Checkout the [**contribution guidelines**](https://finalynx.readthedocs.io/en/latest/project/contributing.html) to learn how to install this project in development mode and agree on common conventions 🧑‍💻
 ```

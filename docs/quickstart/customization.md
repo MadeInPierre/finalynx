@@ -104,7 +104,7 @@ Define your own sidecars using one of two options:
 assistant = Assistant(
     portfolio,
     sidecars=[
-        Sidecar("[ideal]", ["delta"], "HELLO", False),
+        Sidecar("[ideal]", "[delta]", "HELLO", False),
         Sidecar("[delta]", show_folders=False),
     ],
 ).run()

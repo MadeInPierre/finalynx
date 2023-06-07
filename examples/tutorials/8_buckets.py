@@ -70,4 +70,5 @@ portfolio = Portfolio(
 Assistant(
     portfolio,
     buckets=[bucket_livrets],
+    ignore_orphans=True,  # Simply used to make the result nicer when you run this tutorial
 ).run()

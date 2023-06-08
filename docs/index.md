@@ -7,7 +7,7 @@
 
 quickstart/installation
 quickstart/getting_started
-tutorials/tutorials
+quickstart/tutorials
 quickstart/customization
 ```
 

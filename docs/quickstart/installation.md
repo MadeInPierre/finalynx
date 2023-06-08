@@ -7,7 +7,7 @@ If you don't plan on touching the code, simply run (with python >=3.10 and pip i
 pip install finalynx  # run again with --upgrade to update
 ```
 
-And you're done! Now create your own copy of the [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) example anywhere and run it to make sure everything works. You can now customize it for your own needs 🚀
+And you're done! Now create your own copy of the [`demo.py` example file](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) anywhere and run it to make sure everything works. You can now customize it for your own needs 🚀
 
 ```{tip}
 **Pro Tip 💡:** Why not setup a script to autorun your config in a new terminal on startup? Could be a nice view 🤭
@@ -27,26 +27,45 @@ python3 --version  # Must be >=3.10
 
 There are two options to install Finalynx:
 
-1. Install using `pip`, and paste the contents of the `demo.py` example file in any folder (e.g. Documents):
+1. **Install using `pip` (beginner-friendly):** open a new terminal and paste the contents of the [`demo.py` example file](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) in any folder, like `Documents` for example:
 ```bash
-pip3 install finalynx        # Automatically install finalynx globally, lets you use `from finalynx import *`
-cd somewhere/like/Documents  # Make sure you use any folder outside system files, like your home directory
-touch assistant_config.py    # Create your configuration file and past the contents of the `demo.py` example
-python3 assistant_config.py  # Run your configuration file to make sure everything works, then customize it!
+# Automatically install finalynx globally, lets you use `from finalynx import *`
+pip3 install finalynx
+
+# Make sure you use any folder outside system files, like your home directory
+cd somewhere/like/Documents
+
+# Create your configuration file and paste the contents of the `demo.py` example
+touch assistant_config.py
+
+# Run your configuration file to make sure everything works, then customize it!
+python3 assistant_config.py
 ```
-
-2. Install using `git clone`, lets you modify the code yourself, contribute to this project, and get the latest code to avoid waiting for new releases:
+2. **Install using `git clone`:** lets you modify the code yourself, contribute to this project, and get the latest code to avoid waiting for new releases:
 ```bash
-cd somewhere/like/Documents/  # Choose any folder to download Finalynx's code, must be outside of system folders
-git clone https://github.com/MadeInPierre/finalynx.git  # Download the code as a git repository (easy to update)
-cd finalynx  # Go inside the newly downloaded project
-pip3 install poetry && poetry check && poetry install  # Install all project dependencies
-pip3 install -e .  # Install the code globally, -e means you can change the code without the need to reinstall
-python3 examples/demo.py  # Try out the demo example to make sure everything works
+# Choose any folder to download Finalynx's code, must be outside of system folders
+cd somewhere/like/Documents/
 
-cp examples/demo.py assistant_config.py  # Create your own copy of the demo, this will be your personal config
+# Download the code as a git repository (easy to update)
+git clone https://github.com/MadeInPierre/finalynx.git
+
+# Go inside the newly downloaded project
+cd finalynx
+
+# Install all project dependencies
+pip3 install poetry && poetry check && poetry install
+
+# Install the project globally, -e means you can change the code without reinstalling
+pip3 install -e .
+
+# Try out the demo example to make sure everything works
+python3 examples/demo.py
+
+# Create your own copy of the demo, this will be your personal config
+cp examples/demo.py assistant_config.py
+
 # Customize your config now to create your own portfolio!
-python3 assistant_config.py --help  # Run your own config (use --help to see customizable options)
+python3 assistant_config.py # use --help to see customizable options
 ```
 
 ```{note}

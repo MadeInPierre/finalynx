@@ -40,7 +40,7 @@ to set the default `perf` of all its children.
 
 
 portfolio = Portfolio(
-    "My Portfolio",  # Only used for display purposes
+    "My Portfolio",
     children=[
         # Defaults to AssetClass.UNKNOWN, AssetSubclass.UNKNOWN:
         Line("My line"),

@@ -39,7 +39,7 @@ instead of a list of children. We'll see how to use them in the next tutorial.
 portfolio = Portfolio(
     "My Portfolio",  # Only used for display purposes
     currency="€",  # Set the default currency for all children
-    target=None,  # We'll see how to use targets later
+    target=None,  # We'll see how to use targets in a future tutorial
     children=[
         Folder(
             "My first folder",

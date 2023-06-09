@@ -26,7 +26,7 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 🇫🇷🥖 Vous pouvez traduire cette page en Français avec votre navigateur (_clic droit > traduire_).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot.png" width="500" />
+  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_demo.png" width="600" />
 </p>
 
 ## ✨ Features
@@ -39,6 +39,15 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 6. **🙏 Optional:** Nice but out-of-my-skills or time-consuming features. Any volunteers?
 
 You can check the [current development status](https://github.com/users/MadeInPierre/projects/4). Contributions are warmly welcome!
+
+<details>
+<summary><strong>[Click]</strong> Additional screenshots 📸</summary>
+
+| Recommendations | Web dashboard |
+|---|---|
+| <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_recommendations.png" width="600" /> | <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_dashboard.png" width="600" /> |
+
+</details>
 
 ## 🚀 Installation
 If you don't plan on touching the code, simply run (with python >=3.10 and pip installed):

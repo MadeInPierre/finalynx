@@ -116,7 +116,7 @@ class Dashboard:
         with ui.column().classes("w-full"):
             self.hey = ui.markdown(f"#### {self.selected_node.name}").classes("text-center")
 
-            with ui.splitter(value=40).classes("w-full") as splitter:
+            with ui.splitter(value=25).classes("w-full") as splitter:
                 with splitter.before:
                     self.portfolio_dict = self._convert_rich_tree_to_nicegui(portfolio)
                     max_id = self._add_ids_to_tree(self.portfolio_dict)
@@ -172,14 +172,16 @@ class Dashboard:
 
                 with splitter.after:
                     with ui.column():
-                        self.chart_simulator = ui.chart(Simulator().chart(portfolio))
-                        self.chart_asset_classes = ui.chart(
-                            AnalyzeAssetClasses(self.selected_node).chart(self.color_map)
-                        )
-                        self.chart_envelope_states = ui.chart(
-                            AnalyzeInvestmentStates(self.selected_node).chart(date.today())
-                        )
-                        self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
+                        with ui.row():
+                            self.chart_asset_classes = ui.chart(
+                                AnalyzeAssetClasses(self.selected_node).chart(self.color_map)
+                            )
+                            self.chart_envelope_states = ui.chart(
+                                AnalyzeInvestmentStates(self.selected_node).chart(date.today())
+                            )
+                        with ui.row():
+                            self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
+                            self.chart_simulator = ui.chart(Simulator().chart(portfolio))
 
         ui.run(
             title="Finalynx Dashboard",

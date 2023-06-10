@@ -2,9 +2,11 @@
 Finalynx - Tutorial 2 - Change the console color theme
 ======================================================
 
+
 This tutorial shows how to change the console color theme if
 your terminal doesn't have a white background (default theme)
 or different color aliases.
+
 
 Try it out by running:
 > python3 examples/tutorials/2_theme.py

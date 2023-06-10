@@ -2,9 +2,11 @@
 Finalynx - Tutorial 7 - Define your portfolio structure (basics)
 ================================================================
 
+
 This tutorial shows how to define your portfolio structure in your configuration
 file. This is the most important part of your configuration and lets you freely
 organize your investments in a tree structure.
+
 
 Try it out by running:
 > python3 examples/tutorials/7_structure.py

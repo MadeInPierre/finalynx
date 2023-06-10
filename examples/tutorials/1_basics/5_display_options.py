@@ -2,8 +2,10 @@
 Finalynx - Tutorial 5 - Change some simple display options
 ==========================================================
 
+
 This tutorial shows how to customize the rendering of your portfolio
 as well as the console output.
+
 
 Try it out by running:
 > python3 examples/tutorials/5_display_options.py

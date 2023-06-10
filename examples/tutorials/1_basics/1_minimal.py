@@ -2,8 +2,10 @@
 Finalynx - Tutorial 1 - Minimal configuration
 =============================================
 
+
 This tutorial shows how to create the smallest valid portfolio
 configuration with a single line.
+
 
 Try it out by running:
 > python3 examples/tutorials/1_minimal.py
@@ -11,7 +13,7 @@ Try it out by running:
 See explanations and details in the online documentation at:
 > https://finalynx.readthedocs.io
 """
-# noreorder
+# noreorder # ignore this line, used for git automation
 from finalynx import Assistant, Portfolio
 
 

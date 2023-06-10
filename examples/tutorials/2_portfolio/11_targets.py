@@ -2,6 +2,7 @@
 Finalynx - Tutorial 10 - Set investment targets for your lines
 ==============================================================
 
+
 This tutorial shows how to define investment targets for your lines. For each node
 in the portfolio tree, you can set various types of targets to help you reach your
 investment goals. These targets include:

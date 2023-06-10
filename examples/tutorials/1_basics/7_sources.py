@@ -2,12 +2,14 @@
 Finalynx - Tutorial 7 - Fetch data from Finary and other sources
 ================================================================
 
+
 This tutorial shows how to launch an interactive dashboard to explore your
 portfolio in a web browser. The dashboard is currently in experimental mode,
 and contributors with web development skills are warmly welcome to improve it!
 
 See the available sources in the source code directly, please contribute! :)
 > https://github.com/MadeInPierre/finalynx/blob/main/finalynx/fetch/
+
 
 Try it out by running:
 > python3 examples/tutorials/7_sources.py

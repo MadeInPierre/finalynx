@@ -2,9 +2,11 @@
 Finalynx - Tutorial 6 - Launch an interactive dashboard
 =======================================================
 
+
 This tutorial shows how to launch an interactive dashboard to explore your
 portfolio in a web browser. The dashboard is currently in experimental mode,
 and contributors with web development skills are warmly welcome to improve it!
+
 
 Try it out by running:
 > python3 examples/tutorials/6_dashboard.py

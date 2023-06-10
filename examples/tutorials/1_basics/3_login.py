@@ -2,8 +2,10 @@
 Finalynx - Tutorial 3 - Control login and cache
 ===============================================
 
+
 This tutorial shows how to clear the cache and login again to Finary
 if you have changed your password or if you want to refresh your data.
+
 
 Try it out by running:
 > python3 examples/tutorials/3_login.py

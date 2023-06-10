@@ -2,6 +2,7 @@
 Finalynx - Tutorial 12 - Set envelopes for your lines
 =====================================================
 
+
 This tutorial shows how to define envelopes for your lines. An envelope is a
 container for your money, it can be a bank account, a stock market account, a
 crypto wallet, etc. You can set an envelope for each line of your portfolio.
@@ -27,7 +28,7 @@ from datetime import date
 
 
 """ [ENVELOPES] ---------------------------------------------------------------
-Use the `envelope` argument to set an envelope for a line of folder. It can be
+Use the `envelope` argument to set an envelope for a line or folder. It can be
 initialized with the following arguments:
 - `name`: the name of the envelope, displayed everywhere in Finalynx
 - `code`: displayed name in the console tree (3 characters recommended)

@@ -99,7 +99,6 @@ A sidecar is defined by 4 parameters:
 
 Define your own sidecars using one of two options:
 1. From your Python configuration:
-
 ```python
 assistant = Assistant(
     portfolio,
@@ -109,9 +108,7 @@ assistant = Assistant(
     ],
 ).run()
 ```
-
-1. From the command line (comma-separated values):
-
+2. From the command line (comma-separated values):
 ```bash
 python your_config.py --sidecar="[ideal],[delta],HELLO,False" --sidecar="[delta],,,False"
 ```

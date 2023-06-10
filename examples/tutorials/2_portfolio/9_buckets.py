@@ -2,10 +2,12 @@
 Finalynx - Tutorial 8 - Define buckets to group similar lines
 =============================================================
 
+
 This tutorial shows how to define buckets to group similar lines together.
 Buckets are useful to group lines by type, by account, by risk level, etc.
 For instance, if you have multiple Livrets, you can group them in a bucket
 to treat them as a single investment.
+
 
 Try it out by running:
 > python3 examples/tutorials/8_buckets.py

@@ -2,6 +2,7 @@
 Finalynx - Tutorial 9 - Set custom attributes for your lines
 ===============================================================
 
+
 This tutorial shows how to define custom attributes for your lines, which include:
 - Asset classes and subclasses are used in the dashboard to display the repartition
   of your investments by asset class with graphs. In the future, they might also
@@ -11,6 +12,7 @@ This tutorial shows how to define custom attributes for your lines, which includ
 
 See the online documentation for the list of available asset classes & subclasses:
 > https://github.com/MadeInPierre/finalynx/blob/main/finalynx/portfolio/constants.py
+
 
 Try it out by running:
 > python3 examples/tutorials/9_asset_classes.py

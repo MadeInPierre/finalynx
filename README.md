@@ -26,7 +26,7 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 🇫🇷🥖 Vous pouvez traduire cette page en Français avec votre navigateur (_clic droit > traduire_).
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_demo.png" width="600" />
+  <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_demo_frameless.png" width="600" />
 </p>
 
 ## ✨ Features
@@ -65,8 +65,8 @@ Here is the bare minimum code accepted:
 
 ```python
 from finalynx import Portfolio, Assistant
-portfolio = Portfolio()  # <- your custom configuration here
-Assistant(portfolio).run()
+portfolio = Portfolio()     # <- your custom configuration here
+Assistant(portfolio).run()  # <- see tutorials for more options
 ```
 
 You can now populate the `Portfolio` class with your own custom hierarchy by taking inspiration from the [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) example or by reading the [Getting Started](https://finalynx.readthedocs.io/en/latest/quickstart/getting_started.html) guide in the documentation and step-by-step [Tutorials](https://github.com/MadeInPierre/finalynx/tree/main/examples/tutorials). For additional details, checkout the full [API Reference](https://finalynx.readthedocs.io/en/latest/apidocs/index.html) or [ask a question](https://github.com/MadeInPierre/finalynx/discussions/new?category=q-a).

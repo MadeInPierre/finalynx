@@ -2,6 +2,7 @@ from typing import List
 from typing import Optional
 
 import gspread
+from rich.table import Table
 
 from ..console import console
 from .expense import Expense
@@ -23,11 +24,15 @@ class Budget:
         # Google Sheet that serves as the database of expenses, will be connected later
         self._sheet = None
 
-        # # Initialize the list of expenses and the account balance, will be fetched later
-        self._all_expenses: List[Expense] = []
-        # self._source_balance: float = 0.0
+        # # Initialize the list of expenses, will be fetched later
+        self.expenses: List[Expense] = []
+        self._new_expenses: List[Expense] = []  # Freshly fetched from the source
+        self._pending_expenses: List[Expense] = []  # Filtered to keep only the ones that need review
+        self.balance: float = 0.0
 
-    def connect(self, email: str, password: str, device_token: str) -> None:
+    def fetch(self, email: str, password: str, device_token: str) -> List[Expense]:
+        """TODO"""
+
         # Initialize the N26 client with the credentials
         with console.status("[bold green]Connecting to N26...[/] [dim white](you may have to confirm in the app)"):
             self._source = SourceN26(email, password, device_token)
@@ -44,77 +49,73 @@ class Budget:
                     "personal service_account.json token file in your OS's default directory?"
                 )
 
-    def run(self, interactive: bool = False) -> None:
-        """Run the budgeting process. This is the main method of the class.
-        It will fetch the latest expenses from the source and the sheet, and
-        update the sheet with the new expenses. It will then display the list
-        of pending expenses in a nice rich table. Optionally, you can call
-        the `review()` method to review the expenses one by one interactively.
-
-        :return: The list of pending expenses
-        """
-
         # Make sure we are already connected to the source and the sheet
-        assert self._sheet is not None, "Call connect() first"
-        assert self._source is not None, "Call connect() first"
+        assert self._source is not None, "Something went wrong with the connection to N26"
+        assert self._sheet is not None, "Something went wrong with the connection to GSheets"
 
         # Fetch the latest values from the source and the sheet
-        balance = self._fetch_source_balance()
+        self.balance = self._fetch_source_balance()
         expenses = self._fetch_source_expenses()
         sheet_values = self._fetch_sheet_values()
 
         # Get the new expenses from the source that are not in the sheet yet
         last_row_timestamp = int(sheet_values[-1][0]) if str(sheet_values[-1][0]).isdigit() else 0
-        new_expenses = [e for e in expenses if e.timestamp > last_row_timestamp]
+        self._new_expenses = [e for e in expenses if e.timestamp > last_row_timestamp]
 
         # Add the new expenses to the sheet
-        if len(new_expenses) > 0:
+        if len(self._new_expenses) > 0:
             first_empty_row = len(sheet_values) + 1
 
             self._sheet.update(
-                f"A{first_empty_row}:D{first_empty_row + len(new_expenses)}", [d.to_list()[:4] for d in new_expenses]
+                f"A{first_empty_row}:D{first_empty_row + len(self._new_expenses)}",
+                [d.to_list()[:4] for d in self._new_expenses],
             )
 
         # Fetch the latest values from the sheet again to get the complete list of expenses
         sheet_values = self._fetch_sheet_values()  # TODO improve
 
         # From now on, we will work with the up-to-date list of expenses
-        updated_expenses = [Expense.from_list(line, i + 2) for i, line in enumerate(sheet_values[1:])]
+        self.expenses = [Expense.from_list(line, i + 2) for i, line in enumerate(sheet_values[1:])]
 
         # Filter expenses to keep only the ones that are not skipped and incomplete
-        pending_expenses = [
-            t for t in updated_expenses if t.status not in [Status.SKIP, Status.DONE] or t.i_paid is None
+        self._pending_expenses = [
+            t for t in self.expenses if t.status not in [Status.SKIP, Status.DONE] or t.i_paid is None
         ]
 
+        # Return the list for user convenience
+        return self.expenses
+
+    def render_expenses(self) -> Table:
+        # Make sure we are already connected to the source and the sheet
+        assert self._new_expenses is not None, "Call `fetch()` first"
+        assert self._pending_expenses is not None, "Call `fetch()` first"
+
         # Display the table of pending expenses
-        n_new, n_pending = len(new_expenses), len(pending_expenses)
-        table = _render_expenses_table(
-            pending_expenses[-Budget.MAX_DISPLAY_ROWS :],  # noqa: E203
+        n_new, n_pending = len(self._new_expenses), len(self._pending_expenses)
+        return _render_expenses_table(
+            self._pending_expenses[-Budget.MAX_DISPLAY_ROWS :],  # noqa: E203
             title=(
                 f"{n_new} new expense{'s' if n_new != 1 else ''} ── {n_pending} need{'s' if n_pending == 1 else ''} review "
                 + (f"(displaying {Budget.MAX_DISPLAY_ROWS} first rows)" if n_pending > Budget.MAX_DISPLAY_ROWS else "")
             ),
-            caption=f"N26 Balance: {balance:.2f} €",
+            caption=f"N26 Balance: {self.balance:.2f} €",
         )
-        console.print("\n\n\n", table, "\n\n\n", sep="\n")
 
-        if interactive:
-            self._review(pending_expenses)
-
-    def _review(self, pending_expenses: List[Expense]) -> None:
+    def interactive_review(self) -> None:
         """Review the list of pending expenses one by one, and update the sheet
         with the new values.
 
         :param pending_expenses: The list of pending expenses
         """
-        assert self._sheet is not None, "Call connect() and run() first"
+        assert self._sheet is not None, "Call fetch() first"
+        assert self._pending_expenses, "Call fetch() first"
 
         # Make space so that the main table is not hidden by the next console clears
         console.print("\n" * console.height)
         console.clear()
 
         # Review pending expenses in reverse (most recent first) for convenience
-        review_expenses = pending_expenses[::-1]
+        review_expenses = self._pending_expenses[::-1]
 
         # For each expense, ask the user to set each field to classify the expense
         for i, t in enumerate(review_expenses):
@@ -137,7 +138,7 @@ class Budget:
                     self._sheet.update(f"A{t.cell_number}:J{t.cell_number}", [t.to_list()])
 
         console.clear()
-        console.print("\n\n\n[bold]All done![/] :tada:\n\n\n")
+        console.print("[bold]All done![/] 🎉")
 
     def _fetch_source_balance(self) -> float:
         """Get the account balance from the source."""

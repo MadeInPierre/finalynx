@@ -31,9 +31,6 @@ from .dashboard import Dashboard
 # Simulator
 from .simulator import Simulator
 
-# Budget
-from .budget import Expense, Status, Period, Constraint, Budget
-
 # Main
 from .assistant import Assistant
 

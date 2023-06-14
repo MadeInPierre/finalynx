@@ -6,8 +6,11 @@ import gspread
 from ..console import console
 from .expense import Expense
 from .expense import Status
-from .render_table import generate_table
 from .source_n26 import SourceN26
+
+# noreorder
+from ._render import _render_expenses_table
+from ._review import _i_paid, _payback, _constraint, _period, _comment, _status  # noqa: F401
 
 
 class Budget:
@@ -41,8 +44,16 @@ class Budget:
                     "personal service_account.json token file in your OS's default directory?"
                 )
 
-    def run(self) -> None:
-        """Run the budgeting process."""
+    def run(self, interactive: bool = False) -> None:
+        """Run the budgeting process. This is the main method of the class.
+        It will fetch the latest expenses from the source and the sheet, and
+        update the sheet with the new expenses. It will then display the list
+        of pending expenses in a nice rich table. Optionally, you can call
+        the `review()` method to review the expenses one by one interactively.
+
+        :return: The list of pending expenses
+        """
+
         # Make sure we are already connected to the source and the sheet
         assert self._sheet is not None, "Call connect() first"
         assert self._source is not None, "Call connect() first"
@@ -77,7 +88,7 @@ class Budget:
 
         # Display the table of pending expenses
         n_new, n_pending = len(new_expenses), len(pending_expenses)
-        table = generate_table(
+        table = _render_expenses_table(
             pending_expenses[-Budget.MAX_DISPLAY_ROWS :],  # noqa: E203
             title=(
                 f"{n_new} new expense{'s' if n_new != 1 else ''} ── {n_pending} need{'s' if n_pending == 1 else ''} review "
@@ -86,6 +97,47 @@ class Budget:
             caption=f"N26 Balance: {balance:.2f} €",
         )
         console.print("\n\n\n", table, "\n\n\n", sep="\n")
+
+        if interactive:
+            self._review(pending_expenses)
+
+    def _review(self, pending_expenses: List[Expense]) -> None:
+        """Review the list of pending expenses one by one, and update the sheet
+        with the new values.
+
+        :param pending_expenses: The list of pending expenses
+        """
+        assert self._sheet is not None, "Call connect() and run() first"
+
+        # Make space so that the main table is not hidden by the next console clears
+        console.print("\n" * console.height)
+        console.clear()
+
+        # Review pending expenses in reverse (most recent first) for convenience
+        review_expenses = pending_expenses[::-1]
+
+        # For each expense, ask the user to set each field to classify the expense
+        for i, t in enumerate(review_expenses):
+            _skip_line = False
+
+            for method in [
+                _i_paid,
+                _payback,
+                _constraint,
+                _period,
+                _comment,
+                _status,
+            ]:
+                if not method(review_expenses, i):
+                    _skip_line = True
+                    break
+
+            if not _skip_line:
+                with console.status("[bold green]Saving..."):
+                    self._sheet.update(f"A{t.cell_number}:J{t.cell_number}", [t.to_list()])
+
+        console.clear()
+        console.print("\n\n\n[bold]All done![/] :tada:\n\n\n")
 
     def _fetch_source_balance(self) -> float:
         """Get the account balance from the source."""

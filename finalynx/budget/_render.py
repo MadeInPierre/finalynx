@@ -1,3 +1,7 @@
+"""
+This module contains the logic for displaying a table of expenses. It is only used
+internally by the `Budget` class.
+"""
 from datetime import datetime
 from typing import List
 from typing import Optional
@@ -12,7 +16,7 @@ from .expense import Period
 from .expense import Status
 
 
-def generate_table(
+def _render_expenses_table(
     expenses: List[Expense],
     title: str = "",
     caption: str = "",

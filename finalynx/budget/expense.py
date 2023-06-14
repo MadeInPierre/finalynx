@@ -18,7 +18,7 @@ class Period(Enum):
     YEARLY = "YEARLY"
 
 
-class Constraint(Enum):
+class Constraint(Enum):  # TODO rename to Necessity
     UNKNOWN = "UNKNOWN"
     FIXED = "FIXED"
     MODULAR = "MODULAR"

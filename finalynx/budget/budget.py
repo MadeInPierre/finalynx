@@ -103,10 +103,8 @@ class Budget:
 
     def interactive_review(self) -> None:
         """Review the list of pending expenses one by one, and update the sheet
-        with the new values.
-
-        :param pending_expenses: The list of pending expenses
-        """
+        with the new values. This method is interactive, and will clear the
+        console between each expense or when the user presses Ctrl+C."""
         assert self._sheet is not None, "Call fetch() first"
         assert self._pending_expenses, "Call fetch() first"
 
@@ -118,27 +116,34 @@ class Budget:
         review_expenses = self._pending_expenses[::-1]
 
         # For each expense, ask the user to set each field to classify the expense
-        for i, t in enumerate(review_expenses):
-            _skip_line = False
+        try:
+            for i, t in enumerate(review_expenses):
+                _skip_line = False
 
-            for method in [
-                _i_paid,
-                _payback,
-                _constraint,
-                _period,
-                _comment,
-                _status,
-            ]:
-                if not method(review_expenses, i):
-                    _skip_line = True
-                    break
+                for method in [
+                    _i_paid,
+                    _payback,
+                    _constraint,
+                    _period,
+                    _comment,
+                    _status,
+                ]:
+                    result = method(review_expenses, i)
+                    if result is None:
+                        console.clear()
+                        return
+                    elif result is False:
+                        _skip_line = True
+                        break
 
-            if not _skip_line:
-                with console.status("[bold green]Saving..."):
-                    self._sheet.update(f"A{t.cell_number}:J{t.cell_number}", [t.to_list()])
+                if not _skip_line:
+                    with console.status("[bold green]Saving..."):
+                        self._sheet.update(f"A{t.cell_number}:J{t.cell_number}", [t.to_list()])
 
-        console.clear()
-        console.print("[bold]All done![/] 🎉")
+            console.clear()
+            console.print("[bold]All done![/] 🎉")
+        except KeyboardInterrupt:
+            console.clear()
 
     def _fetch_source_balance(self) -> float:
         """Get the account balance from the source."""

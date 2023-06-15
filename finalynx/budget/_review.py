@@ -81,7 +81,7 @@ def _set_field(
     apply: Callable[[str], bool],
     current: Optional[str] = None,
     default: Optional[str] = None,
-) -> bool:
+) -> Optional[bool]:
     """Ask the user to set a field of the expense. The input will be validated with the `is_valid`
     function. If the input is not valid, the user will be asked to try again. If the input is valid,
     the `apply` function will be called with the input as argument. If the input is empty, the
@@ -106,11 +106,11 @@ def _set_field(
         return True
     elif result == "q":
         console.clear()
-        exit(0)
+        return None
     return apply(result)
 
 
-def _i_paid(expenses: List[Expense], i_expense: int) -> bool:
+def _i_paid(expenses: List[Expense], i_expense: int) -> Optional[bool]:
     """Ask the user to set the amount they paid for the expense."""
     question = "How much did you pay for yourself?"
     options = (
@@ -147,7 +147,7 @@ def _i_paid(expenses: List[Expense], i_expense: int) -> bool:
     return _set_field(expenses, i_expense, question, options, is_valid, apply, current, default="f")
 
 
-def _payback(expenses: List[Expense], i_expense: int) -> bool:
+def _payback(expenses: List[Expense], i_expense: int) -> Optional[bool]:
     """Ask the user to set the payback for the expense (who also paid for this)."""
     question = "Anyone needs to pay you back?"
     options = (
@@ -163,7 +163,7 @@ def _payback(expenses: List[Expense], i_expense: int) -> bool:
     return _set_field(expenses, i_expense, question, options, lambda _: True, apply, current, default="no")
 
 
-def _constraint(expenses: List[Expense], i_expense: int) -> bool:
+def _constraint(expenses: List[Expense], i_expense: int) -> Optional[bool]:
     """Ask the user to set the constraint for the expense."""
     question = "How important was this expense?"
     options = "\n".join(
@@ -190,7 +190,7 @@ def _constraint(expenses: List[Expense], i_expense: int) -> bool:
     return _set_field(expenses, i_expense, question, options, is_valid, apply, current)
 
 
-def _period(expenses: List[Expense], i_expense: int) -> bool:
+def _period(expenses: List[Expense], i_expense: int) -> Optional[bool]:
     question = "How should this expense count in your budget?"
     options = (
         "  - [bold green]m[/][dim] for a monthly expense [bold](default)[/][/]\n"
@@ -209,7 +209,7 @@ def _period(expenses: List[Expense], i_expense: int) -> bool:
     return _set_field(expenses, i_expense, question, options, is_valid, apply, current)
 
 
-def _comment(expenses: List[Expense], i_expense: int) -> bool:
+def _comment(expenses: List[Expense], i_expense: int) -> Optional[bool]:
     question = "Any comments?"
     options = "  - [bold green]<text>[/][dim] for any personal notes[/]\n"
 
@@ -221,7 +221,7 @@ def _comment(expenses: List[Expense], i_expense: int) -> bool:
     return _set_field(expenses, i_expense, question, options, lambda _: True, apply, current)
 
 
-def _status(expenses: List[Expense], i_expense: int) -> bool:
+def _status(expenses: List[Expense], i_expense: int) -> Optional[bool]:
     question = "What's the status of this expense?"
     options = (
         "  - [bold green]t[/] or [bold green]todo[/][dim] to review this expense again next time [bold](default)[/][/]\n"

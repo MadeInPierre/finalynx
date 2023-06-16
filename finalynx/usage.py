@@ -21,7 +21,7 @@ def main_filter(message: str) -> str:
 __doc__ = f"""
 Finalynx command line v{__version__}
 Usage:
-  finalynx {main_filter(main_usage)}[ideal | target | delta | perf | text | --format=string] [--no-export | --export-dir=path] [--sidecar=format]... [dashboard] [options]
+  finalynx {main_filter(main_usage)}[ideal | target | delta | perf | text | --format=string] [--no-export | --export-dir=path] [--sidecar=format]... [budget] [dashboard] [options]
   finalynx (-h | --help)
   finalynx (-v | --version)
 
@@ -38,11 +38,13 @@ Options:
 {main_filter(main_options)}
   dashboard            Launch an interactive web dashboard!
 
-  -t --theme=string    Choose a predefined color theme for the console output (light or dark)
+  budget               Check your daily expenses (N26 accounts only for now)
+  -I --interactive     Interactively review and classify your expenses (requires budget option)
 
   --no-export          Don't export to JSON
   --export-dir=path    Path to a folder where the JSON file will be saved
 
+  -t --theme=string    Choose a predefined color theme for the console output (light or dark)
   --sidecar=string     Output format for each sidecar (can be repeated), defaults to "[delta]"
   --format=string      Customize the maint tree's output format to your own style and information
   ideal                Shortcut to --format="[console_ideal]" (show ideal amounts to follow all targets)

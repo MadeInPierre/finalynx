@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import date
+from typing import Any
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -11,6 +12,7 @@ from docopt import docopt
 from finalynx import Dashboard
 from finalynx import Fetch
 from finalynx import Portfolio
+from finalynx.budget.budget import Budget
 from finalynx.config import get_active_theme as TH
 from finalynx.config import set_active_theme
 from finalynx.copilot.recommendations import render_recommendations
@@ -79,6 +81,8 @@ class Assistant:
         active_sources: Optional[List[str]] = None,
         theme: Optional[finalynx.theme.Theme] = None,
         sidecars: Optional[List[Sidecar]] = None,
+        check_budget: bool = False,
+        interactive: bool = False,
         ignore_argv: bool = False,
     ):
         self.portfolio = portfolio
@@ -98,6 +102,8 @@ class Assistant:
         self.export_dir = export_dir
         self.active_sources = active_sources if active_sources else ["finary"]
         self.sidecars = sidecars if sidecars else []
+        self.check_budget = check_budget
+        self.interactive = interactive
 
         # Set the global color theme if specified
         if theme:
@@ -135,6 +141,12 @@ class Assistant:
             self.show_data = True
         if args["dashboard"]:
             self.launch_dashboard = True
+        if args["budget"]:
+            self.check_budget = True
+        if args["--interactive"]:
+            if not self.check_budget:
+                console.log("[red][bold]Error:[/] --interactive can only be used with budget, ignoring.")
+            self.interactive = True
         if args["--format"]:
             self.output_format = args["--format"]
         if args["--sidecar"]:
@@ -187,6 +199,19 @@ class Assistant:
         # Render the console elements
         main_frame = self.render_mainframe()
         panels = self.render_panels()
+        renders: List[Any] = [main_frame, panels]
+
+        budget = Budget()
+        if self.check_budget:
+            with open("n26_credentials.json") as f:  # TODO
+                t = json.load(f)
+                email = t["email"]
+                password = t["password"]
+                device_token = t["device_token"]
+            budget.fetch(email, password, device_token)  # TODO Add info to the fetched data tree?
+            console.log("[bold]Tip:[/] run again with -R or --review to interactively review the expenses 👀")
+
+            renders.append(budget.render_expenses())
 
         # Save the current portfolio to a file. Useful for statistics later
         if self.enable_export:
@@ -197,13 +222,11 @@ class Assistant:
             console.print(Panel(fetched_tree, title="Fetched data"))
 
         # Display the entire portfolio and associated recommendations
-        console.print(
-            "\n\n",
-            main_frame,
-            "\n\n",
-            panels,
-            "\n",
-        )
+        console.print(*renders, sep="\n\n")
+
+        # Interactive review of the budget expenses if enabled
+        if self.check_budget and self.interactive:
+            budget.interactive_review()
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:

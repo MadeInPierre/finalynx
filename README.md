@@ -18,7 +18,7 @@
   <br>
 </div>
 
-Finalynx is your "Finary Assistant", a command-line tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals.
+Finalynx is your "Finary Assistant", a command-line (and experimental web dashboard) tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals.
 This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values.
 
 Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) 🌹 (or through the [default](https://finary.com/signup) page).

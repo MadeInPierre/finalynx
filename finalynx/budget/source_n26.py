@@ -60,11 +60,15 @@ class SourceN26(SourceBaseExpense):
                 merchant_category = "---"
 
             # If there is no merchant name, it means it's an internal transfer
-            merchant_name = t["merchantName"] if "merchantName" in t else "(transfer)"
+            if "merchantName" in t:
+                merchant_name = t["merchantName"]
+            else:
+                merchant_name = t["referenceText"] if "referenceText" in t else ""
+                merchant_name += (" with " + t["partnerName"]) if "partnerName" in t else ""
 
             # Create the Expense object
             self._register_expense(
-                int(t["createdTS"]),
+                int(t["confirmed"]),
                 float(t["amount"]),
                 "€",
                 merchant_name,

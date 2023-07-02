@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
@@ -6,8 +7,11 @@ import gspread
 from rich.table import Table
 from rich.tree import Tree
 
+from ..config import get_active_theme as TH
 from ..console import console
+from .expense import Constraint
 from .expense import Expense
+from .expense import Period
 from .expense import Status
 from .source_n26 import SourceN26
 
@@ -20,7 +24,7 @@ if TYPE_CHECKING:
 
 
 class Budget:
-    MAX_DISPLAY_ROWS = 20
+    MAX_DISPLAY_ROWS = 10
 
     def __init__(self) -> None:
         # Google Sheet that serves as the database of expenses, will be connected later
@@ -64,8 +68,8 @@ class Budget:
         sheet_values = self._sheet.get_all_values()
 
         # Get the new expenses from the source that are not in the sheet yet
-        sheet_timestamps = [int(row[0]) for row in sheet_values if str(row[0]).isdigit()]
-        new_expenses = list(reversed([e for e in source.get_expenses() if e.timestamp not in sheet_timestamps]))
+        last_timestamp = max([int(row[0]) for row in sheet_values if str(row[0]).isdigit()])
+        new_expenses = list(reversed([e for e in source.get_expenses() if e.timestamp > last_timestamp]))
         self.n_new_expenses = len(new_expenses)
 
         # Add the new expenses to the sheet
@@ -106,6 +110,68 @@ class Budget:
             ),
             caption=f"N26 Balance: {self.balance:.2f} €",
         )
+
+    def render_summary(self) -> Tree:
+        """Render a summary of the budget, mainly the current and previous month's totals."""
+
+        # Make sure we are already connected to the source and the sheet
+        assert self.n_new_expenses > -1, "Call `fetch()` first"
+        assert self.expenses is not None, "Call `fetch()` first"
+        tree = Tree("Budget", hide_root=True, guide_style=TH().HINT)
+
+        def _get_monthly_expenses(month: int, year: int) -> List[Expense]:
+            return [
+                e
+                for e in self.expenses
+                if e.as_datetime().month == month
+                and e.as_datetime().year == year
+                and e.status != Status.SKIP
+                and e.period == Period.MONTHLY
+            ]
+
+        def _add_node(title: str, total: float, is_current: bool = False, hint: str = "") -> Tree:
+            return tree.add(
+                f"[bold {TH().TEXT}]{title:<9}[/] [{'bold' if is_current else 'none'} {TH().TEXT}]{str(total):>5} € "
+                + f"[{TH().ACCENT}]{hint}[/]"
+            )
+
+        # Get the yearly total
+        now = datetime.now()
+        yearly_total = sum(
+            [
+                (e.i_paid if e.i_paid is not None else 0)
+                for e in self.expenses
+                if e.as_datetime().year == now.year and e.status != Status.SKIP and e.period == Period.YEARLY
+            ]
+        )
+        _add_node(
+            str(now.year),
+            round(yearly_total),
+            hint=f" {round((yearly_total / 12)):>5} € / month",
+        )
+        node = tree.add(" ")
+
+        # Get each month's total expenses
+        for i_month in range(1, now.month + 1):
+            expenses = _get_monthly_expenses(i_month, now.year)
+            total = round(sum([(e.i_paid if e.i_paid is not None else 0) for e in expenses]))
+            node = _add_node(
+                datetime(now.year, i_month, 1).strftime("%B"),
+                total,
+                i_month == now.month,
+                f" {round(total + (yearly_total / 12)):>5} €",
+            )
+
+            # Summarize the expenses by category for the last 3 months
+            if i_month > now.month - 3:
+                for c in [c for c in Constraint if c != Constraint.UNKNOWN]:
+                    node.add(
+                        f"[{TH().HINT}]{c.value.capitalize():<8} "
+                        f"{round(sum([(e.i_paid if e.i_paid is not None else 0) for e in expenses if e.constraint == c])):>5} €"
+                    )
+                tree.add(" ") if i_month < now.month else None
+
+        return tree
 
     def interactive_review(self) -> None:
         """Review the list of pending expenses one by one, and update the sheet

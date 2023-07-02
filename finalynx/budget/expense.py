@@ -1,9 +1,12 @@
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+
+import pytz
 
 
 class Status(Enum):
@@ -49,7 +52,16 @@ class Expense:
     # Internal information
     cell_number: int = -1
 
+    def as_datetime(self, timezone: str = "Europe/Paris") -> datetime:
+        """Return the timestamp as a datetime object in the given timezone."""
+        return (
+            datetime.utcfromtimestamp(int(self.timestamp) / 1000)
+            .replace(tzinfo=pytz.UTC)
+            .astimezone(pytz.timezone(timezone))
+        )
+
     def to_list(self) -> List[Any]:
+        """Return the expense as a list of values. Used for Google Sheets export/import."""
         return [
             int(self.timestamp),
             float(self.amount),
@@ -65,6 +77,7 @@ class Expense:
 
     @staticmethod
     def from_list(list: List[Any], cell_number: int = -1) -> "Expense":
+        """Create an Expense object from a list of values. Used for Google Sheets export/import."""
         if len(list) < 4:
             raise ValueError("List must have at least 4 elements, got", len(list))
         return Expense(
@@ -82,6 +95,7 @@ class Expense:
         )
 
     def to_dict(self) -> Dict[str, Any]:
+        """Return the expense as a dictionary. Used for JSON export/import."""
         return {
             "timestamp": str(self.timestamp),
             "amount": str(self.amount),
@@ -98,6 +112,7 @@ class Expense:
 
     @staticmethod
     def from_dict(dict_: Dict[str, Any]) -> "Expense":
+        """Create an Expense object from a dictionary. Used for JSON export/import."""
         return Expense(
             timestamp=int(dict_["timestamp"]),
             amount=float(str(dict_["amount"]).replace("€", "").strip()),

@@ -6,7 +6,7 @@
 </h1>
 
 <div align="center">
-  <h4>Minimalistic companion to help you manage your investments: Reach your life goals!</h4>
+  <h4>Minimalistic command-line tool to help you manage your investments</h4>
   <a href="https://pypi.org/project/finalynx/"><img alt="PyPI" src="https://img.shields.io/pypi/v/finalynx?style=flat-square"></a>
   <a href="https://github.com/MadeInPierre/finalynx/actions/workflows/semantic-release.yml"><img alt="GitHub Workflow Status (main)" src="https://img.shields.io/github/actions/workflow/status/madeinpierre/finalynx/semantic-release.yml?branch=main&style=flat-square"></a>
   <a href="https://github.com/MadeInPierre/finalynx/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/madeinpierre/finalynx?style=flat-square"></a>
@@ -29,6 +29,27 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
   <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_demo_frameless.png" width="600" />
 </p>
 
+<details>
+<summary>
+  <div align="center">
+    <strong>[Click]</strong> Additional screenshots 📸
+  </div>
+</summary>
+
+| Recommendations | Web dashboard |
+|---|---|
+| <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_recommendations.png" width="600" /> | <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_dashboard.png" width="600" /> |
+
+Finalynx also includes a daily budget manager to classify your expenses and show monthly & yearly statistics:
+
+<img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/budget.png"/>
+
+<img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/budget_review.png"/>
+
+Statistics and visualizations will be added soon!
+
+</details>
+
 ## ✨ Features
 
 1. **✅ Portfolio:** Organize your assets, set targets, and sync with your Finary account.
@@ -38,15 +59,6 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 5. **🙏 Extensions:** Make this tool work for other people's situations, contributions needed 👀
 
 You can check the [current development status](https://github.com/users/MadeInPierre/projects/4). Contributions are warmly welcome!
-
-<details>
-<summary><strong>[Click]</strong> Additional screenshots 📸</summary>
-
-| Recommendations | Web dashboard |
-|---|---|
-| <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_recommendations.png" width="600" /> | <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_dashboard.png" width="600" /> |
-
-</details>
 
 ## 🚀 Installation
 If you don't plan on touching the code, simply run (with python >=3.10 and pip installed):

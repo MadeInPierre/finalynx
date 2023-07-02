@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import List
 from typing import Optional
 
-import pytz
 from rich import box
 from rich.table import Table
 
@@ -22,7 +21,7 @@ def _render_expenses_table(
     caption: str = "",
     focus: Optional[int] = None,
 ) -> Table:
-    """Generate a rich table from a list of expenses."""
+    """Generate a rich console table from a list of expenses."""
     table = Table(title=title, box=box.MINIMAL, caption=caption, caption_justify="right", expand=True)
     table.add_column("#", justify="center")
     table.add_column("Date", justify="left", style="orange1")
@@ -38,11 +37,8 @@ def _render_expenses_table(
     table.add_column("Comment", style="white", justify="left")
 
     for i, t in enumerate(expenses):
-        # Convert timestamp to date
-        timestamp = int(t.timestamp) / 1000
-        ts_date = (
-            datetime.utcfromtimestamp(timestamp).replace(tzinfo=pytz.UTC).astimezone(pytz.timezone("Europe/Paris"))
-        )
+        # Format date and time
+        ts_date = t.as_datetime()
         day_name_str = ts_date.strftime("%A")[:3]
         day_nth_str = ts_date.strftime("%d")
         month_str = ts_date.strftime("%B")

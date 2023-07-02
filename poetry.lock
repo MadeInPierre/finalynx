@@ -2309,6 +2309,18 @@ files = [
 ]
 
 [[package]]
+name = "pytz"
+version = "2023.3"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pytz-2023.3-py2.py3-none-any.whl", hash = "sha256:a151b3abb88eda1d4e34a9814df37de2a80e301e68ba0fd856fb9b46bfbbbffb"},
+    {file = "pytz-2023.3.tar.gz", hash = "sha256:1d8ce29db189191fb55338ee6d0387d82ab59f3d00eac103412d64e0ebd0c588"},
+]
+
+[[package]]
 name = "pywebview"
 version = "4.1"
 description = "Build GUI for your Python program with JavaScript, HTML, and CSS."
@@ -3433,4 +3445,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "976771bf995d9c8a0c87bf07cf2a9f02911a75f7df7f4d5ba841690854134286"
+content-hash = "47cfdad9130bc7ef52f0d039c6352181335ec4545b5d48fb476139f1be7a6f42"

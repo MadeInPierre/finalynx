@@ -6,14 +6,14 @@ from rich.tree import Tree
 
 from ..config import get_active_theme as TH
 from ..console import console
-from .source_base import SourceBase
+from .source_base_line import SourceBaseLine
 
 
 GNOSIS_API_TOKENLIST_URI = "https://blockscout.com/xdai/mainnet/api?module=account&action=tokenlist&address="
 REALT_API_TOKENLIST_URI = "https://api.realt.community/v1/token"
 
 
-class SourceRealT(SourceBase):
+class SourceRealT(SourceBaseLine):
     def __init__(self, wallet_address: str, name: str = "RealT", cache_validity: int = 120) -> None:
         """RealT wrapper to fetch an address' investments.
         :param wallet_address: Your wallet address.

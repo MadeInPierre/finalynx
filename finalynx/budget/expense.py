@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -64,8 +65,8 @@ class Expense:
 
     @staticmethod
     def from_list(list: List[Any], cell_number: int = -1) -> "Expense":
-        if not (4 <= len(list) <= 10):
-            raise ValueError("List must have 4 to 10 elements, got", len(list))
+        if len(list) < 4:
+            raise ValueError("List must have at least 4 elements, got", len(list))
         return Expense(
             timestamp=int(list[0]),
             amount=float(str(list[1]).replace("€", "").strip()),
@@ -78,4 +79,35 @@ class Expense:
             period=Period(list[8]) if list[8] else Period.UNKNOWN,
             comment=list[9],
             cell_number=cell_number,
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "timestamp": str(self.timestamp),
+            "amount": str(self.amount),
+            "merchant_name": self.merchant_name,
+            "merchant_category": self.merchant_category,
+            "status": self.status.value,
+            "i_paid": str(self.i_paid),
+            "payback": self.payback,
+            "constraint": self.constraint.value,
+            "period": self.period.value,
+            "comment": self.comment,
+            "cell_number": str(self.cell_number),
+        }
+
+    @staticmethod
+    def from_dict(dict_: Dict[str, Any]) -> "Expense":
+        return Expense(
+            timestamp=int(dict_["timestamp"]),
+            amount=float(str(dict_["amount"]).replace("€", "").strip()),
+            merchant_name=dict_["merchant_name"],
+            merchant_category=dict_["merchant_category"],
+            status=Status(dict_["status"]) if dict_["status"] else Status.UNKNOWN,
+            i_paid=float(str(dict_["i_paid"]).replace("€", "").strip()) if dict_["i_paid"] != "None" else None,
+            payback=dict_["payback"],
+            constraint=Constraint(dict_["constraint"]) if dict_["constraint"] else Constraint.UNKNOWN,
+            period=Period(dict_["period"]) if dict_["period"] else Period.UNKNOWN,
+            comment=dict_["comment"],
+            cell_number=int(dict_["cell_number"]),
         )

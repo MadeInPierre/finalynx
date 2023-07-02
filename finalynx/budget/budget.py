@@ -1,8 +1,10 @@
 from typing import List
 from typing import Optional
+from typing import TYPE_CHECKING
 
 import gspread
 from rich.table import Table
+from rich.tree import Tree
 
 from ..console import console
 from .expense import Expense
@@ -13,29 +15,35 @@ from .source_n26 import SourceN26
 from ._render import _render_expenses_table
 from ._review import _i_paid, _payback, _constraint, _period, _comment, _status  # noqa: F401
 
+if TYPE_CHECKING:
+    from gspread.worksheet import Worksheet
+
 
 class Budget:
     MAX_DISPLAY_ROWS = 20
 
     def __init__(self) -> None:
-        # Initialize the N26 client with the credentials, no connection yet
-        self._source: Optional[SourceN26] = None
-
         # Google Sheet that serves as the database of expenses, will be connected later
-        self._sheet = None
+        self._sheet: Optional[Worksheet] = None
 
-        # # Initialize the list of expenses, will be fetched later
+        # Initialize the list of expenses, will be fetched later
         self.expenses: List[Expense] = []
-        self._new_expenses: List[Expense] = []  # Freshly fetched from the source
-        self._pending_expenses: List[Expense] = []  # Filtered to keep only the ones that need review
+        self.n_new_expenses: int = -1
         self.balance: float = 0.0
 
-    def fetch(self, email: str, password: str, device_token: str) -> List[Expense]:
-        """TODO"""
+        # Private copy that only includes expenses that need user review (calculated only once)
+        self._pending_expenses: List[Expense] = []
+
+    def fetch(self, email: str, password: str, device_token: str, clear_cache: bool) -> Tree:
+        """Get expenses from all sources and return a rich tree to summarize the results.
+        This method also updates the google sheets table with the newly found expenses and
+        prepares the list of "pending" expenses that need user reviews."""
 
         # Initialize the N26 client with the credentials
-        with console.status("[bold green]Connecting to N26...[/] [dim white](you may have to confirm in the app)"):
-            self._source = SourceN26(email, password, device_token)
+        with console.status("[bold green]Fetching from N26...[/] [dim white](you may have to confirm in the app)"):
+            source = SourceN26(email, password, device_token)
+            tree = source.fetch(clear_cache)
+            self.balance = source.balance
 
         # Connect to the Google Sheet that serves as the database of expenses
         with console.status("[bold green]Connecting to Google Sheets..."):
@@ -50,25 +58,23 @@ class Budget:
                 )
 
         # Make sure we are already connected to the source and the sheet
-        assert self._source is not None, "Something went wrong with the connection to N26"
         assert self._sheet is not None, "Something went wrong with the connection to GSheets"
 
-        # Fetch the latest values from the source and the sheet
-        self.balance = self._fetch_source_balance()
-        expenses = self._fetch_source_expenses()
-        sheet_values = self._fetch_sheet_values()
+        # Fetch the latest values from the the sheet
+        sheet_values = self._sheet.get_all_values()
 
         # Get the new expenses from the source that are not in the sheet yet
-        last_row_timestamp = int(sheet_values[-1][0]) if str(sheet_values[-1][0]).isdigit() else 0
-        self._new_expenses = [e for e in expenses if e.timestamp > last_row_timestamp]
+        sheet_timestamps = [int(row[0]) for row in sheet_values if str(row[0]).isdigit()]
+        new_expenses = list(reversed([e for e in source.get_expenses() if e.timestamp not in sheet_timestamps]))
+        self.n_new_expenses = len(new_expenses)
 
         # Add the new expenses to the sheet
-        if len(self._new_expenses) > 0:
+        if self.n_new_expenses > 0:
             first_empty_row = len(sheet_values) + 1
 
             self._sheet.update(
-                f"A{first_empty_row}:D{first_empty_row + len(self._new_expenses)}",
-                [d.to_list()[:4] for d in self._new_expenses],
+                f"A{first_empty_row}:D{first_empty_row + len(new_expenses)}",
+                [d.to_list()[:4] for d in new_expenses],
             )
 
         # Fetch the latest values from the sheet again to get the complete list of expenses
@@ -82,20 +88,20 @@ class Budget:
             t for t in self.expenses if t.status not in [Status.SKIP, Status.DONE] or t.i_paid is None
         ]
 
-        # Return the list for user convenience
-        return self.expenses
+        # Return the tree summary to be displayed in the console
+        return tree
 
     def render_expenses(self) -> Table:
         # Make sure we are already connected to the source and the sheet
-        assert self._new_expenses is not None, "Call `fetch()` first"
+        assert self.n_new_expenses > -1, "Call `fetch()` first"
         assert self._pending_expenses is not None, "Call `fetch()` first"
 
         # Display the table of pending expenses
-        n_new, n_pending = len(self._new_expenses), len(self._pending_expenses)
+        n_pending = len(self._pending_expenses)
         return _render_expenses_table(
             self._pending_expenses[-Budget.MAX_DISPLAY_ROWS :],  # noqa: E203
             title=(
-                f"{n_new} new expense{'s' if n_new != 1 else ''} ── {n_pending} need{'s' if n_pending == 1 else ''} review "
+                f"{self.n_new_expenses} new expense{'s' if self.n_new_expenses != 1 else ''} ── {n_pending} need{'s' if n_pending == 1 else ''} review "
                 + (f"(displaying {Budget.MAX_DISPLAY_ROWS} first rows)" if n_pending > Budget.MAX_DISPLAY_ROWS else "")
             ),
             caption=f"N26 Balance: {self.balance:.2f} €",
@@ -145,20 +151,8 @@ class Budget:
         except KeyboardInterrupt:
             console.clear()
 
-    def _fetch_source_balance(self) -> float:
-        """Get the account balance from the source."""
-        assert self._source is not None, "Call connect() first"
-        with console.status("[bold green]Fetching N26 balance..."):
-            return self._source.fetch_balance()
-
-    def _fetch_source_expenses(self) -> List[Expense]:
-        """Get the list of expenses from the source."""
-        assert self._source is not None, "Call connect() first"
-        with console.status("[bold green]Fetching N26 expenses..."):
-            return self._source.fetch_expenses()
-
     def _fetch_sheet_values(self) -> List[List[str]]:
         """Get the latest values from the Google Sheet."""
         assert self._sheet is not None, "Call connect() first"
         with console.status("[bold green]Fetching previous expenses from Google Sheets..."):
-            return self._sheet.get_all_values()
+            return self._sheet.get_all_values()  # type: ignore

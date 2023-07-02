@@ -208,8 +208,8 @@ class Assistant:
                 email = t["email"]
                 password = t["password"]
                 device_token = t["device_token"]
-            budget.fetch(email, password, device_token)  # TODO Add info to the fetched data tree?
-            console.log("[bold]Tip:[/] run again with -R or --review to interactively review the expenses 👀")
+            fetched_tree.add(budget.fetch(email, password, device_token, self.clear_cache))
+            console.log("[bold]Tip:[/] run again with -I or --interactive review the expenses 👀")
 
             renders.append(budget.render_expenses())
 

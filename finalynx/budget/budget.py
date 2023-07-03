@@ -44,13 +44,16 @@ class Budget:
         prepares the list of "pending" expenses that need user reviews."""
 
         # Initialize the N26 client with the credentials
-        with console.status("[bold green]Fetching from N26...[/] [dim white](you may have to confirm in the app)"):
+        with console.status(
+            f"[bold {TH().ACCENT}]Fetching from N26...[/] [dim white](you may have to confirm in the app)",
+            spinner_style=TH().ACCENT,
+        ):
             source = SourceN26(email, password, device_token)
             tree = source.fetch(clear_cache)
             self.balance = source.balance
 
         # Connect to the Google Sheet that serves as the database of expenses
-        with console.status("[bold green]Connecting to Google Sheets..."):
+        with console.status(f"[bold {TH().ACCENT}]Connecting to Google Sheets...", spinner_style=TH().ACCENT):
             try:
                 gs = gspread.service_account()
                 sh = gs.open("N26 Expenses")
@@ -129,11 +132,8 @@ class Budget:
                 and e.period == Period.MONTHLY
             ]
 
-        def _add_node(title: str, total: float, is_current: bool = False, hint: str = "") -> Tree:
-            return tree.add(
-                f"[bold {TH().TEXT}]{title:<9}[/] [{'bold' if is_current else 'none'} {TH().TEXT}]{str(total):>5} € "
-                + f"[{TH().ACCENT}]{hint}[/]"
-            )
+        def _add_node(title: str, total: float, hint: str = "") -> Tree:
+            return tree.add(f"[bold {TH().TEXT}]{title:<11}[/] [{TH().TEXT}]{str(total):>5} € [{TH().ACCENT}]{hint}[/]")
 
         # Get the yearly total
         now = datetime.now()
@@ -152,14 +152,15 @@ class Budget:
         node = tree.add(" ")
 
         # Get each month's total expenses
+        month_totals: List[int] = []
         for i_month in range(1, now.month + 1):
             expenses = _get_monthly_expenses(i_month, now.year)
-            total = round(sum([(e.i_paid if e.i_paid is not None else 0) for e in expenses]))
+            monthly_total = round(sum([(e.i_paid if e.i_paid is not None else 0) for e in expenses]))
+            month_totals.append(round(monthly_total + (yearly_total / 12)))
             node = _add_node(
                 datetime(now.year, i_month, 1).strftime("%B"),
-                total,
-                i_month == now.month,
-                f" {round(total + (yearly_total / 12)):>5} €",
+                monthly_total,
+                f" {month_totals[-1]:>5} €",
             )
 
             # Summarize the expenses by category for the last 3 months
@@ -169,7 +170,13 @@ class Budget:
                         f"[{TH().HINT}]{c.value.capitalize():<8} "
                         f"{round(sum([(e.i_paid if e.i_paid is not None else 0) for e in expenses if e.constraint == c])):>5} €"
                     )
-                tree.add(" ") if i_month < now.month else None
+                tree.add(" ")
+
+        mean_monthly_total = round(sum(month_totals[:-1]) / len(month_totals[:-1]))
+        last_month_name = datetime(now.year, now.month - 1, 1).strftime("%B")
+        tree.add(
+            f"[{TH().TEXT}]Mean up to {last_month_name:<9} [{TH().ACCENT}][bold]{mean_monthly_total:>5} €[/] / month"
+        )
 
         return tree
 
@@ -209,7 +216,7 @@ class Budget:
                         break
 
                 if not _skip_line:
-                    with console.status("[bold green]Saving..."):
+                    with console.status(f"[bold {TH().ACCENT}]Saving...", spinner_style=TH().ACCENT):
                         self._sheet.update(f"A{t.cell_number}:J{t.cell_number}", [t.to_list()])
 
             console.clear()
@@ -220,5 +227,8 @@ class Budget:
     def _fetch_sheet_values(self) -> List[List[str]]:
         """Get the latest values from the Google Sheet."""
         assert self._sheet is not None, "Call connect() first"
-        with console.status("[bold green]Fetching previous expenses from Google Sheets..."):
+        with console.status(
+            f"[bold {TH().ACCENT}]Fetching previous expenses from Google Sheets...",
+            spinner_style=TH().ACCENT,
+        ):
             return self._sheet.get_all_values()  # type: ignore

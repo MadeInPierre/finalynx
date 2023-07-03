@@ -82,11 +82,11 @@ class Expense:
             raise ValueError("List must have at least 4 elements, got", len(list))
         return Expense(
             timestamp=int(list[0]),
-            amount=float(str(list[1]).replace("€", "").strip()),
+            amount=float(str(list[1]).replace("€", "").replace(",", "").strip()),
             merchant_name=list[2],
             merchant_category=list[3],
             status=Status(list[4]) if list[4] else Status.UNKNOWN,
-            i_paid=float(str(list[5]).replace("€", "").strip()) if list[5] else None,
+            i_paid=float(str(list[5]).replace("€", "").replace(",", "").strip()) if list[5] else None,
             payback=list[6],
             constraint=Constraint(list[7]) if list[7] else Constraint.UNKNOWN,
             period=Period(list[8]) if list[8] else Period.UNKNOWN,

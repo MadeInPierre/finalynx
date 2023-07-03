@@ -9,6 +9,7 @@ from typing import Optional
 from rich import box
 from rich.table import Table
 
+from ..config import get_active_theme as TH
 from .expense import Constraint
 from .expense import Expense
 from .expense import Period
@@ -23,18 +24,18 @@ def _render_expenses_table(
 ) -> Table:
     """Generate a rich console table from a list of expenses."""
     table = Table(title=title, box=box.MINIMAL, caption=caption, caption_justify="right", expand=True)
-    table.add_column("#", justify="center")
+    table.add_column("#", justify="center", style=TH().TEXT)
     table.add_column("Date", justify="left", style="orange1")
     table.add_column("Time", justify="left", style="orange1")
     table.add_column("Amount", justify="right", style="red")
-    table.add_column("Merchant", style="cyan", justify="left")
-    table.add_column("Category", style="dim white", justify="left")
-    table.add_column("Status", style="white", justify="left")
-    table.add_column("I Paid", style="white", justify="right")
-    table.add_column("Payback", style="white", justify="left")
-    table.add_column("Type", style="white", justify="left")
-    table.add_column("Period", style="white", justify="left")
-    table.add_column("Comment", style="white", justify="left")
+    table.add_column("Merchant", justify="left", style="cyan")
+    table.add_column("Category", justify="left", style=TH().HINT)
+    table.add_column("Status", justify="left", style=TH().TEXT)
+    table.add_column("I Paid", justify="right", style="red")
+    table.add_column("Payback", justify="left", style=TH().TEXT)
+    table.add_column("Type", justify="left", style=TH().TEXT)
+    table.add_column("Period", justify="left", style=TH().TEXT)
+    table.add_column("Comment", justify="left", style=TH().HINT)
 
     for i, t in enumerate(expenses):
         # Format date and time

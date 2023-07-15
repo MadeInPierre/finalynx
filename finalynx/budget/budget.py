@@ -38,19 +38,15 @@ class Budget:
         # Private copy that only includes expenses that need user review (calculated only once)
         self._pending_expenses: List[Expense] = []
 
-    def fetch(self, email: str, password: str, device_token: str, clear_cache: bool) -> Tree:
+    def fetch(self, clear_cache: bool, force_signin: bool = False) -> Tree:
         """Get expenses from all sources and return a rich tree to summarize the results.
         This method also updates the google sheets table with the newly found expenses and
         prepares the list of "pending" expenses that need user reviews."""
 
         # Initialize the N26 client with the credentials
-        with console.status(
-            f"[bold {TH().ACCENT}]Fetching from N26...[/] [dim white](you may have to confirm in the app)",
-            spinner_style=TH().ACCENT,
-        ):
-            source = SourceN26(email, password, device_token)
-            tree = source.fetch(clear_cache)
-            self.balance = source.balance
+        source = SourceN26(force_signin)
+        tree = source.fetch(clear_cache=bool(clear_cache or force_signin))
+        self.balance = source.balance
 
         # Connect to the Google Sheet that serves as the database of expenses
         with console.status(f"[bold {TH().ACCENT}]Connecting to Google Sheets...", spinner_style=TH().ACCENT):
@@ -92,7 +88,7 @@ class Budget:
 
         # Filter expenses to keep only the ones that are not skipped and incomplete
         self._pending_expenses = [
-            t for t in self.expenses if t.status not in [Status.SKIP, Status.DONE] or t.i_paid is None
+            t for t in self.expenses if t.status not in [Status.SKIP, Status.DONE, Status.TODO] or t.i_paid is None
         ]
 
         # Return the tree summary to be displayed in the console
@@ -133,7 +129,7 @@ class Budget:
             ]
 
         def _add_node(title: str, total: float, hint: str = "") -> Tree:
-            return tree.add(f"[bold {TH().TEXT}]{title:<11}[/] [{TH().TEXT}]{str(total):>5} € [{TH().ACCENT}]{hint}[/]")
+            return tree.add(f"[bold {TH().TEXT}]{title:<11}[/] [{TH().TEXT}]{str(total):>6} € [{TH().ACCENT}]{hint}[/]")
 
         # Get the yearly total
         now = datetime.now()
@@ -185,7 +181,11 @@ class Budget:
         with the new values. This method is interactive, and will clear the
         console between each expense or when the user presses Ctrl+C."""
         assert self._sheet is not None, "Call fetch() first"
-        assert self._pending_expenses, "Call fetch() first"
+        assert self._pending_expenses is not None, "Call `fetch()` first"
+
+        if not self._pending_expenses:
+            console.print("[green]You're all done with your expenses! 💸")
+            return
 
         # Make space so that the main table is not hidden by the next console clears
         console.print("\n" * console.height)

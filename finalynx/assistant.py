@@ -199,12 +199,7 @@ class Assistant:
 
         # Fetch the budget from N26 if enabled
         if self.check_budget:
-            with open("n26_credentials.json") as f:  # TODO
-                t = json.load(f)
-                email = t["email"]
-                password = t["password"]
-                device_token = t["device_token"]
-            fetched_tree.add(self.budget.fetch(email, password, device_token, self.clear_cache))
+            fetched_tree.add(self.budget.fetch(self.clear_cache, self.force_signin))
             console.log("[bold]Tip:[/] run again with -I or --interactive review the expenses 👀")
 
         # Render the console elements

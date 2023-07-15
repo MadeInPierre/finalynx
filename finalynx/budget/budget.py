@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
+from typing import Union
 
 import gspread
 from rich.table import Table
@@ -94,13 +95,17 @@ class Budget:
         # Return the tree summary to be displayed in the console
         return tree
 
-    def render_expenses(self) -> Table:
+    def render_expenses(self) -> Union[Table, str]:
         # Make sure we are already connected to the source and the sheet
         assert self.n_new_expenses > -1, "Call `fetch()` first"
         assert self._pending_expenses is not None, "Call `fetch()` first"
 
         # Display the table of pending expenses
         n_pending = len(self._pending_expenses)
+
+        if n_pending == 0:
+            return f"[green]No pending expenses 🎉 [dim white]N26 Balance: {self.balance:.2f} €\n"
+
         return _render_expenses_table(
             self._pending_expenses[-Budget.MAX_DISPLAY_ROWS :],  # noqa: E203
             title=(

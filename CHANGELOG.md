@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v1.21.0 (2023-07-15)
+
+### Feature
+
+* **budget:** Manage your daily expenses (N26 only) ([#135](https://github.com/MadeInPierre/finalynx/issues/135)) ([`6209b40`](https://github.com/MadeInPierre/finalynx/commit/6209b4088d8a37640a71832e5bb275ab851b5ac6))
+
+### Documentation
+
+* Visual tweaks, update screenshots ([`efaa8b8`](https://github.com/MadeInPierre/finalynx/commit/efaa8b86d24578db10c3c3ce81774413b0d189a3))
+* Add envelopes and sources tutorials ([`20a9a82`](https://github.com/MadeInPierre/finalynx/commit/20a9a823d20bd5bd2b37ca8abaca02e013062d63))
+* Organize tutorials, add awesome badge ([`62b249d`](https://github.com/MadeInPierre/finalynx/commit/62b249d11b8e14e98f137286bd160d518f4a174e))
+* Improve installation guide readability ([`a57f996`](https://github.com/MadeInPierre/finalynx/commit/a57f996ffa25028b332f9628946d7c4039a1c932))
+* Create tutorials table of contents online ([`e690ab0`](https://github.com/MadeInPierre/finalynx/commit/e690ab09189be56fbd1109abc21c9ac51b5fcc3d))
+
 ## v1.20.3 (2023-06-07)
 
 ### Fix

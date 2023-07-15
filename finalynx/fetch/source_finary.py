@@ -13,10 +13,10 @@ from rich.tree import Tree
 
 from ..config import get_active_theme as TH
 from ..console import console
-from .source_base import SourceBase
+from .source_base_line import SourceBaseLine
 
 
-class SourceFinary(SourceBase):
+class SourceFinary(SourceBaseLine):
     """Wrapper class for the `finary_uapi` package."""
 
     _categories = [

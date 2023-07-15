@@ -2,24 +2,17 @@ import datetime
 import json
 import os
 from typing import Any
-from typing import Dict
 from typing import List
-from typing import Optional
 
 from rich.tree import Tree
-from unidecode import unidecode
 
-from ..config import get_active_theme as TH
 from ..console import console
-from ..portfolio import Line
-from ..portfolio import Portfolio
-from .fetch_line import FetchLine
 
 
 class SourceBase:
     """Abstract class to fetch data from multiple sources."""
 
-    def __init__(self, name: str, cache_validity: int = 12):
+    def __init__(self, name: str, _type: type, item_name: str, cache_validity: int = 12):
         """This is an abstract class to provide a common interface when fetching investments from
         multiple sources.
 
@@ -27,28 +20,27 @@ class SourceBase:
         Contributions to add data from any format or source are warmly welcome!
         ```
 
-        :param name: a unique name to identify this source instance, the id used to
+        :param name: A unique name to identify this source instance, the id used to
         activate this source is the lower-case name.
+        :param _type: Used by children classes to specify what type of object the source generates.
         :param cache_validity: Finalynx will save fetched results to a file and reuse them on
         the next run if the cache age is less than the specified number of hours.
         """
         self.name = name
         self.cache_validity = cache_validity
         self.cache_fullpath = os.path.join(os.path.dirname(__file__), f"{self.id}_cache.json")
+        self._type = _type
+        self._item_name = item_name
 
-        # This list will hold all fetched line objects.
-        self._fetched_lines: List[FetchLine] = []
+        # This list will hold all fetched objects
+        self._fetched_items: List[Any] = []
 
-    def fetch(
+    def _fetch(
         self,
-        portfolio: Portfolio,
         clear_cache: bool,
-        ignore_orphans: bool,
     ) -> Tree:
-        """Abstract method, requires to be overridden by subclasses.
+        """Fetch items from the source.
         :param clear_cache: Delete cached data to immediately fetch data online, defaults to False
-        :param ignore_orphans: If a line in your account is not referenced in your `Portfolio` instance
-        then don't attach it to the root (used as a reminder), defaults to False
         :returns: A `Tree` object from the `rich` package used to display what has been fetched.
         """
         console.log(f"Fetching data from {self.name}...")
@@ -59,11 +51,11 @@ class SourceBase:
             os.remove(self.cache_fullpath)
 
         # This will hold a key:amount dictionary of all lines found in the source
-        self._fetched_lines = self._get_cache()  # try to get the data in the cache first
+        self._fetched_items = self._get_cache()  # try to get the data in the cache first
         tree = Tree(self.name, highlight=True, hide_root=True)
 
         # If there's no valid cache, signin and fetch the data online
-        if not self._fetched_lines:
+        if not self._fetched_items:
             try:
                 # Go fetch the data online and populate self._fetched_lines through `_register_fetchline`
                 self._fetch_data(tree)
@@ -75,32 +67,6 @@ class SourceBase:
             # Save what has been found in a cache file for offline use and better performance at next launch
             self._save_cache()
 
-        # If the cache is not empty, Match all lines to the portfolio hierarchy
-        for fline in self._fetched_lines:
-            name = fline.name if fline.name else "Unknown"
-            matched_lines: List[Line] = list(set(portfolio.match_lines(fline)))  # merge identical instances
-
-            # Set attributes to the first matched line
-            if matched_lines:
-                # Issue a warning if multiple lines matched, try to set a stricter key
-                if len(matched_lines) > 1:
-                    self._log(
-                        f"[yellow][bold]Warning:[/] Line matched with multiple nodes, updating first only: {name}",
-                        highlight=False,
-                    )
-
-                # Update the first line's attributes based on whata has been found online
-                fline.update_line(matched_lines[0])
-
-            # If no line matched, attach a fake line to root (unless ignored)
-            elif not ignore_orphans:
-                self._log(
-                    f"[yellow][bold]Warning:[/] Line did not match with any node, attaching to root: {name}"
-                    " (ignore with --ignore-orphans)",
-                    highlight=False,
-                )
-                portfolio.add_child(Line(name, amount=fline.amount, currency=fline.currency))
-
         # Return a rich tree to be displayed in the console as a recap of what has been fetched
         return tree
 
@@ -110,34 +76,7 @@ class SourceBase:
         each fetched investment."""
         raise NotImplementedError("This abstract method must be overriden by all subclasses")
 
-    def _register_fetchline(
-        self,
-        tree_node: Tree,
-        name: str,
-        id: str,
-        account: str,
-        amount: int,
-        currency: str,
-        custom: Optional[Dict[str, Any]] = None,
-    ) -> None:
-        """Internal method used to register a new investment found from Finary."""
-
-        # Skip malformed lines (or lines with 0 euros invested)
-        if not (name or id or account) or (amount >= -1.0 and amount < 1.0):
-            return
-
-        # Discard non-ASCII characters in the fields
-        name, id, account, amount = unidecode(name), str(id), unidecode(account), round(float(amount))
-
-        # Add the line to the rendering tree
-        tree_node.add(f"{amount} {currency} {name} [{TH().HINT}]{id=}")
-
-        # Form a FetLine instance from the information given and return it
-        self._fetched_lines.append(
-            FetchLine(name=name, id=id, account=account, custom=custom, amount=amount, currency=currency)
-        )
-
-    def _get_cache(self) -> List[FetchLine]:
+    def _get_cache(self) -> List[Any]:
         """Attempt to retrieve the cached data. Check if more than an hour has passed since the last update.
         :returns: A key:amount dictionary if the cache file is less than an hour old, None otherwise.
         """
@@ -158,7 +97,9 @@ class SourceBase:
 
         if hours_passed < self.cache_validity:
             self._log(f"Using recently cached data (<{self.cache_validity}h max)")
-            return [FetchLine.from_dict(line_dict) for line_dict in data["lines"]]
+
+            # Assume the children class' generated object has a `from_dict` method
+            return [self._type.from_dict(line_dict) for line_dict in data[self._item_name]]  # type: ignore
         self._log(f"Fetching data (cache file is {hours_passed}h old > {self.cache_validity}h max)")
         return []
 
@@ -170,7 +111,7 @@ class SourceBase:
         # Save current date and time to a JSON file with the fetched data
         self._log(f"Saved fetched data to '{self.cache_fullpath}'")
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        data = {"last_updated": current_time, "lines": [line.to_dict() for line in self._fetched_lines]}
+        data = {"last_updated": current_time, self._item_name: [line.to_dict() for line in self._fetched_items]}
         with open(self.cache_fullpath, "w") as f:
             json.dump(data, f, indent=4)
 

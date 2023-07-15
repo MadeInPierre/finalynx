@@ -6,7 +6,7 @@ from rich.tree import Tree
 
 from ..console import console
 from ..portfolio.folder import Portfolio
-from .source_base import SourceBase
+from .source_base_line import SourceBaseLine
 
 
 class Fetch:
@@ -17,17 +17,17 @@ class Fetch:
         portfolio: Portfolio,
         clear_cache: bool = False,
         ignore_orphans: bool = False,
-        sources: Optional[List[SourceBase]] = None,
+        sources: Optional[List[SourceBaseLine]] = None,
     ) -> None:
         """This class orchestrates the fetching process from multiple sources."""
         self.portfolio = portfolio
-        self._sources: Dict[str, SourceBase] = {s.name: s for s in sources} if sources else {}
+        self._sources: Dict[str, SourceBaseLine] = {s.name: s for s in sources} if sources else {}
 
         # Flags set by user
         self.clear_cache = clear_cache
         self.ignore_orphans = ignore_orphans
 
-    def add_source(self, source: SourceBase) -> None:
+    def add_source(self, source: SourceBaseLine) -> None:
         """Register a new source instance which must already be configured."""
         self._sources[source.id] = source
 

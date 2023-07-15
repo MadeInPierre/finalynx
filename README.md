@@ -18,7 +18,7 @@
   <br>
 </div>
 
-Finalynx is your "Finary Assistant", a command-line tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals.
+Finalynx is your "Finary Assistant", a command-line (and experimental web dashboard) tool to organize your investments portfolio and get automated monthly investment recommendations based on your future life goals.
 This tool synchronizes with your [Finary](https://finary.com/) account to show real-time investment values.
 
 Don't have Finary yet? You can sign up using my [referral link](https://finary.com/referral/f8d349c922d1e1c8f0d2) 🌹 (or through the [default](https://finary.com/signup) page).
@@ -29,6 +29,27 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
   <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_demo_frameless.png" width="600" />
 </p>
 
+<details>
+<summary>
+  <div align="center">
+    <strong>[Click]</strong> Additional screenshots 📸
+  </div>
+</summary>
+
+| Recommendations | Web dashboard |
+|---|---|
+| <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_recommendations.png" width="600" /> | <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_dashboard.png" width="600" /> |
+
+Finalynx also includes a daily budget manager to classify your expenses and show monthly & yearly statistics:
+
+<img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/budget.png"/>
+
+<img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/budget_review.png"/>
+
+Statistics and visualizations will be added soon!
+
+</details>
+
 ## ✨ Features
 
 1. **✅ Portfolio:** Organize your assets, set targets, and sync with your Finary account.
@@ -38,15 +59,6 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
 5. **🙏 Extensions:** Make this tool work for other people's situations, contributions needed 👀
 
 You can check the [current development status](https://github.com/users/MadeInPierre/projects/4). Contributions are warmly welcome!
-
-<details>
-<summary><strong>[Click]</strong> Additional screenshots 📸</summary>
-
-| Recommendations | Web dashboard |
-|---|---|
-| <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_recommendations.png" width="600" /> | <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_dashboard.png" width="600" /> |
-
-</details>
 
 ## 🚀 Installation
 If you don't plan on touching the code, simply run (with python >=3.10 and pip installed):

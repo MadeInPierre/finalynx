@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import date
+from typing import Any
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -11,10 +12,11 @@ from docopt import docopt
 from finalynx import Dashboard
 from finalynx import Fetch
 from finalynx import Portfolio
+from finalynx.budget.budget import Budget
 from finalynx.config import get_active_theme as TH
 from finalynx.config import set_active_theme
 from finalynx.copilot.recommendations import render_recommendations
-from finalynx.fetch.source_base import SourceBase
+from finalynx.fetch.source_base_line import SourceBaseLine
 from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
@@ -79,6 +81,8 @@ class Assistant:
         active_sources: Optional[List[str]] = None,
         theme: Optional[finalynx.theme.Theme] = None,
         sidecars: Optional[List[Sidecar]] = None,
+        check_budget: bool = False,
+        interactive: bool = False,
         ignore_argv: bool = False,
     ):
         self.portfolio = portfolio
@@ -98,6 +102,8 @@ class Assistant:
         self.export_dir = export_dir
         self.active_sources = active_sources if active_sources else ["finary"]
         self.sidecars = sidecars if sidecars else []
+        self.check_budget = check_budget
+        self.interactive = interactive
 
         # Set the global color theme if specified
         if theme:
@@ -109,8 +115,9 @@ class Assistant:
 
         # Create the fetching manager instance
         self._fetch = Fetch(self.portfolio, self.clear_cache, self.ignore_orphans)
+        self.budget = Budget()
 
-    def add_source(self, source: SourceBase) -> None:
+    def add_source(self, source: SourceBaseLine) -> None:
         """Register a source, either defined in your own config or from the available Finalynx sources
         using `from finalynx.fetch.source_any import SourceAny`."""
         self._fetch.add_source(source)
@@ -135,6 +142,12 @@ class Assistant:
             self.show_data = True
         if args["dashboard"]:
             self.launch_dashboard = True
+        if args["budget"]:
+            self.check_budget = True
+        if args["--interactive"]:
+            if not self.check_budget:
+                console.log("[red][bold]Error:[/] --interactive can only be used with budget, ignoring.")
+            self.interactive = True
         if args["--format"]:
             self.output_format = args["--format"]
         if args["--sidecar"]:
@@ -184,9 +197,17 @@ class Assistant:
         # Fetch from the online sources and process the portfolio
         fetched_tree = self.initialize()
 
+        # Fetch the budget from N26 if enabled
+        if self.check_budget:
+            fetched_tree.add(self.budget.fetch(self.clear_cache, self.force_signin))
+            console.log("[bold]Tip:[/] run again with -I or --interactive review the expenses 👀")
+
         # Render the console elements
         main_frame = self.render_mainframe()
         panels = self.render_panels()
+        renders: List[Any] = [main_frame, panels]
+        if self.check_budget:
+            renders.append(self.budget.render_expenses())
 
         # Save the current portfolio to a file. Useful for statistics later
         if self.enable_export:
@@ -197,13 +218,12 @@ class Assistant:
             console.print(Panel(fetched_tree, title="Fetched data"))
 
         # Display the entire portfolio and associated recommendations
-        console.print(
-            "\n\n",
-            main_frame,
-            "\n\n",
-            panels,
-            "\n",
-        )
+        for render in renders:
+            console.print("\n\n", render)
+
+        # Interactive review of the budget expenses if enabled
+        if self.check_budget and self.interactive:
+            self.budget.interactive_review()
 
         # Host a local webserver with the running dashboard
         if self.launch_dashboard:
@@ -250,24 +270,19 @@ class Assistant:
     def render_panels(self) -> Columns:
         """Renders the default set of panels used in the default console view when calling run()."""
 
+        def panel(title: str, content: Any) -> Panel:
+            return Panel(content, title=title, padding=(1, 2), expand=False, border_style=TH().PANEL)
+
         # Final set of results to be displayed
         panels: List[ConsoleRenderable] = [
             Text(" "),
-            Panel(
-                render_recommendations(self.portfolio, self.envelopes),
-                title="Recommendations",
-                padding=(1, 2),
-                expand=False,
-                border_style=TH().PANEL,
-            ),
-            Panel(
-                self.render_performance_report(),
-                title="Performance",
-                padding=(1, 2),
-                expand=False,
-                border_style=TH().PANEL,
-            ),
+            panel("Recommendations", render_recommendations(self.portfolio, self.envelopes)),
+            panel("Performance", self.render_performance_report()),
         ]
+
+        # Add the budget panel if enabled
+        if self.check_budget:
+            panels.append(panel("Budget", self.budget.render_summary()))
 
         return Columns(panels, padding=(2, 2))
 

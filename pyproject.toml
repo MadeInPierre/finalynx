@@ -17,6 +17,10 @@ numpy = "^1.24.2"
 nicegui = "^1.2.13"
 finary-uapi = "^0.1.2"
 html2image = "^2.0.3"
+n26 = "^3.3.1"
+iso18245 = "^1.2.0"
+gspread = "^5.10.0"
+pytz = "^2023.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

@@ -1,20 +1,20 @@
 from rich.tree import Tree
 
-from .source_base import SourceBase
+from .source_base_line import SourceBaseLine
 
 
-class MySource(SourceBase):
+class MySource(SourceBaseLine):
     # No spaces, alphanumeric name only
     SOURCE_NAME = "MySourceName"
 
-    def __init__(self, clear_cache: bool = False, ignore_orphans: bool = False) -> None:
+    def __init__(self, clear_cache: bool = False) -> None:
         """Write a description of how your source works here, with a list of what each
         argument does:
         :param clear_cache: Forces to clear the last fetch's saved results.
         :param ignore_orphans: Don't create new lines at the root of the portfolio if some
         investments have been fetched but have not been matched with any existing node.
         """
-        super().__init__(self.SOURCE_NAME, clear_cache, ignore_orphans)
+        super().__init__(self.SOURCE_NAME, clear_cache)
 
     def _fetch_data(self, tree: Tree) -> None:
         """Use this method to fetch your data however you want! CSV, PDF, API, manual input...

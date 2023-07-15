@@ -537,14 +537,14 @@ testing = ["covdefaults (>=2.2.2)", "coverage (>=7.0.1)", "pytest (>=7.2)", "pyt
 
 [[package]]
 name = "finary-uapi"
-version = "0.1.2"
+version = "0.1.4"
 description = "Finary API client and command line tool to interact with your Finary account."
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "finary_uapi-0.1.2-py3-none-any.whl", hash = "sha256:9a57bbcff5d0433451873f12efa414aa020263371e9173e528d0ff8b007ad3fc"},
-    {file = "finary_uapi-0.1.2.tar.gz", hash = "sha256:0556994ac6e8d3cc42d683c66a8ebd1ed963d3f475b454f43f542c8c3beebb6a"},
+    {file = "finary_uapi-0.1.4-py3-none-any.whl", hash = "sha256:a3b3c9173aabbc205ce2193ed56cc47cf329d383e686e4a4891e67d024ea7e87"},
+    {file = "finary_uapi-0.1.4.tar.gz", hash = "sha256:0ee7cac49a68e809dc67677110841e08a4df022c9cc026715a3305ae09749dd8"},
 ]
 
 [package.dependencies]
@@ -3445,4 +3445,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "47cfdad9130bc7ef52f0d039c6352181335ec4545b5d48fb476139f1be7a6f42"
+content-hash = "63ea2f48139f4399090615f2d48c915aa47bbe47de018be18dc0d53c99dc1158"

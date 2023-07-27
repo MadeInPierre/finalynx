@@ -1,4 +1,3 @@
-import copy
 import itertools
 from typing import Any
 from typing import Dict
@@ -59,18 +58,18 @@ class Bucket:
         sublines = []
 
         if result["index"] == result_prev["index"]:
-            new_line = copy.deepcopy(self.lines[result["index"]])
+            new_line = self.lines[result["index"]].copy()
             new_line.amount = result["remainder"] - result_prev["remainder"]
             sublines.append(new_line)
         else:
-            line1 = copy.deepcopy(self.lines[result_prev["index"]])
+            line1 = self.lines[result_prev["index"]].copy()
             line1.amount = line1.amount - result_prev["remainder"]
             sublines.append(line1)
 
             for i in range(result_prev["index"] + 1, result["index"]):
-                sublines.append(copy.deepcopy(self.lines[i]))
+                sublines.append(self.lines[i].copy())
 
-            line2 = copy.deepcopy(self.lines[result["index"]])
+            line2 = self.lines[result["index"]].copy()
             line2.amount = result["remainder"]
             sublines.append(line2)
 
@@ -88,6 +87,11 @@ class Bucket:
     def get_used_amount(self) -> float:
         """:return: The total amount used from the bucket until now."""
         return self.amount_used
+
+    def reset(self) -> None:
+        """Go back to a state where no amount was used."""
+        self._prev_amount_used = 0
+        self.amount_used = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return {

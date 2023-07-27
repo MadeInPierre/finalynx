@@ -115,3 +115,18 @@ class Line(Node):
             newline=bool(dict["newline"]),
             currency=dict["currency"] if "currency" in dict.keys() else DEFAULT_CURRENCY,
         )
+
+    def copy(self) -> "Line":
+        return Line(
+            name=self.name,
+            asset_class=self.asset_class,
+            asset_subclass=self.asset_subclass,
+            parent=self.parent,
+            target=self.target,
+            key=self.key,
+            amount=self.amount,
+            newline=self.newline,
+            perf=self.perf,
+            currency=self.currency,
+            envelope=self.envelope,
+        )

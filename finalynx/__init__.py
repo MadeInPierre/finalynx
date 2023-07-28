@@ -29,7 +29,11 @@ from .copilot import Copilot
 from .dashboard import Dashboard
 
 # Simulator
-from .simulator import Simulator
+from .simulator import Simulator, Timeline
+from .simulator import Action, AddLineAmount, SetLineAmount
+from .simulator import Event, Salary
+from .simulator import Recurrence, DeltaRecurrence, MonthlyRecurrence
+from datetime import date
 
 # Main
 from .assistant import Assistant

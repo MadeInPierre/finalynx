@@ -6,6 +6,8 @@ from finalynx.portfolio.folder import Portfolio
 from finalynx.portfolio.line import Line
 from finalynx.simulator.actions import Action
 from finalynx.simulator.actions import AddLineAmount
+from finalynx.simulator.actions import ApplyPerformance
+from finalynx.simulator.recurrence import DeltaRecurrence
 from finalynx.simulator.recurrence import MonthlyRecurrence
 from finalynx.simulator.recurrence import Recurrence
 
@@ -58,3 +60,16 @@ class Salary(Event):
             MonthlyRecurrence(day_of_the_month, until=end_date),
             name,
         )
+
+
+class YearlyPerformance(Event):
+    def __init__(
+        self,
+        inflation: float,
+        start_year: Optional[int] = None,
+        repeat_annual: bool = True,
+        name: str = "Yearly Performance",
+    ) -> None:
+        start_date = date(start_year if start_year is not None else date.today().year, 12, 31)
+        recurrence = DeltaRecurrence(years=1) if repeat_annual else None
+        super().__init__(ApplyPerformance(inflation), start_date, recurrence, name)

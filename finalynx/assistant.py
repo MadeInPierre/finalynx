@@ -21,7 +21,7 @@ from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Sidecar
-from finalynx.simulator.timeline import Event
+from finalynx.simulator.timeline import Simulation
 from finalynx.simulator.timeline import Timeline
 from html2image import Html2Image  # type: ignore[import]
 from rich import inspect  # noqa F401
@@ -86,8 +86,7 @@ class Assistant:
         check_budget: bool = False,
         interactive: bool = False,
         # Simulation options
-        sim_events: Optional[List[Event]] = None,
-        sim_end_date: Optional[date] = None,
+        simulation: Optional[Simulation] = None,
     ):
         self.portfolio = portfolio
         self.buckets = buckets if buckets else []
@@ -108,6 +107,7 @@ class Assistant:
         self.sidecars = sidecars if sidecars else []
         self.check_budget = check_budget
         self.interactive = interactive
+        self.simulation = simulation
 
         # Set the global color theme if specified
         if theme:
@@ -122,8 +122,7 @@ class Assistant:
         self.budget = Budget()
 
         # Initialize the simulation timeline with the initial user events
-        sim_events = sim_events if sim_events is not None else []
-        self._timeline = Timeline(self.portfolio, self.buckets, sim_events, sim_end_date)
+        self._timeline = Timeline(simulation, self.portfolio, self.buckets) if simulation else None
 
     def add_source(self, source: SourceBaseLine) -> None:
         """Register a source, either defined in your own config or from the available Finalynx sources
@@ -226,7 +225,7 @@ class Assistant:
             console.print(Panel(fetched_tree, title="Fetched data"))
 
         # Run the simulation if there are events defined
-        if not self._timeline.is_finished:
+        if self._timeline and not self._timeline.is_finished:
             console.log(f"Running simulation until {self._timeline.end_date}...")
             tree = Tree("\n[bold]Worth", guide_style=TH().TREE_BRANCH)
 
@@ -322,8 +321,11 @@ class Assistant:
 
         tree = Tree("Global Performance", hide_root=True, guide_style=TH().TREE_BRANCH)
         node = tree.add("[bold]Yield")
-        node.add(f"[{TH().TEXT}]Current:  [bold][{TH().ACCENT}]{perf:.2f} %[/] / year")
-        node.add(f"[{TH().TEXT}]Planned:  [bold][{TH().ACCENT}]{perf_ideal:.2f} %[/] / year")
+        node.add(f"[{TH().TEXT}]Current:    [bold][{TH().ACCENT}]{perf:.2f} %[/] / year")
+        node.add(f"[{TH().TEXT}]Planned:    [bold][{TH().ACCENT}]{perf_ideal:.2f} %[/] / year")
+
+        if self.simulation:
+            node.add(f"[{TH().TEXT}]Inflation:  [bold][gold1]{self.simulation.inflation:.2f} %[/] / year")
         return tree
 
     def dashboard(self) -> None:

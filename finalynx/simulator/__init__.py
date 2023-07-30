@@ -25,3 +25,4 @@ from .recurrence import Recurrence
 # Main classes
 from .simulator import Simulator
 from .timeline import Timeline
+from .timeline import Simulation

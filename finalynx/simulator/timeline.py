@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import date
 from datetime import timedelta
 from typing import List
@@ -6,27 +7,43 @@ from typing import Optional
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.folder import Portfolio
 from finalynx.simulator.events import Event
+from finalynx.simulator.events import YearlyPerformance
+
+
+@dataclass
+class Simulation:
+    events: List[Event]
+    inflation: float = 2.0
+    end_date: Optional[date] = None
+    default_events: bool = True
 
 
 class Timeline:
     def __init__(
         self,
+        simulation: Simulation,
         portfolio: Portfolio,
         buckets: List[Bucket],
-        events: List[Event],
-        end_date: Optional[date] = None,
     ) -> None:
         """The timeline is a list of programmed events. The user can set his own list of events
         with optional recurring settings. The timeline will automatically apply each event and
         generate the recurring events until `duration_years` is reached."""
+        self.simulation = simulation
         self._portfolio = portfolio
         self._buckets = buckets
-        self._events = events
+
+        # Create default events, add the user ones, and sort by date
+        self._events = simulation.events
+        if simulation.default_events:
+            self._events += [
+                YearlyPerformance(simulation.inflation),
+                # TODO auto-balance the portfolio by following the recommendations
+            ]
         self._sort_events()
 
         # This is a pointer to the current portfolio's date, which will move when applying events
         self.current_date = date.today()
-        self.end_date = end_date if end_date else date.today() + timedelta(weeks=100 * 52)
+        self.end_date = simulation.end_date if simulation.end_date else date.today() + timedelta(weeks=100 * 52)
 
     def run(self) -> None:
         self.goto(self.end_date)
@@ -68,10 +85,6 @@ class Timeline:
         for bucket in self._buckets:
             bucket.reset()
         self._portfolio.process()
-
-        # TODO auto-balance the portfolio by following the recommendations
-        # TODO apply the yearly performance for each Line in the portfolio
-        # TODO apply inflation (inside the performance or after?)
 
         # Remove this event, add the new ones, and sort by date
         self._events.remove(next_event)

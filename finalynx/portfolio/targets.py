@@ -284,9 +284,9 @@ class TargetRatio(TargetRange):
         self.target_ratio = target_ratio
         self.zone = zone
 
-    def get_ideal(self) -> int:
+    def get_ideal(self) -> float:
         """:returns: How much this amount represents agains the reference in percentage (0-100%)."""
-        return round(self._get_parent_amount() * self.target_ratio / 100)
+        return self._get_parent_amount() * self.target_ratio / 100
 
     def render_goal(self) -> str:
         """:returns: The target ratio as a string."""

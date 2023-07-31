@@ -1,3 +1,4 @@
+from typing import Any
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
@@ -8,6 +9,7 @@ from finalynx.portfolio.folder import Portfolio
 from finalynx.portfolio.folder import SharedFolder
 from finalynx.portfolio.line import Line
 from finalynx.portfolio.node import Node
+from finalynx.portfolio.targets import TargetRatio
 
 if TYPE_CHECKING:
     from finalynx.simulator.events import Event
@@ -52,6 +54,11 @@ class AddLineAmount(Action):
 
 class ApplyPerformance(Action):
     def __init__(self, inflation: float = 2.0, period_years: float = 1.0) -> None:
+        """This action applies every line's expected performance defined in `LinePerf`
+        instances for the entire portfolio objecti.
+        :param inflation: Float to reduce each line's performance by this number.
+        :param period_years: Duration to apply the performance on. E.g. for one month, use 1/12.
+        """
         self.period_years = period_years
         self.inflation = inflation
         super().__init__()
@@ -68,6 +75,7 @@ class ApplyPerformance(Action):
 
         # Collect the buckets in the tree, apply the performance for each of
         # their lines, and process again to redistribute the new amounts.
+        # Timeline already processes the tree avec each event, no need here.
         for bucket in set(self._buckets):
             for line in bucket.lines:
                 line.apply_perf(self.inflation, self.period_years)
@@ -85,3 +93,49 @@ class ApplyPerformance(Action):
             node.apply_perf(self.inflation, self.period_years)
         else:
             raise ValueError("Unexpected node type.")
+
+
+class AutoBalance(Action):
+    def apply(self, portfolio: Portfolio) -> List["Event"]:
+        """This action automatically applies the ideal amounts auto-calculated
+        in the portfolio tree. This only applies to `Line` and `SharedFolder`
+        instances that have a `TargetRatio` target. The amounts are balanced
+        depending on the target percentages for each node.
+        Lines auto-added by envelope in folders are also balanced with equal
+        percentages set for each child in the same folder.
+        """
+        ideals = self._get_ideals(portfolio)
+        self._set_ideals(portfolio, ideals)
+        return []
+
+    def _get_ideals(self, node: Node) -> List[Any]:
+        """Save the ideal amounts calculated in the tree before applying them to
+        avoid inconsistent states."""
+        if isinstance(node, Folder) and not isinstance(node, SharedFolder):
+            return [self._get_ideals(c) for c in node.children]
+        else:
+            if (
+                node.target.__class__.__name__ == "Target"
+                and node.parent
+                and isinstance(node.parent.target, TargetRatio)
+            ):
+                return [node.parent.get_ideal() / len(node.parent.children)]
+            return [node.get_ideal()]
+
+    def _set_ideals(self, node: Node, ideals: List[Any]) -> None:
+        """Set the ideal amounts for each `Line` and `SharedFolder`."""
+
+        # Traverse the tree to get to the leaves
+        if isinstance(node, Folder) and not isinstance(node, SharedFolder):
+            for i_child, child in enumerate(node.children):
+                self._set_ideals(child, ideals[i_child])
+
+        # At a leaf level, only update the amount if it's a node with a ratio target.
+        # Add an exception for Lines auto-added in folders (no target set but the parent folder has a ratio)
+        elif isinstance(node.target, TargetRatio) or (
+            node.target.__class__.__name__ == "Target" and node.parent and isinstance(node.parent.target, TargetRatio)
+        ):
+            if isinstance(node, SharedFolder):
+                node.bucket.add_amount(ideals[0] - node.get_amount())
+            elif isinstance(node, Line):
+                node.amount = ideals[0]

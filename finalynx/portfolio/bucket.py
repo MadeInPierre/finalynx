@@ -88,6 +88,32 @@ class Bucket:
         """:return: The total amount used from the bucket until now."""
         return self.amount_used
 
+    def add_amount(self, amount: float) -> None:
+        """Add or remove an amount to the bucket's lines. This can be used to dynamically change the
+        bucket's total amount, e.g. to apply recommendations from Finalynx during the simulation"""
+
+        # If the amount is positive, add the amount to the last line in the bucket
+        if amount > 0:
+            if not self.lines:
+                raise ValueError("Cannot add amount to an empty bucket.")
+            self.lines[-1].amount += amount
+
+        # If the amount is negative, remove successively from each line
+        else:
+            amount *= -1
+            removed_amount = 0.0
+            for line in reversed(self.lines):
+                remaining_amount = amount - removed_amount
+
+                if line.amount >= remaining_amount:
+                    line.amount -= remaining_amount
+                    return
+                else:
+                    removed_amount += line.amount
+                    line.amount = 0
+
+        raise ValueError("Attempted to remove too much from the bucket.")
+
     def reset(self) -> None:
         """Go back to a state where no amount was used."""
         self._prev_amount_used = 0

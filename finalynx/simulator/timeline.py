@@ -4,10 +4,14 @@ from datetime import timedelta
 from typing import List
 from typing import Optional
 
+from finalynx.config import get_active_theme as TH
+from finalynx.console import console
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.folder import Portfolio
+from finalynx.simulator.actions import AutoBalance
 from finalynx.simulator.events import Event
 from finalynx.simulator.events import YearlyPerformance
+from finalynx.simulator.recurrence import MonthlyRecurrence
 
 
 @dataclass
@@ -31,13 +35,13 @@ class Timeline:
         self.simulation = simulation
         self._portfolio = portfolio
         self._buckets = buckets
-
-        # Create default events, add the user ones, and sort by date
         self._events = simulation.events
+
+        # Create default events in addition to the user ones and sort events by date
         if simulation.default_events:
             self._events += [
                 YearlyPerformance(simulation.inflation),
-                # TODO auto-balance the portfolio by following the recommendations
+                Event(AutoBalance(), recurrence=MonthlyRecurrence(1, n_months=3)),
             ]
         self._sort_events()
 
@@ -46,17 +50,19 @@ class Timeline:
         self.end_date = simulation.end_date if simulation.end_date else date.today() + timedelta(weeks=100 * 52)
 
     def run(self) -> None:
+        """Step all events until the simulation limit is reached."""
         self.goto(self.end_date)
 
     def goto(self, target_date: date) -> None:
-        """"""
-        if target_date == self.current_date:
-            return
-        elif target_date > self.current_date:
-            self.step_until(target_date)
-        else:
-            self.unstep_until(target_date)
-        self.current_date = target_date
+        """Step until the target date is reached (in the future or past)."""
+        with console.status(f"[bold {TH().ACCENT}]Moving timeline until {target_date}...", spinner_style=TH().ACCENT):
+            if target_date == self.current_date:
+                return
+            elif target_date > self.current_date:
+                self.step_until(target_date)
+            else:
+                self.unstep_until(target_date)
+            self.current_date = target_date
 
     def step_until(self, target_date: date) -> None:
         """Execute all events until the specified date is reached."""
@@ -93,10 +99,6 @@ class Timeline:
 
         # Move the current date to this event's date
         self.current_date = next_event.planned_date
-        # console.log(
-        #     f"{next_event.planned_date} Portfolio has "
-        #     f"{round(self._portfolio.get_amount())} € after event {next_event}"
-        # )
         return False
 
     def unstep_until(self, target_date: date) -> None:
@@ -109,6 +111,8 @@ class Timeline:
 
     @property
     def is_finished(self) -> bool:
+        """The timeline is finished if there are no events left to step
+        or the limit date is reached."""
         return len(self._events) == 0 or self.current_date >= self.end_date
 
     def _sort_events(self) -> None:

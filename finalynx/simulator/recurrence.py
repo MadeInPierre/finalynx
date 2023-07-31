@@ -42,12 +42,16 @@ class MonthlyRecurrence(Recurrence):
     def __init__(
         self,
         day_of_the_month: int,
+        n_months: int = 1,
         until: Optional[date] = None,
     ) -> None:
         super().__init__(until)
         self.day_of_the_month = day_of_the_month
+        self.n_months = n_months
 
     def _next_date(self, current_date: date) -> date:
-        if current_date.month == 12:
-            return date(current_date.year + 1, 1, self.day_of_the_month)
-        return date(current_date.year, current_date.month + 1, self.day_of_the_month)
+        next_month = current_date.month + self.n_months
+
+        if next_month > 12:
+            return date(current_date.year + 1, next_month - 12, self.day_of_the_month)
+        return date(current_date.year, next_month, self.day_of_the_month)

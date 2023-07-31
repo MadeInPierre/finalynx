@@ -31,6 +31,7 @@ from rich import traceback
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import Confirm
 from rich.text import Text
 from rich.tree import Tree
 
@@ -230,7 +231,7 @@ class Assistant:
             tree = Tree("\n[bold]Worth", guide_style=TH().TREE_BRANCH)
 
             def append_worth(year: int, amount: float) -> None:
-                tree.add(f"[{TH().TEXT}]{year}:     [{TH().ACCENT}][bold]{round(amount / 1000):>3}[/] k€")
+                tree.add(f"[{TH().TEXT}]{year}:       [{TH().ACCENT}][bold]{round(amount / 1000):>4}[/] k€")
 
             append_worth(date.today().year, self.portfolio.get_amount())
             for year in range(date.today().year + 5, self._timeline.end_date.year, 5):
@@ -242,12 +243,14 @@ class Assistant:
 
             console.log(f"    Portfolio will be worth [{TH().ACCENT}]{self.portfolio.get_amount():.0f} €[/]")
 
-        # renders.append(self.render_mainframe())
-
         # Display the entire portfolio and associated recommendations
         for render in renders:
             console.print("\n\n", render)
         console.print("\n")
+
+        # TODO replace with a command option
+        if self._timeline and Confirm.ask(f"Display your future portfolio in {self._timeline.end_date}?"):
+            console.print("\n\n", self.render_mainframe())
 
         # Interactive review of the budget expenses if enabled
         if self.check_budget and self.interactive:

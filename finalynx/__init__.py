@@ -32,7 +32,7 @@ from .dashboard import Dashboard
 from .simulator import Simulator, Simulation, Timeline
 from .simulator import Action, AddLineAmount, SetLineAmount
 from .simulator import Event, Salary
-from .simulator import Recurrence, DeltaRecurrence, MonthlyRecurrence
+from .simulator import DeltaRecurrence, MonthlyRecurrence
 from datetime import date
 
 # Main

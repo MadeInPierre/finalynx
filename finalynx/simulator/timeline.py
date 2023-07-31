@@ -16,6 +16,8 @@ from finalynx.simulator.recurrence import MonthlyRecurrence
 
 @dataclass
 class Simulation:
+    """Configuration class to launch a Finalynx simulation."""
+
     events: List[Event]
     inflation: float = 2.0
     end_date: Optional[date] = None
@@ -23,6 +25,8 @@ class Simulation:
 
 
 class Timeline:
+    """Main simulation engine to execute programmed actions on your portfolio."""
+
     def __init__(
         self,
         simulation: Simulation,

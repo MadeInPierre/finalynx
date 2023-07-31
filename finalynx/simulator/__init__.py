@@ -20,7 +20,6 @@ from .events import Salary
 # Recurrence
 from .recurrence import DeltaRecurrence
 from .recurrence import MonthlyRecurrence
-from .recurrence import Recurrence
 
 # Main classes
 from .simulator import Simulator

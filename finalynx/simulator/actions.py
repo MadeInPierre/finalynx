@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 
 class Action:
+    """Abstract base class to perform an action on the portfolio."""
+
     def __init__(self, name: Optional[str] = None) -> None:
         """Abstract class. An action describes a procedure to change something in the portfolio.
         For instance, when receiving a salary, an action could add some amount to the main account.
@@ -31,7 +33,12 @@ class Action:
 
 
 class SetLineAmount(Action):
+    """Set an amount to a line."""
+
     def __init__(self, target_line: Line, amount: float) -> None:
+        """This action simply applies the new amount to the line. The timeline then processes
+        the portfolio again to recalculate the SharedFolders' values.
+        """
         self.target_line = target_line
         self.amount = amount
         super().__init__()
@@ -42,7 +49,12 @@ class SetLineAmount(Action):
 
 
 class AddLineAmount(Action):
+    """Add some amount to a line."""
+
     def __init__(self, target_line: Line, amount: float) -> None:
+        """This action simply applies the new amount to the line. The timeline then processes
+        the portfolio again to recalculate the SharedFolders' values.
+        """
         self.target_line = target_line
         self.amount = amount
         super().__init__()
@@ -53,6 +65,8 @@ class AddLineAmount(Action):
 
 
 class ApplyPerformance(Action):
+    """Add the investment interests to each line (defined by the expected performance)."""
+
     def __init__(self, inflation: float = 2.0, period_years: float = 1.0) -> None:
         """This action applies every line's expected performance defined in `LinePerf`
         instances for the entire portfolio objecti.
@@ -96,6 +110,8 @@ class ApplyPerformance(Action):
 
 
 class AutoBalance(Action):
+    """Automatically apply Finalynx's recommendations on the portfolio."""
+
     def apply(self, portfolio: Portfolio) -> List["Event"]:
         """This action automatically applies the ideal amounts auto-calculated
         in the portfolio tree. This only applies to `Line` and `SharedFolder`

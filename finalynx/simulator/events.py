@@ -9,15 +9,17 @@ from finalynx.simulator.actions import AddLineAmount
 from finalynx.simulator.actions import ApplyPerformance
 from finalynx.simulator.recurrence import DeltaRecurrence
 from finalynx.simulator.recurrence import MonthlyRecurrence
-from finalynx.simulator.recurrence import Recurrence
+from finalynx.simulator.recurrence import RecurrenceBase
 
 
 class Event:
+    """Program an action to happen at a certain (optionally recurring) date."""
+
     def __init__(
         self,
         action: Action,
         planned_date: Optional[date] = None,
-        recurrence: Optional[Recurrence] = None,
+        recurrence: Optional[RecurrenceBase] = None,
         name: Optional[str] = None,
     ) -> None:
         """An event associates a date to an action."""
@@ -42,6 +44,8 @@ class Event:
 
 
 class Salary(Event):
+    """Add your salary to your account every month (nicer shortcut)."""
+
     def __init__(
         self,
         target_line: Line,
@@ -63,6 +67,8 @@ class Salary(Event):
 
 
 class YearlyPerformance(Event):
+    """Earn your investments' interests at the end of each year."""
+
     def __init__(
         self,
         inflation: float,

@@ -3,7 +3,9 @@ from datetime import timedelta
 from typing import Optional
 
 
-class Recurrence:
+class RecurrenceBase:
+    """Abstract class to define how often an Event should be triggered."""
+
     def __init__(self, until: Optional[date] = None) -> None:
         self.until = until
 
@@ -17,7 +19,9 @@ class Recurrence:
         raise NotImplementedError("Must be overridden by subclass.")
 
 
-class DeltaRecurrence(Recurrence):
+class DeltaRecurrence(RecurrenceBase):
+    """Program an action to happen every few days/months/years."""
+
     def __init__(
         self,
         days: Optional[int] = None,
@@ -38,13 +42,18 @@ class DeltaRecurrence(Recurrence):
         return current_date + self._delta
 
 
-class MonthlyRecurrence(Recurrence):
+class MonthlyRecurrence(RecurrenceBase):
+    """Program an action to happen every nth day of the month."""
+
     def __init__(
         self,
         day_of_the_month: int,
         n_months: int = 1,
         until: Optional[date] = None,
     ) -> None:
+        """Program an action to happen every nth day of the month.
+        :param n_months: Optionally skip some months.
+        """
         super().__init__(until)
         self.day_of_the_month = day_of_the_month
         self.n_months = n_months

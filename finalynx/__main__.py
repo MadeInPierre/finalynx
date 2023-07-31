@@ -3,11 +3,11 @@ This file describes finalynx's behavior when called as a standalone python packa
 
 Currently, Finalynx does not support direct calls and only prints the command-line usage description to the console.
 """
-from docopt import docopt
+from docopt import docopt  # type: ignore[import]
 
 from .__meta__ import __version__
 from .parse.json import ImportJSON
-from .usage import __doc__
+from .usage import __doc__  # type: ignore[import]
 
 if __name__ == "__main__":
     args = docopt(__doc__, version=__version__)

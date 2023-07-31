@@ -2,13 +2,13 @@ import json
 import os
 from datetime import date
 from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import TYPE_CHECKING
 
 import finalynx.theme
-from docopt import docopt
+from docopt import docopt  # type: ignore[import]
 from finalynx import Dashboard
 from finalynx import Fetch
 from finalynx import Portfolio
@@ -21,7 +21,9 @@ from finalynx.fetch.source_finary import SourceFinary
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import Envelope
 from finalynx.portfolio.folder import Sidecar
-from html2image import Html2Image
+from finalynx.simulator.timeline import Simulation
+from finalynx.simulator.timeline import Timeline
+from html2image import Html2Image  # type: ignore[import]
 from rich import inspect  # noqa F401
 from rich import pretty
 from rich import print  # noqa F401
@@ -29,12 +31,9 @@ from rich import traceback
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import Confirm
 from rich.text import Text
 from rich.tree import Tree
-
-
-if TYPE_CHECKING:
-    from rich.console import ConsoleRenderable
 
 from .__meta__ import __version__
 from .console import console
@@ -65,9 +64,11 @@ class Assistant:
 
     def __init__(
         self,
+        # Main structure elements
         portfolio: Portfolio,
         buckets: Optional[List[Bucket]] = None,
         envelopes: Optional[List[Envelope]] = None,
+        # Portfolio options
         ignore_orphans: bool = False,
         clear_cache: bool = False,
         force_signin: bool = False,
@@ -81,15 +82,18 @@ class Assistant:
         active_sources: Optional[List[str]] = None,
         theme: Optional[finalynx.theme.Theme] = None,
         sidecars: Optional[List[Sidecar]] = None,
+        ignore_argv: bool = False,
+        # Budget options
         check_budget: bool = False,
         interactive: bool = False,
-        ignore_argv: bool = False,
+        # Simulation options
+        simulation: Optional[Simulation] = None,
     ):
         self.portfolio = portfolio
         self.buckets = buckets if buckets else []
         self.envelopes = envelopes if envelopes else []
 
-        # Options that can either be set in the constructor or from the command line options, type --help
+        # Options that can either be set in the constructor or from the command line options, see --help
         self.ignore_orphans = ignore_orphans
         self.clear_cache = clear_cache
         self.force_signin = force_signin
@@ -104,6 +108,7 @@ class Assistant:
         self.sidecars = sidecars if sidecars else []
         self.check_budget = check_budget
         self.interactive = interactive
+        self.simulation = simulation
 
         # Set the global color theme if specified
         if theme:
@@ -116,6 +121,9 @@ class Assistant:
         # Create the fetching manager instance
         self._fetch = Fetch(self.portfolio, self.clear_cache, self.ignore_orphans)
         self.budget = Budget()
+
+        # Initialize the simulation timeline with the initial user events
+        self._timeline = Timeline(simulation, self.portfolio, self.buckets) if simulation else None
 
     def add_source(self, source: SourceBaseLine) -> None:
         """Register a source, either defined in your own config or from the available Finalynx sources
@@ -204,8 +212,8 @@ class Assistant:
 
         # Render the console elements
         main_frame = self.render_mainframe()
-        panels = self.render_panels()
-        renders: List[Any] = [main_frame, panels]
+        dict_panels, render_panels = self.render_panels()
+        renders: List[Any] = [main_frame, render_panels]
         if self.check_budget:
             renders.append(self.budget.render_expenses())
 
@@ -217,9 +225,32 @@ class Assistant:
         if self.show_data:
             console.print(Panel(fetched_tree, title="Fetched data"))
 
+        # Run the simulation if there are events defined
+        if self._timeline and not self._timeline.is_finished:
+            console.log(f"Running simulation until {self._timeline.end_date}...")
+            tree = Tree("\n[bold]Worth", guide_style=TH().TREE_BRANCH)
+
+            def append_worth(year: int, amount: float) -> None:
+                tree.add(f"[{TH().TEXT}]{year}:       [{TH().ACCENT}][bold]{round(amount / 1000):>4}[/] k€")
+
+            append_worth(date.today().year, self.portfolio.get_amount())
+            for year in range(date.today().year + 5, self._timeline.end_date.year, 5):
+                self._timeline.goto(date(year, 1, 1))
+                append_worth(year, self.portfolio.get_amount())
+            self._timeline.run()
+            append_worth(self._timeline.current_date.year, self.portfolio.get_amount())
+            dict_panels["performance"].add(tree)
+
+            console.log(f"    Portfolio will be worth [{TH().ACCENT}]{self.portfolio.get_amount():.0f} €[/]")
+
         # Display the entire portfolio and associated recommendations
         for render in renders:
             console.print("\n\n", render)
+        console.print("\n")
+
+        # TODO replace with a command option
+        if self._timeline and Confirm.ask(f"Display your future portfolio in {self._timeline.end_date}?"):
+            console.print("\n\n", self.render_mainframe())
 
         # Interactive review of the budget expenses if enabled
         if self.check_budget and self.interactive:
@@ -267,33 +298,37 @@ class Assistant:
 
         return Columns(main_frame, padding=(0, 0))  # type: ignore
 
-    def render_panels(self) -> Columns:
+    def render_panels(self) -> Tuple[Dict[str, Any], Columns]:
         """Renders the default set of panels used in the default console view when calling run()."""
 
         def panel(title: str, content: Any) -> Panel:
             return Panel(content, title=title, padding=(1, 2), expand=False, border_style=TH().PANEL)
 
-        # Final set of results to be displayed
-        panels: List[ConsoleRenderable] = [
-            Text(" "),
-            panel("Recommendations", render_recommendations(self.portfolio, self.envelopes)),
-            panel("Performance", self.render_performance_report()),
-        ]
+        dict_items: Dict[str, Any] = {
+            "recommendations": render_recommendations(self.portfolio, self.envelopes),
+            "performance": self.render_performance_report(),
+        }
 
         # Add the budget panel if enabled
         if self.check_budget:
-            panels.append(panel("Budget", self.budget.render_summary()))
+            dict_items["budget"] = self.budget.render_summary()
 
-        return Columns(panels, padding=(2, 2))
+        return dict_items, Columns(
+            [Text(" ")] + [panel(k.capitalize(), v) for k, v in dict_items.items()], padding=(2, 2)
+        )
 
     def render_performance_report(self) -> Tree:
         """Print the current and ideal global expected performance. Call either run() or initialize() first."""
         perf = self.portfolio.get_perf(ideal=False).expected
         perf_ideal = self.portfolio.get_perf(ideal=True).expected
 
-        tree = Tree("Global Performance", hide_root=True)
-        tree.add(f"[{TH().TEXT}]Current:  [bold][{TH().ACCENT}]{perf:.1f} %[/] / year")
-        tree.add(f"[{TH().TEXT}]Planned:  [bold][{TH().ACCENT}]{perf_ideal:.1f} %[/] / year")
+        tree = Tree("Global Performance", hide_root=True, guide_style=TH().TREE_BRANCH)
+        node = tree.add("[bold]Yield")
+        node.add(f"[{TH().TEXT}]Current:    [bold][{TH().ACCENT}]{perf:.2f} %[/] / year")
+        node.add(f"[{TH().TEXT}]Planned:    [bold][{TH().ACCENT}]{perf_ideal:.2f} %[/] / year")
+
+        if self.simulation:
+            node.add(f"[{TH().TEXT}]Inflation:  [bold][gold1]{self.simulation.inflation:.2f} %[/] / year")
         return tree
 
     def dashboard(self) -> None:
@@ -351,7 +386,7 @@ class Assistant:
         # Export the entire portfolio tree to HTML and set the zoom
         dashboard_console = Console(record=True, file=open(os.devnull, "w"))
         dashboard_console.print(self.render_mainframe())
-        dashboard_console.print(self.render_panels())
+        dashboard_console.print(self.render_panels()[1])
         output_html = dashboard_console.export_html().replace("body {", f"body {{\n    zoom: {zoom};")
 
         # Convert the HTML to PNG

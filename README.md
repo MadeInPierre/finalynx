@@ -55,9 +55,9 @@ Statistics and visualizations will be added soon!
 ## ✨ Features
 
 1. **✅ Portfolio:** Organize your assets, set targets, and sync with your Finary account.
-2. **⏳ Web dashboard:** Generate global statistics and graphs to understand each line and folder.
-3. **⏳ Assistant:** Get monthly recommendations on where to invest next to meet your goals.
-4. **🔜 Simulator:** Define your life goals and events, simulate your portfolio's future.
+2. **✅ Assistant:** Get monthly recommendations on where to invest next to meet your goals.
+3. **✅ Simulator:** Define your life goals and events, simulate your portfolio's future.
+4. **⏳ Web dashboard:** Generate global statistics and graphs to understand each line and folder.
 5. **🙏 Extensions:** Make this tool work for other people's situations, contributions needed 👀
 
 You can check the [current development status](https://github.com/users/MadeInPierre/projects/4). Contributions are warmly welcome!

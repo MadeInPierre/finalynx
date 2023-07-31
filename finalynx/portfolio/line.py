@@ -4,6 +4,8 @@ from typing import Dict
 from typing import Optional
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from ..config import DEFAULT_CURRENCY
 from ..config import get_active_theme as TH
 from .constants import AssetClass
@@ -80,6 +82,17 @@ class Line(Node):
         assert self.perf is not None
         return self.perf
 
+    def apply_perf(self, inflation: float = 2.0, n_years: float = 1.0) -> float:
+        """Applies the performance if set. `n_years` specifies the period to apply
+        the performance over (e.g. 1 / 12 = 0.0833 for one month).
+        :returns: The gained amount, or None if no perf was defined."""
+        if self.perf is None or (self.perf is not None and self.perf.skip):
+            return np.nan
+        percentage = (self.perf.expected - inflation) / (100 * n_years)
+        gain = self.get_amount() * percentage
+        self.amount += gain
+        return gain
+
     def _render_account_code(self) -> str:
         """:returns: A formatted string representation of this line's envelope."""
         return f"[{TH().ENVELOPE_CODE}][{self.envelope.code}][/] " if self.envelope else ""
@@ -114,4 +127,19 @@ class Line(Node):
             perf=LinePerf.from_dict(dict["perf"]),
             newline=bool(dict["newline"]),
             currency=dict["currency"] if "currency" in dict.keys() else DEFAULT_CURRENCY,
+        )
+
+    def copy(self) -> "Line":
+        return Line(
+            name=self.name,
+            asset_class=self.asset_class,
+            asset_subclass=self.asset_subclass,
+            parent=self.parent,
+            target=self.target,
+            key=self.key,
+            amount=self.amount,
+            newline=self.newline,
+            perf=self.perf,
+            currency=self.currency,
+            envelope=self.envelope,
         )

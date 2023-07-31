@@ -4,8 +4,24 @@ This subpackage has a [dedicated milestone](https://github.com/MadeInPierre/fina
 ```
 
 Finalynx Simulator: define your future life events and watch your portfolio's future.
-
-This subpackage has not started development yet, check back later or help us build it by contributing!
 """
 # flake8: noqa
+# noreorder
+
+# Actions
+from .actions import Action
+from .actions import AddLineAmount
+from .actions import SetLineAmount
+
+# Events
+from .events import Event
+from .events import Salary
+
+# Recurrence
+from .recurrence import DeltaRecurrence
+from .recurrence import MonthlyRecurrence
+
+# Main classes
 from .simulator import Simulator
+from .timeline import Timeline
+from .timeline import Simulation

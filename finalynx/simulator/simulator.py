@@ -15,7 +15,7 @@ from finalynx.portfolio.envelope import EnvelopeState
 from ..portfolio.folder import Portfolio
 
 
-class Simulator:
+class Simulator:  # TODO DEPRECATED merge with timeline
     """
     Main class for generating modular graphs about your life events and portfolio evolution.
 

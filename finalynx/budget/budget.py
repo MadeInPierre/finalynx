@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from typing import Union
 
 import gspread
+from rich.prompt import Confirm
 from rich.table import Table
 from rich.tree import Tree
 
@@ -33,7 +34,7 @@ class Budget:
 
         # Initialize the list of expenses, will be fetched later
         self.expenses: List[Expense] = []
-        self.n_new_expenses: int = -1
+        self.n_new_expenses: int = 0
         self.balance: float = 0.0
 
         # Private copy that only includes expenses that need user review (calculated only once)
@@ -43,11 +44,6 @@ class Budget:
         """Get expenses from all sources and return a rich tree to summarize the results.
         This method also updates the google sheets table with the newly found expenses and
         prepares the list of "pending" expenses that need user reviews."""
-
-        # Initialize the N26 client with the credentials
-        source = SourceN26(force_signin)
-        tree = source.fetch(clear_cache=bool(clear_cache or force_signin))
-        self.balance = source.balance
 
         # Connect to the Google Sheet that serves as the database of expenses
         with console.status(f"[bold {TH().ACCENT}]Connecting to Google Sheets...", spinner_style=TH().ACCENT):
@@ -67,22 +63,30 @@ class Budget:
         # Fetch the latest values from the the sheet
         sheet_values = self._sheet.get_all_values()
 
-        # Get the new expenses from the source that are not in the sheet yet
-        last_timestamp = max([int(row[0]) for row in sheet_values if str(row[0]).isdigit()])
-        new_expenses = list(reversed([e for e in source.get_expenses() if e.timestamp > last_timestamp]))
-        self.n_new_expenses = len(new_expenses)
+        # Initialize the N26 client with the credentials
+        if Confirm.ask("Fetch expenses from N26?", default=True):
+            source = SourceN26(force_signin)
+            tree = source.fetch(clear_cache=bool(clear_cache or force_signin))
+            self.balance = source.balance
 
-        # Add the new expenses to the sheet
-        if self.n_new_expenses > 0:
-            first_empty_row = len(sheet_values) + 1
+            # Get the new expenses from the source that are not in the sheet yet
+            last_timestamp = max([int(row[0]) for row in sheet_values if str(row[0]).isdigit()])
+            new_expenses = list(reversed([e for e in source.get_expenses() if e.timestamp > last_timestamp]))
+            self.n_new_expenses = len(new_expenses)
 
-            self._sheet.update(
-                f"A{first_empty_row}:D{first_empty_row + len(new_expenses)}",
-                [d.to_list()[:4] for d in new_expenses],
-            )
+            # Add the new expenses to the sheet
+            if self.n_new_expenses > 0:
+                first_empty_row = len(sheet_values) + 1
 
-        # Fetch the latest values from the sheet again to get the complete list of expenses
-        sheet_values = self._fetch_sheet_values()  # TODO improve
+                self._sheet.update(
+                    f"A{first_empty_row}:D{first_empty_row + len(new_expenses)}",
+                    [d.to_list()[:4] for d in new_expenses],
+                )
+
+            # Fetch the latest values from the sheet again to get the complete list of expenses
+            sheet_values = self._fetch_sheet_values()  # TODO improve
+        else:
+            tree = Tree("N26 Skipped.")
 
         # From now on, we will work with the up-to-date list of expenses
         self.expenses = [Expense.from_list(line, i + 2) for i, line in enumerate(sheet_values[1:])]
@@ -97,14 +101,15 @@ class Budget:
 
     def render_expenses(self) -> Union[Table, str]:
         # Make sure we are already connected to the source and the sheet
-        assert self.n_new_expenses > -1, "Call `fetch()` first"
         assert self._pending_expenses is not None, "Call `fetch()` first"
 
         # Display the table of pending expenses
         n_pending = len(self._pending_expenses)
 
         if n_pending == 0:
-            return f"[green]No pending expenses 🎉 [dim white]N26 Balance: {self.balance:.2f} €\n"
+            return "[green]No pending expenses 🎉" + (
+                f" [dim white]N26 Balance: {self.balance:.2f} €\n" if self.balance > 0.001 else "\n"
+            )
 
         return _render_expenses_table(
             self._pending_expenses[-Budget.MAX_DISPLAY_ROWS :],  # noqa: E203
@@ -119,7 +124,6 @@ class Budget:
         """Render a summary of the budget, mainly the current and previous month's totals."""
 
         # Make sure we are already connected to the source and the sheet
-        assert self.n_new_expenses > -1, "Call `fetch()` first"
         assert self.expenses is not None, "Call `fetch()` first"
         tree = Tree("Budget", hide_root=True, guide_style=TH().HINT)
 

@@ -372,7 +372,6 @@ class SharedFolder(Folder):
         self.bucket = bucket
 
     def process(self) -> None:
-        super().process()  # Process children
         self.children = self.bucket.use_amount(self.target_amount)  # type: ignore
 
         for child in self.children:

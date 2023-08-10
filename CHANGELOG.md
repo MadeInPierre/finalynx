@@ -2,6 +2,13 @@
 
 
 
+## v1.22.2 (2023-08-10)
+
+### Fix
+
+* fix(simulation): add salary income &amp; expense growth ([`84e6524`](https://github.com/MadeInPierre/finalynx/commit/84e6524cba7b47fb1e4a4d87dc895d68e796506b))
+
+
 ## v1.22.1 (2023-08-10)
 
 ### Fix

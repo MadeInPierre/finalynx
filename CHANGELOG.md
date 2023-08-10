@@ -2,6 +2,13 @@
 
 
 
+## v1.22.1 (2023-08-10)
+
+### Fix
+
+* fix(simulator): show portfolio evolution in dashboard, cleanup ([`78c1782`](https://github.com/MadeInPierre/finalynx/commit/78c17827b994b83ee4ebac529c141d77a09b8b9a))
+
+
 ## v1.22.0 (2023-07-31)
 
 ### Build

@@ -22,7 +22,12 @@ class Event:
         recurrence: Optional[RecurrenceBase] = None,
         name: Optional[str] = None,
     ) -> None:
-        """An event associates a date to an action."""
+        """An event associates a date to an action.
+        :param action: `Action` instance to execute.
+        :param planned_date: Date when the action should be executed.
+        :param recurrence: Optional recurrence to repeat the action every month/year/other.
+        :param name: Optional name of the event, defaults to the action's name.
+        """
         self.name = name if name else action.name
         self.planned_date = planned_date if planned_date is not None else date.today()
         self.recurrence = recurrence
@@ -54,8 +59,34 @@ class Salary(Event):
         day_of_the_month: int = 1,
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
+        income_growth: float = 0,
+        expenses_follow: float = 0,
         name: str = "Salary",
     ) -> None:
+        """Add your salary to your account every month (nicer shortcut). The salary amount can
+        grow with a fixed percentage every year. The expenses can follow the income gains with a
+        fixed percentage every year (0 means every new gain is invested, 100 means every gain is
+        used to increase your way of life).
+
+        :param target_line: `Line` reference in the portfolio to add the salary to.
+        :param income: Monthly salary amount.
+        :param expenses: Monthly expenses amount.
+        :param day_of_the_month: Day of the month to add the salary to the portfolio.
+        :param start_date: When to start adding the salary to the portfolio, defaults to today's next month.
+        :param end_date: When to stop adding the salary to the portfolio, defaults to no end date.
+        :param income_growth: Annual salary growth rate.
+        :param expenses_follow: Annual expenses growth rate (percentage of income gains reinvested).
+        :param name: Name of the event.
+        """
+        self.target_line = target_line
+        self.day_of_the_month = day_of_the_month
+        self.start_date = start_date
+
+        self.income = income
+        self.expenses = expenses
+        self.income_growth = income_growth
+        self.expenses_follow = expenses_follow
+
         super().__init__(
             AddLineAmount(target_line, income - expenses),
             start_date
@@ -64,6 +95,29 @@ class Salary(Event):
             MonthlyRecurrence(day_of_the_month, until=end_date),
             name,
         )
+
+    def apply(self, portfolio: Portfolio) -> List["Event"]:
+        """Update the salary amount with the growth rates. Creates a new salary
+        with the updated income/expense amounts depending on the growth rates."""
+        self.action.apply(portfolio)
+
+        assert self.recurrence is not None  # Needed for mypy
+        if next_date := self.recurrence.next(self.planned_date):
+            income_gains = self.income * self.income_growth / (12 * 100)
+            return [
+                Salary(
+                    target_line=self.target_line,
+                    income=self.income + income_gains,
+                    expenses=self.expenses + income_gains * self.expenses_follow / 100,
+                    day_of_the_month=self.day_of_the_month,
+                    start_date=next_date,
+                    end_date=self.recurrence.until,
+                    income_growth=self.income_growth,
+                    expenses_follow=self.expenses_follow,
+                    name=self.name,
+                )
+            ]
+        return []
 
 
 class YearlyPerformance(Event):

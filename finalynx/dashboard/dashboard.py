@@ -16,7 +16,7 @@ from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.folder import FolderDisplay
 from finalynx.portfolio.line import Line
 from finalynx.portfolio.node import Node
-from finalynx.simulator.simulator import Simulator
+from finalynx.simulator.timeline import Timeline  # type: ignore[import]
 from nicegui import ui
 
 from ..console import console
@@ -60,7 +60,7 @@ class Dashboard:
     def __init__(self, hide_amounts: bool = False):
         self.hide_amounts = hide_amounts
 
-    def run(self, portfolio: Portfolio) -> None:
+    def run(self, portfolio: Portfolio, timeline: Optional[Timeline] = None) -> None:
         """Simple structure for now, to be improved!"""
         self.color_map = "finalynx"
         self.selected_node: Node = portfolio
@@ -181,7 +181,7 @@ class Dashboard:
                             )
                         with ui.row():
                             self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
-                            self.chart_simulator = ui.chart(Simulator().chart(portfolio))
+                            self.chart_simulation = ui.chart(timeline.chart() if timeline else {})
 
         ui.run(
             title="Finalynx Dashboard",

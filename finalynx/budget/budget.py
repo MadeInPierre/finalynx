@@ -179,6 +179,9 @@ class Budget:
 
         mean_monthly_total = round(sum(month_totals[:-1]) / len(month_totals[:-1]))
         last_month_name = datetime(now.year, now.month - 1, 1).strftime("%B")
+
+        delta = month_totals[-1] - mean_monthly_total
+        tree.add(f"[{TH().TEXT}]Current delta [{'green' if delta > 0 else 'red'}][bold]{delta:>12} €[/]\n")
         tree.add(
             f"[{TH().TEXT}]Mean up to {last_month_name:<9} [{TH().ACCENT}][bold]{mean_monthly_total:>5} €[/] / month"
         )

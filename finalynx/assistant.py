@@ -31,7 +31,6 @@ from rich import traceback
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Confirm
 from rich.text import Text
 from rich.tree import Tree
 
@@ -188,6 +187,10 @@ class Assistant:
             self.export_dir = args["--export-dir"]
         if args["--sources"]:
             self.active_sources = str(args["--sources"]).split(",")
+        if args["--future"] and self.simulation:
+            self.simulation.print_final = True
+        if args["--sim-steps"] and self.simulation:
+            self.simulation.step_years = int(args["--sim-steps"])
         if args["--theme"]:
             theme_name = str(args["--theme"])
             if theme_name not in finalynx.theme.AVAILABLE_THEMES:
@@ -226,31 +229,22 @@ class Assistant:
             console.print(Panel(fetched_tree, title="Fetched data"))
 
         # Run the simulation if there are events defined
-        if self._timeline and not self._timeline.is_finished:
-            console.log(f"Running simulation until {self._timeline.end_date}...")
-            tree = Tree("\n[bold]Worth", guide_style=TH().TREE_BRANCH)
+        if self.simulation:
+            # Add the simulation summary to the performance panel in the console
+            dict_panels["performance"].add(self.simulate())
 
-            def append_worth(year: int, amount: float) -> None:
-                tree.add(f"[{TH().TEXT}]{year}:       [{TH().ACCENT}][bold]{round(amount / 1000):>4}[/] k€")
-
-            append_worth(date.today().year, self.portfolio.get_amount())
-            for year in range(date.today().year + 5, self._timeline.end_date.year, 5):
-                self._timeline.goto(date(year, 1, 1))
-                append_worth(year, self.portfolio.get_amount())
-            self._timeline.run()
-            append_worth(self._timeline.current_date.year, self.portfolio.get_amount())
-            dict_panels["performance"].add(tree)
-
-            console.log(f"    Portfolio will be worth [{TH().ACCENT}]{self.portfolio.get_amount():.0f} €[/]")
+            # If enabled by the user, print the final portfolio after the simulation
+            if self.simulation.print_final:
+                renders.append(f"\nYour portfolio in {self.simulation.end_date}:")
+                renders.append(self.render_mainframe())
+            else:
+                end_year = self.simulation.end_date.year if self.simulation.end_date else date.today().year + 100
+                console.log(f"  [bold]Tip:[/] Use --future to display the final portfolio in {end_year}.\n")
 
         # Display the entire portfolio and associated recommendations
         for render in renders:
             console.print("\n\n", render)
         console.print("\n")
-
-        # TODO replace with a command option
-        if self._timeline and Confirm.ask(f"Display your future portfolio in {self._timeline.end_date}?"):
-            console.print("\n\n", self.render_mainframe())
 
         # Interactive review of the budget expenses if enabled
         if self.check_budget and self.interactive:
@@ -279,6 +273,35 @@ class Assistant:
             console.log("[yellow][bold]Warning:[/] Bucket's total amount was not fully used.")
 
         return fetched_tree
+
+    def simulate(self) -> Tree:
+        """Simulate your portfolio's future with the `Simulation` configuration
+        passed in the `Assistant` constructor.
+        :returns: A tree with the portfolio total worth every few years until the end date.
+        """
+        if not (self.simulation and self._timeline and not self._timeline.is_finished):
+            raise ValueError("Nothing to simulate, have you added events?")
+
+        console.log(f"Running simulation until {self._timeline.end_date}...")
+        tree = Tree("\n[bold]Worth", guide_style=TH().TREE_BRANCH)
+
+        # Utility function to append a new formatted line to the tree
+        def append_worth(year: int, amount: float) -> None:
+            tree.add(f"[{TH().TEXT}]{year}:       [{TH().ACCENT}][bold]{round(amount / 1000):>4}[/] k€")
+
+        # Run the simulation and append the results to the tree every `step_years`
+        append_worth(date.today().year, self.portfolio.get_amount())
+        for year in range(
+            date.today().year + self.simulation.step_years,
+            self._timeline.end_date.year,
+            self.simulation.step_years,
+        ):
+            self._timeline.goto(date(year, 12, 31))
+            append_worth(year, self.portfolio.get_amount())
+        self._timeline.run()
+        append_worth(self._timeline.current_date.year, self.portfolio.get_amount())
+        console.log(f"    Portfolio will be worth [{TH().ACCENT}]{self.portfolio.get_amount():.0f} €[/]")
+        return tree
 
     def render_mainframe(self) -> Columns:
         """Renders the main tree and sidecars together. Call either run() or initialize() first."""
@@ -334,7 +357,7 @@ class Assistant:
     def dashboard(self) -> None:
         """Launch an interactive web dashboard! Call either run() or initialize() first."""
         console.log("Launching dashboard.")
-        Dashboard(hide_amounts=self.hide_amounts).run(portfolio=self.portfolio)
+        Dashboard(hide_amounts=self.hide_amounts).run(self.portfolio, self._timeline)
 
     def export_json(self, dirpath: str) -> None:
         """Save everything in a JSON file. Can be used for data analysis in future

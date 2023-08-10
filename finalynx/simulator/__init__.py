@@ -22,6 +22,5 @@ from .recurrence import DeltaRecurrence
 from .recurrence import MonthlyRecurrence
 
 # Main classes
-from .simulator import Simulator
 from .timeline import Timeline
 from .timeline import Simulation

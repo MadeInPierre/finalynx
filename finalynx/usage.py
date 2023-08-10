@@ -54,4 +54,7 @@ Options:
 
   -s --sources=string  Comma-separated list of sources to activate, defaults to "finary" only
 
+  --sim-steps=int      Display the simulated portfolio's worth every X years, defaults to 5
+  --future             Print the portfolio after the simulation has finished
+
 """

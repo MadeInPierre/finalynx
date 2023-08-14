@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 2 - Change the console color theme
-======================================================
+Finalynx - Tutorial 1.2 - Change the console color theme
+========================================================
 
 
 This tutorial shows how to change the console color theme if

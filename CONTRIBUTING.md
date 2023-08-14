@@ -31,7 +31,7 @@ If you want to propose something new (new feature, extension, bugfix, documentat
 1. **Open an issue** and chat with everyone to make sure your contribution would fit nicely with the project.
 1. **Fork** this repo (click the _fork_ button on GitHub)
 2. **Follow the initial setup** described in the section below
-3. **Create a separate branch** that will hold your contribution
+3. **Create a separate branch** that will hold your contribution with any name (e.g. `feat/my_feature`)
 4. **Make your changes** 🪄 and stage them with `git add .`
 5. **Check your changes** with `pre-commit run`. If some of your changes do not follow the conventions, they will automatically be fixed. Take a look at the proposed changes and run `git add . && pre-commit run` again until all checks pass.
 6. **Commit** your contributions using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) naming standard (e.g. `feat(readme): added something cool`)
@@ -45,6 +45,7 @@ For your next contributions, you can simply update your fork and start from step
 1. Clone your fork using the `--recursive` option to include the [`finary_api`](https://github.com/lasconic/finary) submodule:
 ```sh
 git clone --recursive https://github.com/YOUR_GITHUB_USERNAME/finalynx.git
+cd finalynx
 # If you forgot --recursive, run: git submodule update --init --recursive
 ```
 2. Install [`poetry`](https://python-poetry.org/) which manages the project dependencies, and get all dependencies needed to work on this project:

@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 3 - Control login and cache
-===============================================
+Finalynx - Tutorial 1.3 - Control login and cache
+=================================================
 
 
 This tutorial shows how to clear the cache and login again to Finary

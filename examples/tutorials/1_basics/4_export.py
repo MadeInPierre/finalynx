@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 4 - Export your portfolio to JSON logs
-==========================================================
+Finalynx - Tutorial 1.4 - Export your portfolio to JSON logs
+============================================================
 
 
 By default, Finalynx saves your portfolio in a JSON file everytime

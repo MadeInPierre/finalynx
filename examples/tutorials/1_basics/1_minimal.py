@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 1 - Minimal configuration
-=============================================
+Finalynx - Tutorial 1.1 - Minimal configuration
+===============================================
 
 
 This tutorial shows how to create the smallest valid portfolio

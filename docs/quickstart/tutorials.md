@@ -14,11 +14,16 @@ Learn how to use the general tool's features before diving into your investments
 
 ## 2. Portfolio
 Now, you can set your own portfolio tree and watch your structure be built once you run Finalynx!
-- [**Tutorial 8:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/8_structure.py) Define your portfolio structure
-- [**Tutorial 9:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/9_buckets.py) Buckets
-- [**Tutorial 10:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/10_attributes.py) Asset classes and expected performance
-- [**Tutorial 11:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/11_targets.py) Targets
-- [**Tutorial 12:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/12_envelopes.py) Envelopes
+- [**Tutorial 1:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/1_structure.py) Define your portfolio structure
+- [**Tutorial 2:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/2_buckets.py) Buckets
+- [**Tutorial 3:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/3_attributes.py) Asset classes and expected performance
+- [**Tutorial 4:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/4_targets.py) Targets
+- [**Tutorial 5:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/5_envelopes.py) Envelopes
+
+## 3. Simulation
+Simulate your portfolio's future by adding your planned life events and salaries. Finalynx will automatically
+balance your investments based on the targets you have defined!
+- [**Tutorial 1:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/1_structure.py) Define your portfolio structure
 
 Check back soon for more features, or [contribute](https://finalynx.readthedocs.io/en/latest/project/contributing.html) to see them appear here! 😄
 

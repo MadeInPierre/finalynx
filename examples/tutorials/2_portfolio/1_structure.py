@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 7 - Define your portfolio structure (basics)
-================================================================
+Finalynx - Tutorial 2.1 - Define your portfolio structure (basics)
+==================================================================
 
 
 This tutorial shows how to define your portfolio structure in your configuration

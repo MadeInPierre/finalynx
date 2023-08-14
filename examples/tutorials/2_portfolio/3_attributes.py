@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 9 - Set custom attributes for your lines
-===============================================================
+Finalynx - Tutorial 2.3 - Set custom attributes for your lines
+=================================================================
 
 
 This tutorial shows how to define custom attributes for your lines, which include:

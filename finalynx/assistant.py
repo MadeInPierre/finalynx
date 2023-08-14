@@ -379,10 +379,10 @@ class Assistant:
                 f.write(json.dumps(final_dict, indent=4))
             console.log(f"Saved current portfolio to '{full_path}'")
         except FileNotFoundError:
-            console.log("[red][bold]Error:[/] Can't find the folder to save the portfolio to JSON. Three options:")
-            console.log("[red]  1. Disable export using --no-export")
-            console.log("[red]  2. Create a folder called logs/ in this folder (default folder)")
-            console.log("[red]  3. Set your own export directory using --export-dir=your/path/to/dir/")
+            console.log("[yellow][bold]Warning:[/] Can't find the folder to save the portfolio to JSON. Three options:")
+            console.log("[yellow]  1. Disable export using --no-export")
+            console.log("[yellow]  2. Create a folder called logs/ in this folder (default folder)")
+            console.log("[yellow]  3. Set your own export directory using --export-dir=your/path/to/dir/")
 
     def export_img(
         self,

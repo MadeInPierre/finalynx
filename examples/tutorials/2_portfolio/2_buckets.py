@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 8 - Define buckets to group similar lines
-=============================================================
+Finalynx - Tutorial 2.2 - Define buckets to group similar lines
+===============================================================
 
 
 This tutorial shows how to define buckets to group similar lines together.

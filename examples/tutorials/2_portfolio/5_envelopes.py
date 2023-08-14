@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 12 - Set envelopes for your lines
-=====================================================
+Finalynx - Tutorial 2.5 - Set envelopes for your lines
+=======================================================
 
 
 This tutorial shows how to define envelopes for your lines. An envelope is a

@@ -26,7 +26,7 @@ from rich import inspect, print, pretty, traceback  # noqa
 from finalynx import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio  # noqa
 from finalynx import Folder, Line, Bucket, SharedFolder, Portfolio, FolderDisplay  # noqa
 from finalynx import AssetClass, AssetSubclass, Envelope, PEA, AV, PER  # noqa
-from finalynx import Copilot, Simulator, Assistant
+from finalynx import Assistant
 
 # Enable rich's features
 traceback.install()
@@ -195,25 +195,13 @@ if __name__ in {"__main__", "__mp_main__"}:
     )
 
     """
-    Define your life events and investment strategy on the long term
-    to simulate your portfolio's evolution.
-    """
-    scenario = Simulator()  # TODO Coming soon(ish)!
-
-    """
-    Define your monthly investment strategy to get automated investment
-    recommendations at each salary day.
-    """
-    copilot = Copilot()  # TODO Coming soon(ish-ish)!
-
-    """
     Run the Assistant to get a complete overview of your portfolio!
     See the available options in the README file or the online documentation.
     """
     assistant = Assistant(
         portfolio,
-        buckets=[bucket_garanti],
-        envelopes=[my_bank, my_av],
+        buckets=[bucket_garanti],  # If you have defined buckets, you must pass them here as a list.
+        envelopes=[my_bank, my_av],  # If you have defined envelopes, you must pass them here as a list.
         ignore_orphans=True,  # Ignore fetched lines that you didn't reference in your portfolio.
         hide_amounts=False,  # Display your portfolio with dots instead of the real values (easier to share).
         hide_root=False,  # Display your portfolio without the root (cosmetic preference).

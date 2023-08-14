@@ -1,11 +1,11 @@
 """
-Finalynx - Tutorial 7 - Fetch data from Finary and other sources
-================================================================
+Finalynx - Tutorial 1.7 - Fetch data from Finary and other sources
+==================================================================
 
-
-This tutorial shows how to launch an interactive dashboard to explore your
-portfolio in a web browser. The dashboard is currently in experimental mode,
-and contributors with web development skills are warmly welcome to improve it!
+This tutorial shows how to fetch data from Finary and other sources
+like RealT (and more to come depending on your contributions!).
+Finalynx lets you define your own portfolio structure which then
+gets filled with data from the sources you specify.
 
 See the available sources in the source code directly, please contribute! :)
 > https://github.com/MadeInPierre/finalynx/blob/main/finalynx/fetch/

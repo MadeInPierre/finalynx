@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 6 - Launch an interactive dashboard
-=======================================================
+Finalynx - Tutorial 1.6 - Launch an interactive dashboard
+=========================================================
 
 
 This tutorial shows how to launch an interactive dashboard to explore your

@@ -243,7 +243,7 @@ class Folder(Node):
                 total_ratio += child.target.target_ratio
 
         if total_ratio != 0 and total_ratio != 100:
-            console.log(f"[yellow][bold]WARNING:[/] Folder '{self.name}' total ratio should sum to 100.")
+            console.log(f"[yellow][bold]Warning:[/] Folder '{self.name}' total ratio should sum to 100.")
 
     def match_lines(self, fetch_line: "FetchLine") -> List[Line]:
         """Used by the `fetch` subpackage to

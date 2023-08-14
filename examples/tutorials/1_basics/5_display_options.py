@@ -1,6 +1,6 @@
 """
-Finalynx - Tutorial 5 - Change some simple display options
-==========================================================
+Finalynx - Tutorial 1.5 - Change some simple display options
+============================================================
 
 
 This tutorial shows how to customize the rendering of your portfolio

@@ -23,7 +23,7 @@
 </div>
 
 Finalynx est votre "assistant financier", un outil en ligne de commande (et un tableau de bord web expérimental) pour organiser votre portefeuille d'investissements et obtenir des recommandations mensuelles automatisées basées sur vos objectifs de vie futurs.
-Cet outil se synchronise avec votre compte Finary, un aggrégateur de comptes d'investissement, pour afficher vos positions en temps réel.
+Cet outil se synchronise avec votre compte Finary, un agrégateur de comptes d'investissement, pour afficher vos positions en temps réel.
 
 Vous n'avez pas encore Finary ? Vous pouvez vous inscrire en utilisant mon [lien de parrainage](https://finary.com/referral/f8d349c922d1e1c8f0d2) 🌹 (ou via la page [par défaut](https://finary.com/signup)).
 

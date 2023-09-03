@@ -206,7 +206,7 @@ def _period(expenses: List[Expense], i_expense: int) -> Optional[bool]:
         return True
 
     current = expenses[i_expense].period.value.capitalize() if expenses[i_expense].period != Period.UNKNOWN else None
-    return _set_field(expenses, i_expense, question, options, is_valid, apply, current)
+    return _set_field(expenses, i_expense, question, options, is_valid, apply, current, default="m")
 
 
 def _comment(expenses: List[Expense], i_expense: int) -> Optional[bool]:

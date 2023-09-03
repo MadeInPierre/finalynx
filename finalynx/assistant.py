@@ -239,7 +239,7 @@ class Assistant:
                 renders.append(self.render_mainframe())
             else:
                 end_year = self.simulation.end_date.year if self.simulation.end_date else date.today().year + 100
-                console.log(f"  [bold]Tip:[/] Use --future to display the final portfolio in {end_year}.\n")
+                console.log(f"    [bold]Tip:[/] Use --future to display the final portfolio in {end_year}.\n")
 
         # Display the entire portfolio and associated recommendations
         for render in renders:

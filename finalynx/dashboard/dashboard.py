@@ -238,7 +238,7 @@ class Dashboard:
 
         result = {
             "label": node.render(output_format="[dashboard_tree]"),
-            "amount": node.get_amount(),
+            "amount": round(node.get_amount()),
             "currency": node.get_currency(),
             "name": node.name,
             "hint": node.target.hint(),

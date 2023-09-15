@@ -93,9 +93,9 @@ Meet _sidecars_: each sidecar is a column on the right of the main tree that dis
 
 A sidecar is defined by 4 parameters:
 - **Output format:** Specify what you want to render in this column (aka. sidecar). This uses the same format as the "output format" explained above, except it will be rendered in a separate column on the right of the tree.
-- **Condition format:** Specify any output format. Only show the output format for each node it this render returns a non-empty string. This is useful to make multiple sidecars work together (e.g. only show ideal amounts if the node requires a non-zero delta transaction).
-- **Title:** customize the column (aka. sidecar) title. By default, a title is generated from the output format.
-- **Show folders:** A boolean to choose if you want to only show elements for `Line` objects and not `Folder` objects. When set to `False`, only expanded folders will not have any information displayed.
+- **Condition format (optional):** Specify any output format. Only show the output format for each node if this render returns a non-empty string. This is useful to make multiple sidecars work together (e.g. only show ideal amounts if the node requires a non-zero delta transaction). Defaults to None, meaning all nodes will display the output format.
+- **Title (optional):** customize the column (aka. sidecar) title. By default, a title is generated from the output format. Defaults to the output format name.
+- **Show folders (optional):** A boolean to choose if you want to only show elements for `Line` objects and not `Folder` objects. When set to `False`, only expanded folders will not have any information displayed. Defaults to True.
 
 Define your own sidecars using one of two options:
 1. From your Python configuration:
@@ -103,12 +103,12 @@ Define your own sidecars using one of two options:
 assistant = Assistant(
     portfolio,
     sidecars=[
-        Sidecar("[ideal]", "[delta]", "HELLO", False),
+        Sidecar("[ideal]", "[delta]", "MY TITLE", False),
         Sidecar("[delta]", show_folders=False),
     ],
 ).run()
 ```
 2. From the command line (comma-separated values):
 ```bash
-python your_config.py --sidecar="[ideal],[delta],HELLO,False" --sidecar="[delta],,,False"
+python your_config.py --sidecar="[ideal],[delta],MY TITLE,False" --sidecar="[delta],,,False"
 ```

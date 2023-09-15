@@ -20,10 +20,13 @@ Now, you can set your own portfolio tree and watch your structure be built once 
 - [**Tutorial 4:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/4_targets.py) Targets
 - [**Tutorial 5:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/5_envelopes.py) Envelopes
 
-## 3. Simulation
-Simulate your portfolio's future by adding your planned life events and salaries. Finalynx will automatically
+## 3. Experimental
+
+Advanced features ready for use but still in development. Bug reports and feedback appreciated!
+
+- [**Tutorial 1:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/3_simulation/1_basics.py) Simulate your portfolio's future by adding your planned life events and salaries. Finalynx will automatically
 balance your investments based on the targets you have defined!
-- [**Tutorial 1:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/1_structure.py) Define your portfolio structure
+- [**Tutorial 2:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/4_budget/1_setup.py) Track your daily expenses to have a personal budget.
 
 Check back soon for more features, or [contribute](https://finalynx.readthedocs.io/en/latest/project/contributing.html) to see them appear here! 😄
 

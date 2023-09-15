@@ -17,7 +17,7 @@ See the online documentation for the list of available pre-defined envelopes:
 > https://github.com/MadeInPierre/finalynx/blob/main/finalynx/portfolio/envelopes.py
 
 Try it out by running:
-> python3 examples/tutorials/12_envelopes.py
+> python3 examples/tutorials/3_simulation/1_basics.py
 
 See explanations and details in the online documentation at:
 > https://finalynx.readthedocs.io

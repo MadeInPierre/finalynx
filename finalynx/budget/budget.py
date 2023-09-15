@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 from typing import List
 from typing import Optional
 from typing import TYPE_CHECKING
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
 class Budget:
     MAX_DISPLAY_ROWS = 10
 
-    def __init__(self) -> None:
+    def __init__(self, service_account_path: Union[str, Path, None] = None) -> None:
         # Google Sheet that serves as the database of expenses, will be connected later
         self._sheet: Optional[Worksheet] = None
 
@@ -40,6 +41,15 @@ class Budget:
         # Private copy that only includes expenses that need user review (calculated only once)
         self._pending_expenses: List[Expense] = []
 
+        # Path to the Google Sheets token file, defaults to the OS's default directory
+        self._gspread_token_path = (
+            Path(service_account_path) if service_account_path else gspread.auth.DEFAULT_SERVICE_ACCOUNT_FILENAME
+        )
+
+    def set_gspread_token_path(self, path: Union[str, Path]) -> None:
+        """Set the path to the Google Sheets token file, defaults to the OS's default directory."""
+        self._gspread_token_path = Path(path)
+
     def fetch(self, clear_cache: bool, force_signin: bool = False) -> Tree:
         """Get expenses from all sources and return a rich tree to summarize the results.
         This method also updates the google sheets table with the newly found expenses and
@@ -48,8 +58,9 @@ class Budget:
         # Connect to the Google Sheet that serves as the database of expenses
         with console.status(f"[bold {TH().ACCENT}]Connecting to Google Sheets...", spinner_style=TH().ACCENT):
             try:
-                gs = gspread.service_account()
-                sh = gs.open("N26 Expenses")
+                print(self._gspread_token_path)
+                gs = gspread.service_account(filename=self._gspread_token_path)
+                sh = gs.open("Finalynx Expenses")
                 self._sheet = sh.worksheet("Sheet1")
             except Exception as e:  # noqa
                 console.log(

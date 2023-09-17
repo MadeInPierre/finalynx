@@ -58,7 +58,6 @@ class Budget:
         # Connect to the Google Sheet that serves as the database of expenses
         with console.status(f"[bold {TH().ACCENT}]Connecting to Google Sheets...", spinner_style=TH().ACCENT):
             try:
-                print(self._gspread_token_path)
                 gs = gspread.service_account(filename=self._gspread_token_path)
                 sh = gs.open("Finalynx Expenses")
                 self._sheet = sh.worksheet("Sheet1")

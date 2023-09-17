@@ -20,13 +20,19 @@ Now, you can set your own portfolio tree and watch your structure be built once 
 - [**Tutorial 4:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/4_targets.py) Targets
 - [**Tutorial 5:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/2_portfolio/5_envelopes.py) Envelopes
 
-## 3. Experimental
+## 3. Simulation
 
-Advanced features ready for use but still in development. Bug reports and feedback appreciated!
-
-- [**Tutorial 1:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/3_simulation/1_basics.py) Simulate your portfolio's future by adding your planned life events and salaries. Finalynx will automatically
+Simulate your portfolio's future by adding your planned life events and salaries. Finalynx will automatically
 balance your investments based on the targets you have defined!
-- [**Tutorial 2:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/4_budget/1_setup.py) Track your daily expenses to have a personal budget.
+
+- [**Tutorial 1:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/3_simulation/1_basics.py) Basic configuration
+- [**Tutorial 2:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/3_simulation/2_template.py) Portfolio structure template for simulations
+
+## 3. Budget
+
+Track your daily expenses and classify them to get monthly and yearly statistics.
+
+- [**Tutorial 1:**](https://github.com/MadeInPierre/finalynx/blob/main/examples/tutorials/4_budget/1_setup.py) Track your daily expenses to have a personal budget.
 
 Check back soon for more features, or [contribute](https://finalynx.readthedocs.io/en/latest/project/contributing.html) to see them appear here! 😄
 

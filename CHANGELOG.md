@@ -2,6 +2,41 @@
 
 
 
+## v1.22.3 (2023-09-18)
+
+### Chore
+
+* chore: manual bump to version 1.22.2 ([`2316fdd`](https://github.com/MadeInPierre/finalynx/commit/2316fdd2dcee5846f6cf6af5890fc9074e88cc33))
+
+### Ci
+
+* ci: fix semantic release (breaking config changes) ([`a383983`](https://github.com/MadeInPierre/finalynx/commit/a3839832d07dfcc60d8f65d3273faa046b6ee5fb))
+
+### Documentation
+
+* docs: add simulation template tutorial ([`c15b97c`](https://github.com/MadeInPierre/finalynx/commit/c15b97c9dac452a306745eb0849e13d2b1be75f0))
+
+* docs: add full example ([`de11f6e`](https://github.com/MadeInPierre/finalynx/commit/de11f6ed290e6f510a055b6ab727959538e03608))
+
+* docs: add budget tutorial ([`0fe1513`](https://github.com/MadeInPierre/finalynx/commit/0fe1513c5aeb191eea7cce77ff8fdaa535ddb56e))
+
+* docs: update readme french (#141)
+
+docs : update readme french
+
+Correction orthographique ([`98108d9`](https://github.com/MadeInPierre/finalynx/commit/98108d9cc47360c4f090efb9e2c57ab1e82f9d8b))
+
+* docs: add simulation tutorial, fix typos ([`8c6ab9a`](https://github.com/MadeInPierre/finalynx/commit/8c6ab9a9e9557d18399fa8562fec93701f8da5d7))
+
+### Fix
+
+* fix: clarify signup for 2FA, simulation progress bar ([`3b5c9c4`](https://github.com/MadeInPierre/finalynx/commit/3b5c9c4e34f8101e3b0ea1095dbaa83a06e55959))
+
+### Style
+
+* style: minor improvements ([`57b2424`](https://github.com/MadeInPierre/finalynx/commit/57b2424ead1ab1c9a9cc4c89519850a4a732b02b))
+
+
 ## v1.22.2 (2023-08-10)
 
 ### Fix

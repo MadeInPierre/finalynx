@@ -7,8 +7,6 @@ from typing import List
 from typing import Optional
 
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
-from finalynx.config import get_active_theme as TH
-from finalynx.console import console
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.envelope import EnvelopeState
 from finalynx.portfolio.folder import Portfolio
@@ -80,14 +78,13 @@ class Timeline:
 
     def goto(self, target_date: date) -> None:
         """Step until the target date is reached (in the future or past)."""
-        with console.status(f"[bold {TH().ACCENT}]Moving timeline until {target_date}...", spinner_style=TH().ACCENT):
-            if target_date == self.current_date:
-                return
-            elif target_date > self.current_date:
-                self.step_until(target_date)
-            else:
-                self.unstep_until(target_date)
-            self.current_date = target_date
+        if target_date == self.current_date:
+            return
+        elif target_date > self.current_date:
+            self.step_until(target_date)
+        else:
+            self.unstep_until(target_date)
+        self.current_date = target_date
 
     def step_until(self, target_date: date) -> None:
         """Execute all events until the specified date is reached."""

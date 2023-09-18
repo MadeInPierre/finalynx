@@ -501,7 +501,7 @@ if __name__ in {"__main__", "__mp_main__"}:
         hide_amounts=False,
         hide_root=False,
         show_data=False,
-        check_budget=True,
+        check_budget=False,
         sidecars=[
             Sidecar("[ideal]", "[delta]", render_folders=False),
             Sidecar("[delta]", render_folders=False),

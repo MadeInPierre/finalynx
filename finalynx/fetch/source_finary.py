@@ -122,7 +122,13 @@ class SourceFinary(SourceBaseLine):
 
         # Login to Finary with the existing cookies file or credentials in environment variables and retrieve data
         if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
-            with console.status(f"[bold {TH().ACCENT}]Signing in to Finary...", spinner_style=TH().ACCENT):
+            self._log("Signing in to Finary...")
+            with console.status(
+                f"""[bold {TH().ACCENT}]Signing in to Finary...[/]  """
+                """[dim white](Type your 2FA code if prompted and press [italic]Enter[/], """
+                """it will remain invisible while you type)""",
+                spinner_style=TH().ACCENT,
+            ):
                 result = ff.signin()
                 self._log("Signed in to Finary.")
 

@@ -31,6 +31,7 @@ from rich import traceback
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
+from rich.progress import track
 from rich.text import Text
 from rich.tree import Tree
 
@@ -282,7 +283,7 @@ class Assistant:
         if not (self.simulation and self._timeline and not self._timeline.is_finished):
             raise ValueError("Nothing to simulate, have you added events?")
 
-        console.log(f"Running simulation until {self._timeline.end_date}...")
+        console.log("Launching simulation...")
         tree = Tree("\n[bold]Worth", guide_style=TH().TREE_BRANCH)
 
         # Utility function to append a new formatted line to the tree
@@ -291,13 +292,16 @@ class Assistant:
 
         # Run the simulation and append the results to the tree every `step_years`
         append_worth(date.today().year, self.portfolio.get_amount())
-        for year in range(
-            date.today().year + self.simulation.step_years,
-            self._timeline.end_date.year,
-            self.simulation.step_years,
+        for year in track(
+            range(date.today().year + 1, self._timeline.end_date.year),
+            description=f"Simulating until [{TH().ACCENT} bold]{self._timeline.end_date}[/]...",
         ):
             self._timeline.goto(date(year, 12, 31))
-            append_worth(year, self.portfolio.get_amount())
+
+            if (year - date.today().year) % self.simulation.step_years == 0:
+                append_worth(year, self.portfolio.get_amount())
+
+        # Run until the end date and append the final result
         self._timeline.run()
         append_worth(self._timeline.current_date.year, self.portfolio.get_amount())
         console.log(f"    Portfolio will be worth [{TH().ACCENT}]{self.portfolio.get_amount():.0f} €[/]")

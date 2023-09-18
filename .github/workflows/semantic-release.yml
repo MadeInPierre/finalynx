@@ -77,8 +77,8 @@ jobs:
         if: steps.release.outputs.released == 'true'
         # Use the traditional API Token instead of the new trusted auth method for simplicity
         # See https://github.com/pypa/gh-action-pypi-publish#specifying-a-different-username
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+        # with:
+        #   password: ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Publish package distributions to GitHub Releases
         uses: python-semantic-release/upload-to-gh-release@main

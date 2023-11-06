@@ -182,12 +182,17 @@ class SourceFinary(SourceBaseLine):
         node = tree.add(account_name)
 
         for item in dict_account["fiats"]:
+            subtype=dict_account["bank_account_type"]["subtype"]
+            if subtype == "credit":
+                amount = -item["display_current_value"]
+            else:
+                amount = item["display_current_value"]
             self._register_fetchline(
                 tree_node=node,
                 name=account_name,
                 id=item["id"],
                 account=dict_account["institution"]["name"],
-                amount=item["display_current_value"],
+                amount=amount,
                 currency=item["fiat"]["symbol"],
             )
 

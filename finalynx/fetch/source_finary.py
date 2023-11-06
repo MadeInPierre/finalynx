@@ -122,7 +122,13 @@ class SourceFinary(SourceBaseLine):
 
         # Login to Finary with the existing cookies file or credentials in environment variables and retrieve data
         if os.environ.get("FINARY_EMAIL") and os.environ.get("FINARY_PASSWORD"):
-            with console.status(f"[bold {TH().ACCENT}]Signing in to Finary...", spinner_style=TH().ACCENT):
+            self._log("Signing in to Finary...")
+            with console.status(
+                f"""[bold {TH().ACCENT}]Signing in to Finary...[/]  """
+                """[dim white](Type your 2FA code if prompted and press [italic]Enter[/], """
+                """it will remain invisible while you type)""",
+                spinner_style=TH().ACCENT,
+            ):
                 result = ff.signin()
                 self._log("Signed in to Finary.")
 
@@ -176,17 +182,12 @@ class SourceFinary(SourceBaseLine):
         node = tree.add(account_name)
 
         for item in dict_account["fiats"]:
-            subtype=dict_account["bank_account_type"]["subtype"]
-            if subtype == "credit":
-                amount = -item["display_current_value"]
-            else:
-                amount = item["display_current_value"]
             self._register_fetchline(
                 tree_node=node,
                 name=account_name,
                 id=item["id"],
                 account=dict_account["institution"]["name"],
-                amount=amount,
+                amount=item["display_current_value"],
                 currency=item["fiat"]["symbol"],
             )
 

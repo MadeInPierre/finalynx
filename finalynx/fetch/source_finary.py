@@ -182,7 +182,7 @@ class SourceFinary(SourceBaseLine):
         node = tree.add(account_name)
 
         for item in dict_account["fiats"]:
-            subtype=dict_account["bank_account_type"]["subtype"]
+            subtype = dict_account["bank_account_type"]["subtype"]
             if subtype == "credit":
                 amount = -item["display_current_value"]
             else:

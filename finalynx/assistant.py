@@ -315,6 +315,13 @@ class Assistant:
                     title = "Your portfolio in [bold]"+str(year)+"-12-31:[/]"
                     self.intermediate_value.append(Panel(self.render_mainframe(), title=title))
 
+            if self.simulation.print_each_step:
+                #Storage for each intermediate step of simu
+                #f"[{TH().TEXT}]Current:    [bold][{TH().ACCENT}]{perf:.2f} %[/] / year"
+                #title = "Your portfolio in "+str(year)+"-12-31:"
+                title = "Your portfolio in [bold]"+str(year)+"-12-31:[/]"
+                self.intermediate_value.append(Panel(self.render_mainframe(), title=title))
+
         # Run until the end date and append the final result
         self._timeline.run()
         append_worth(self._timeline.current_date.year, self.portfolio.get_amount())

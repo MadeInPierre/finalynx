@@ -93,6 +93,9 @@ class Assistant:
         self.buckets = buckets if buckets else []
         self.envelopes = envelopes if envelopes else []
 
+        #Storage for value of portfolio at each intermediate step
+        self.intermediate_value = []
+
         # Options that can either be set in the constructor or from the command line options, see --help
         self.ignore_orphans = ignore_orphans
         self.clear_cache = clear_cache
@@ -190,6 +193,8 @@ class Assistant:
             self.active_sources = str(args["--sources"]).split(",")
         if args["--future"] and self.simulation:
             self.simulation.print_final = True
+        if args["--each-step"] and self.simulation:
+            self.simulation.print_each_step = True    
         if args["--sim-steps"] and self.simulation:
             self.simulation.step_years = int(args["--sim-steps"])
         if args["--theme"]:
@@ -233,6 +238,11 @@ class Assistant:
         if self.simulation:
             # Add the simulation summary to the performance panel in the console
             dict_panels["performance"].add(self.simulate())
+
+            # If enabled by the user, print the each_step portfolio during the simulation
+            if self.simulation.print_each_step:
+                for element in self.intermediate_value:
+                    renders.append(element)
 
             # If enabled by the user, print the final portfolio after the simulation
             if self.simulation.print_final:
@@ -300,6 +310,10 @@ class Assistant:
 
             if (year - date.today().year) % self.simulation.step_years == 0:
                 append_worth(year, self.portfolio.get_amount())
+                if self.simulation.print_each_step:
+                    #Storage for each intermediate simulation step
+                    title = "Your portfolio in [bold]"+str(year)+"-12-31:[/]"
+                    self.intermediate_value.append(Panel(self.render_mainframe(), title=title))
 
         # Run until the end date and append the final result
         self._timeline.run()

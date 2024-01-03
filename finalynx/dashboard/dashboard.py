@@ -182,7 +182,6 @@ class Dashboard:
                             )
                         with ui.row():
                             self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
-                            #self.chart_simulation = ui.chart(timeline.chart() if timeline else {})
                             self.chart_etats_enveloppes = ui.chart(timeline.chartOnTimeline("Evolution des états d'enveloppes",timeline._log_env_states,{
                                                                                                                                     "Unknown": "#434348",
                                                                                                                                     "Closed": "#999999",
@@ -190,15 +189,10 @@ class Dashboard:
                                                                                                                                     "Taxed": "#F9C74F",
                                                                                                                                     "Free": "#7BB151",
                                                                                                                                 }) if timeline else {})
-                            #self.chart_simulation1 = ui.chart(timeline.chartEnveloppeTimeline() if timeline else {})
                             self.chart_enveloppes = ui.chart(timeline.chartOnTimeline("Evolution des enveloppes",timeline._log_enveloppe_values) if timeline else {})
-                            #self.chart_simulation2 = ui.chart(timeline.OLDchartBucket() if timeline else {})
-                            #self.chart_simulation3 = ui.chart(timeline.chartAssetTimeline() if timeline else {})
                             self.chart_asset_classes = ui.chart(timeline.chartOnTimeline("Evolution des classes d'actifs",timeline._log_assets_classes_values,AnalyzeAssetClasses.ASSET_COLORS_FINARY) if timeline else {})
                             self.chart_subasset_classes = ui.chart(timeline.chartOnTimeline("Evolution des sous-classes d'actifs",timeline._log_assets_subclasses_values,AnalyzeSubAssetClasses.SUBASSET_COLORS_FINARY) if timeline else {})
-                            #self.chart_simulation4 = ui.chart(timeline.chartSubAssetTimeline() if timeline else {})
                             self.chart_lines = ui.chart(timeline.chartOnTimeline("Evolution des lignes du portefeuille", timeline._log_lines_values, visible_by_default=False) if timeline else {})
-                            #self.chart_simulation5 = ui.chart(timeline.chartLinesTimeline() if timeline else {})
 
         ui.run(
             title="Finalynx Dashboard",

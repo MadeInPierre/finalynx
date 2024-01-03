@@ -93,6 +93,7 @@ class AssetSubclass(Enum):
 
     # Passives
     VEHICLE = "Véhicule"
+    PASSIVE = "Passif"
 
     # Unknown (default)
     UNKNOWN = "Unknown"

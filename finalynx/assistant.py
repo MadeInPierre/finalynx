@@ -93,7 +93,7 @@ class Assistant:
         self.buckets = buckets if buckets else []
         self.envelopes = envelopes if envelopes else []
 
-        #Storage for value of portfolio at each intermediate step
+        # Storage for value of portfolio at each intermediate step
         self.intermediate_value = []
 
         # Options that can either be set in the constructor or from the command line options, see --help
@@ -194,11 +194,11 @@ class Assistant:
         if args["--future"] and self.simulation:
             self.simulation.print_final = True
         if args["--each-step"] and self.simulation:
-            self.simulation.print_each_step = True    
+            self.simulation.print_each_step = True
         if args["--sim-steps"] and self.simulation:
             self.simulation.step_years = int(args["--sim-steps"])
         if args["--metric-frequency"] and self.simulation:
-            self.simulation.metrics_record_freqency = str(args["--metric-frequency"])            
+            self.simulation.metrics_record_freqency = str(args["--metric-frequency"])
         if args["--theme"]:
             theme_name = str(args["--theme"])
             if theme_name not in finalynx.theme.AVAILABLE_THEMES:
@@ -313,8 +313,8 @@ class Assistant:
             if (year - date.today().year) % self.simulation.step_years == 0:
                 append_worth(year, self.portfolio.get_amount())
                 if self.simulation.print_each_step:
-                    #Storage for each intermediate simulation step
-                    title = "Your portfolio in [bold]"+str(year)+"-12-31:[/]"
+                    # Storage for each intermediate simulation step
+                    title = "Your portfolio in [bold]" + str(year) + "-12-31:[/]"
                     self.intermediate_value.append(Panel(self.render_mainframe(), title=title))
 
         # Run until the end date and append the final result

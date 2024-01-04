@@ -1,15 +1,16 @@
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
+from datetime import datetime
 from datetime import timedelta
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+
 from finalynx.analyzer.asset_class import AnalyzeAssetClasses
 from finalynx.analyzer.envelopes import AnalyzeEnvelopes
-from finalynx.analyzer.lines import AnalyzeLines
-
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
+from finalynx.analyzer.lines import AnalyzeLines
 from finalynx.analyzer.subasset_class import AnalyzeSubAssetClasses
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.constants import AssetClass
@@ -42,12 +43,13 @@ class Simulation:
 
     # Whether to print the portfolio state in the console on each step of the simulation
     print_each_step: bool = False
-    
+
     # Display the portfolio's worth in the console every `step` years
     step_years: int = 5
 
     # Record the portfolio stats on each day of the simulation 'DAY', 'MONTH', 'YEAR'
     metrics_record_freqency: str = "MONTH"
+
 
 class Timeline:
     """Main simulation engine to execute programmed actions on your portfolio."""
@@ -105,7 +107,7 @@ class Timeline:
         """Execute all events until the specified date is reached."""
         assert self.current_date < target_date, "Target date must be in the future."
 
-        #Enregistrement de la situation de démarrage du Portefeuille
+        # Enregistrement de la situation de démarrage du Portefeuille
         self._record_metrics()
 
         while self.current_date < target_date and not self.is_finished:
@@ -129,7 +131,7 @@ class Timeline:
         if next_event.planned_date in self._log_events:
             self._log_events[next_event.planned_date].append(next_event.name)
         else:
-            self._log_events[next_event.planned_date]=[next_event.name]
+            self._log_events[next_event.planned_date] = [next_event.name]
 
         # Recalculate the amounts for shared folders
         for bucket in self._buckets:
@@ -142,9 +144,19 @@ class Timeline:
         self._sort_events()
 
         # Record the metrics if the year changed
-        #if next_event.planned_date.year != self.current_date.year:
+        # if next_event.planned_date.year != self.current_date.year:
         #    self._record_metrics()
-        if (self.simulation.metrics_record_freqency == "DAY" and next_event.planned_date != self.current_date) or (self.simulation.metrics_record_freqency == "YEAR" and next_event.planned_date.year != self.current_date.year) or (self.simulation.metrics_record_freqency == "MONTH" and next_event.planned_date.month != self.current_date.month):
+        if (
+            (self.simulation.metrics_record_freqency == "DAY" and next_event.planned_date != self.current_date)
+            or (
+                self.simulation.metrics_record_freqency == "YEAR"
+                and next_event.planned_date.year != self.current_date.year
+            )
+            or (
+                self.simulation.metrics_record_freqency == "MONTH"
+                and next_event.planned_date.month != self.current_date.month
+            )
+        ):
             self.current_date = next_event.planned_date
             self._record_metrics()
 
@@ -179,8 +191,8 @@ class Timeline:
                 if key in self._log_enveloppe_values:
                     self._log_enveloppe_values[key].append(value)
                 else:
-                    self._log_enveloppe_values[key]=[value]
-            
+                    self._log_enveloppe_values[key] = [value]
+
             for key, value in AnalyzeAssetClasses(self._portfolio).analyzeTime(self.current_date).items():
                 self._log_assets_classes_values[key].append(value)
 
@@ -188,43 +200,57 @@ class Timeline:
                 if key in self._log_assets_subclasses_values:
                     self._log_assets_subclasses_values[key].append(value)
                 else:
-                    self._log_assets_subclasses_values[key]=[value]
+                    self._log_assets_subclasses_values[key] = [value]
 
             for key, value in AnalyzeLines(self._portfolio).analyzeTime(self.current_date).items():
                 if key in self._log_lines_values:
                     self._log_lines_values[key].append(value)
                 else:
-                    self._log_lines_values[key]=[value]
+                    self._log_lines_values[key] = [value]
         else:
-            #On doit remplacer les valeurs stockées par les nouvelles sans créer 2 fois l'enregistrement
+            # On doit remplacer les valeurs stockées par les nouvelles sans créer 2 fois l'enregistrement
             ident = self._log_dates.index(self.current_date)
             # Record the envelope states and their amounts at this date
             for key, value in AnalyzeInvestmentStates(self._portfolio).analyze(self.current_date).items():
-                self._log_env_states[key][-1]=value
+                self._log_env_states[key][-1] = value
             for key, value in AnalyzeEnvelopes(self._portfolio).analyzeTime(self.current_date).items():
                 if key in self._log_enveloppe_values:
-                    self._log_enveloppe_values[key][-1]=value
+                    self._log_enveloppe_values[key][-1] = value
                 else:
-                    self._log_enveloppe_values[key]=[value]
+                    self._log_enveloppe_values[key] = [value]
             for key, value in AnalyzeAssetClasses(self._portfolio).analyzeTime(self.current_date).items():
-                self._log_assets_classes_values[key][-1]=value
+                self._log_assets_classes_values[key][-1] = value
             for key, value in AnalyzeSubAssetClasses(self._portfolio).analyzeTime(self.current_date).items():
                 if key in self._log_assets_subclasses_values:
-                    self._log_assets_subclasses_values[key][-1]=value
+                    self._log_assets_subclasses_values[key][-1] = value
                 else:
-                    self._log_assets_subclasses_values[key]=[value]
+                    self._log_assets_subclasses_values[key] = [value]
             for key, value in AnalyzeLines(self._portfolio).analyzeTime(self.current_date).items():
                 if key in self._log_lines_values:
-                    self._log_lines_values[key][-1]=value
+                    self._log_lines_values[key][-1] = value
                 else:
-                    self._log_lines_values[key]=[value]
-    
-    def chartOnTimeline(self, title: str, valuesToGraph: Dict[str, List[float]], colors: Dict[str,str]={}, visible_by_default: bool = True) -> Dict[str, Any]:
+                    self._log_lines_values[key] = [value]
+
+    def chartOnTimeline(
+        self,
+        title: str,
+        valuesToGraph: Dict[str, List[float]],
+        colors: Dict[str, str] = {},
+        visible_by_default: bool = True,
+    ) -> Dict[str, Any]:
         """Plot a Highcharts chart of the portfolio's caracteristics and amounts over time."""
-        #assert self._log_enveloppe_values, "Run the simulation before charting."
+        # assert self._log_enveloppe_values, "Run the simulation before charting."
 
         return {
-            "chart": {"plotBackgroundColor": None, "plotBorderWidth": None, "plotShadow": False, "type": "area", "zooming": {"type": 'xy' }, "height":1200, "width":1000},
+            "chart": {
+                "plotBackgroundColor": None,
+                "plotBorderWidth": None,
+                "plotShadow": False,
+                "type": "area",
+                "zooming": {"type": "xy"},
+                "height": 1200,
+                "width": 1000,
+            },
             "title": {"text": title, "align": "center"},
             "plotOptions": {
                 "area": {
@@ -239,35 +265,36 @@ class Timeline:
                     "name": key,
                     "data": self.convertDataSeries(value),
                     "visible": visible_by_default,
-                    "color": colors[key] if (key in colors) else {None}
+                    "color": colors[key] if (key in colors) else {None},
                 }
                 for key, value in valuesToGraph.items()
             ],
-            "xAxis": {"type": 'datetime'},
+            "xAxis": {"type": "datetime"},
             "yAxis": {"crosshair": True},
             "tooltip": {
-                "xDateFormat": '%m %Y',
-                "pointFormat": '{point.x:%e/%m/%Y}: <b>{point.y:,.0f}€</b><br>',
-                "footerFormat": '<i>{series.name}</i>',
+                "xDateFormat": "%m %Y",
+                "pointFormat": "{point.x:%e/%m/%Y}: <b>{point.y:,.0f}€</b><br>",
+                "footerFormat": "<i>{series.name}</i>",
             },
             "credits": {"enabled": False},
         }
 
-    def convertDataSeries(self, data: [float])->[Any]:
+    def convertDataSeries(self, data: [float]) -> [Any]:
         """Convert DataSeries in a time series format to allow non regular data"""
-        res=[]
+        res = []
         i = 0
         while i < len(data):
-            if (self._log_dates[i] in self._log_events): 
-                evenements = "* "+"<br>* ".join(self._log_events[self._log_dates[i]])
-            else: 
+            if self._log_dates[i] in self._log_events:
+                evenements = "* " + "<br>* ".join(self._log_events[self._log_dates[i]])
+            else:
                 evenements = ""
-            point = {"x": datetime.combine(self._log_dates[i], datetime.min.time()).timestamp() * 1000,
-                     "y": data[i],
-                     "name": evenements
-                     }
+            point = {
+                "x": datetime.combine(self._log_dates[i], datetime.min.time()).timestamp() * 1000,
+                "y": data[i],
+                "name": evenements,
+            }
             res.append(point)
-            i+=1
+            i += 1
         return res
 
     def _sort_events(self) -> None:

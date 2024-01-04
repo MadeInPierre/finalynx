@@ -26,7 +26,7 @@ class AnalyzeEnvelopes(Analyzer):
         """:returns: A dictionary with keys as the asset class names and values as the
         sum of investments corresponding to each class."""
         return self._recursive_mergeTime(self.node, target_date)
-    
+
     def _recursive_mergeTime(self, node: Node, target_date: date) -> Dict[str, Any]:
         """Internal method for recursive searching."""
         total = {}
@@ -42,7 +42,7 @@ class AnalyzeEnvelopes(Analyzer):
         # Folders merge what the children return
         elif isinstance(node, Folder):
             for child in node.children:
-                for key, value in self._recursive_mergeTime(child,target_date).items():
+                for key, value in self._recursive_mergeTime(child, target_date).items():
                     if key in total.keys():
                         total[key] += value
                     else:

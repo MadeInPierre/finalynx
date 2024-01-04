@@ -77,7 +77,7 @@ class AnalyzeAssetClasses(Analyzer):
         """:returns: A dictionary with keys as the asset class names and values as the
         sum of investments corresponding to each class."""
         return self._recursive_mergeTime(self.node, target_date)
-    
+
     def _recursive_mergeTime(self, node: Node, target_date: date) -> Dict[str, Any]:
         """Internal method for recursive searching."""
         total = {c.value: 0.0 for c in AssetClass}

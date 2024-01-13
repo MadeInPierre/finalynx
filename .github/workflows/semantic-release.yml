@@ -55,6 +55,10 @@ jobs:
     needs: pre-commit
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      id-token: write
+      contents: write
     steps:
       - uses: actions/setup-python@v2
         with:

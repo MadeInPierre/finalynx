@@ -37,7 +37,7 @@ class Simulation:
 
     # Whether to print the final portfolio state in the console after the simulation
     print_each_step: bool = False
-    
+
     # Display the portfolio's worth in the console every `step` years
     step_years: int = 5
 

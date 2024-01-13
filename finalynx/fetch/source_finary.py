@@ -179,7 +179,7 @@ class SourceFinary(SourceBaseLine):
 
     def _process_account(self, dict_account: Dict[str, Any], tree: Tree) -> None:
         account_name = dict_account["name"]
-        node = tree.add(account_name)
+        node = tree.add(account_name if not dict_account["fiats"] else dict_account["institution"]["name"])
 
         for item in dict_account["fiats"]:
             subtype = dict_account["bank_account_type"]["subtype"]

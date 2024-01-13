@@ -36,7 +36,8 @@ class DeltaRecurrence(RecurrenceBase):
         months = months if months is not None else 0
         years = years if years is not None else 0
 
-        self._delta = timedelta(days, weeks=4 * months + 52 * years)
+        # Add decimals to stay on the same day (otherwise Yearly goes to 30/12)
+        self._delta = timedelta(days, weeks=4.3452 * months + 52.1429 * years + 0.1429)
 
     def _next_date(self, current_date: date) -> date:
         return current_date + self._delta

@@ -125,6 +125,9 @@ class Assistant:
         # Initialize the simulation timeline with the initial user events
         self._timeline = Timeline(simulation, self.portfolio, self.buckets) if simulation else None
 
+        # Store the portfolio renders for each simulation date (if enabled)
+        self._timeline_renders: List[Any] = []
+
     def add_source(self, source: SourceBaseLine) -> None:
         """Register a source, either defined in your own config or from the available Finalynx sources
         using `from finalynx.fetch.source_any import SourceAny`."""
@@ -190,6 +193,8 @@ class Assistant:
             self.active_sources = str(args["--sources"]).split(",")
         if args["--future"] and self.simulation:
             self.simulation.print_final = True
+        if args["--each-step"] and self.simulation:
+            self.simulation.print_each_step = True
         if args["--sim-steps"] and self.simulation:
             self.simulation.step_years = int(args["--sim-steps"])
         if args["--theme"]:
@@ -233,6 +238,11 @@ class Assistant:
         if self.simulation:
             # Add the simulation summary to the performance panel in the console
             dict_panels["performance"].add(self.simulate())
+
+            # If enabled by the user, print the portfolio at each simulation date
+            if self.simulation.print_each_step:
+                for element in self._timeline_renders:
+                    renders.append(element)
 
             # If enabled by the user, print the final portfolio after the simulation
             if self.simulation.print_final:
@@ -299,7 +309,13 @@ class Assistant:
             self._timeline.goto(date(year, 12, 31))
 
             if (year - date.today().year) % self.simulation.step_years == 0:
+                # Append the portfolio's worth to the Worth tree
                 append_worth(year, self.portfolio.get_amount())
+
+                # Render each intermediate simulation step
+                if self.simulation.print_each_step:
+                    title = "Your portfolio in [bold]" + str(year) + "-12-31:[/]"
+                    self._timeline_renders.append(Panel(self.render_mainframe(), title=title))
 
         # Run until the end date and append the final result
         self._timeline.run()

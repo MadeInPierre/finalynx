@@ -84,7 +84,10 @@ class SourceFinary(SourceBaseLine):
             if os.path.exists(finary_uapi.constants.COOKIE_FILENAME):
                 os.remove(finary_uapi.constants.COOKIE_FILENAME)
             if os.path.exists(finary_uapi.constants.CREDENTIAL_FILE):
-                if not Confirm.ask("Reuse saved credentials? Otherwise, they will also be deleted.", default=True):
+                if not Confirm.ask(
+                    "Reuse saved credentials? Otherwise, they will also be deleted.",
+                    default=True,
+                ):
                     os.remove(finary_uapi.constants.CREDENTIAL_FILE)
 
         # Get the user credentials if there's no session yet (through environment variables or manual input)
@@ -171,7 +174,10 @@ class SourceFinary(SourceBaseLine):
             raise ValueError("Finary signin failed.")
 
         # Call the API and parse the response into `FetchLine` instances
-        with console.status(f"[bold {TH().ACCENT}]Fetching investments from Finary...", spinner_style=TH().ACCENT):
+        with console.status(
+            f"[bold {TH().ACCENT}]Fetching investments from Finary...",
+            spinner_style=TH().ACCENT,
+        ):
             response = ff.get_holdings_accounts(session)
             if response["message"] == "OK":
                 for dict_account in response["result"]:
@@ -182,11 +188,11 @@ class SourceFinary(SourceBaseLine):
         node = tree.add(account_name)
 
         for item in dict_account["fiats"]:
-            subtype = dict_account["bank_account_type"]["subtype"]
-            if subtype == "credit":
+            if dict_account["bank_account_type"]["subtype"] == "credit":
                 amount = -item["display_current_value"]
             else:
                 amount = item["display_current_value"]
+
             self._register_fetchline(
                 tree_node=node,
                 name=account_name,

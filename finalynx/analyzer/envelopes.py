@@ -2,8 +2,6 @@ from datetime import date
 from typing import Any
 from typing import Dict
 
-from finalynx.portfolio.constants import EnvelopeClass
-
 from ..portfolio import Folder
 from ..portfolio import Line
 from ..portfolio import Node

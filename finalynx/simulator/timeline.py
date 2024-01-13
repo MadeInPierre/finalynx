@@ -209,7 +209,8 @@ class Timeline:
                     self._log_lines_values[key] = [value]
         else:
             # On doit remplacer les valeurs stockées par les nouvelles sans créer 2 fois l'enregistrement
-            ident = self._log_dates.index(self.current_date)
+            # ident = self._log_dates.index(self.current_date)  # TODO
+
             # Record the envelope states and their amounts at this date
             for key, value in AnalyzeInvestmentStates(self._portfolio).analyze(self.current_date).items():
                 self._log_env_states[key][-1] = value

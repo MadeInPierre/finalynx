@@ -2,8 +2,6 @@ from datetime import date
 from typing import Any
 from typing import Dict
 
-import numpy as np
-
 from ..portfolio import AssetClass
 from ..portfolio import AssetSubclass
 from ..portfolio import Folder

@@ -15,8 +15,22 @@ You can always get the latest version of this module at:
 # noreorder
 from datetime import date
 from rich import inspect, print, pretty, traceback  # noqa
-from finalynx import TargetRange, TargetMin, TargetMax, TargetRatio, TargetGlobalRatio  # noqa
-from finalynx import Sidecar, Folder, Line, LinePerf, Bucket, SharedFolder, Portfolio, FolderDisplay  # noqa
+from finalynx import (
+    TargetRange,
+    TargetMin,
+    TargetMax,
+    TargetRatio,
+)  # noqa
+from finalynx import (
+    Sidecar,
+    Folder,
+    Line,
+    LinePerf,
+    Bucket,
+    SharedFolder,
+    Portfolio,
+    FolderDisplay,
+)  # noqa
 from finalynx import Envelope, PEA, PEE, AV, PER
 from finalynx import AssetClass, AssetSubclass
 from finalynx import Simulation, AddLineAmount, Event, Salary
@@ -31,24 +45,36 @@ if __name__ in {"__main__", "__mp_main__"}:
     """
     (Optional) Custom shortcuts in variables used below to control the config quickly.
     """
-    short_display = FolderDisplay.COLLAPSED  # Display style for all short-term folders
-    medium_term_amount = 20000  # Amount of money to keep for medium-term (i.e. Livrets in this config)
+    short_display = FolderDisplay.EXPANDED  # Display style for all short-term folders
+    medium_term_amount = (
+        20000  # Amount of money to keep for medium-term (i.e. Livrets in this config)
+    )
     date_retirement = date(2063, 7, 1)
 
     # Define envelopes used in the portfolio
     bank_lbp = Envelope("La Banque Postale", "LBP")
     bank_n26 = Envelope("N26", "N26")
-    bank_boursorama = Envelope("Boursorama", "BOU")
+    bank_boursorama = Envelope("BoursoBank", "BOU")
 
-    pea = PEA("Bourse Direct", "PEA", date(2022, 7, 1), key="PEA")
-    pee = PEE("Natixis", "PEE", date(2023, 4, 1), date_unlock=date(2023, 11, 22), key="PEE Natixis")
+    pea = PEA(
+        "Bourse Direct", "PEA", date(2022, 7, 1), key="MR LACLAU PIERRE (Compte PEA)"
+    )
+    pee = PEE(
+        "Natixis",
+        "PEE",
+        date(2023, 4, 1),
+        date_unlock=date(2023, 11, 22),
+        key="Plan d'Epargne Entreprise",
+    )
 
     av_linxea = AV("Linxea Spirit 2", "LIX", date(2022, 7, 1), key="LINXEA Spirit 2")
     av_goodvest = AV("Goodvest", "GOO", date(2022, 7, 1))
     av_ramify = AV("Ramify", "RAM", date(2022, 7, 1), key="Ramify AV")
 
     per_linxea = PER("Linxea Spirit PER", "PER", date(2022, 7, 1), date_retirement)
-    per_prefon = PER("Prefon", "PRF", date(2022, 7, 1), date_retirement, key="Autres actifs")
+    per_prefon = PER(
+        "Prefon", "PRF", date(2022, 7, 1), date_retirement, key="Autres actifs"
+    )
 
     at_home = Envelope("At Home", "PHY", key="Metaux precieux")
 
@@ -249,27 +275,27 @@ if __name__ in {"__main__", "__mp_main__"}:
                         asset_class=AssetClass.STOCK,
                         asset_subclass=AssetSubclass.ETF,
                         target=TargetRatio(50),
-                        perf=LinePerf(8),
+                        perf=LinePerf(6),
                         children=[
                             Folder(
                                 "USA",
                                 target=TargetRatio(50),
                                 children=[
                                     Line(
-                                        "[italic]PE500[/] - SP500",
-                                        key="7030926",
+                                        "SP500 [italic](PE500)[/]",
+                                        key="13577960",
                                         target=TargetRatio(50),
                                         envelope=pea,
                                     ),
                                     Line(
-                                        "[italic]xxxxx[/] - SP500 ESG",
-                                        key="8804142",
+                                        "SP500 ESG [italic](xxxxx)[/]",
+                                        key="13578020",
                                         target=TargetRatio(30),
                                         envelope=av_linxea,
                                     ),
                                     Line(
-                                        "[italic]RS2K[/]  - Russell 2000",
-                                        key="11358415",
+                                        "Russell 2000 [italic](RS2K)[/]",
+                                        key="13577964",
                                         target=TargetRatio(20),
                                         envelope=pea,
                                     ),
@@ -280,14 +306,14 @@ if __name__ in {"__main__", "__mp_main__"}:
                                 target=TargetRatio(30),
                                 children=[
                                     Line(
-                                        "[italic]PABZ[/] - Europe 600 ESG",
-                                        key="7492719",
+                                        "Europe 600 ESG [italic](PABZ)[/]",
+                                        key="13577963",
                                         target=TargetRatio(80),
                                         envelope=pea,
                                     ),
                                     Line(
-                                        "[italic]ETZ[/]  - Europe 600",
-                                        key="7030927",
+                                        " Europe 600 [italic](ETZ)[/]",
+                                        key="13577961",
                                         target=TargetRatio(20),
                                         envelope=pea,
                                     ),
@@ -298,19 +324,19 @@ if __name__ in {"__main__", "__mp_main__"}:
                                 target=TargetRatio(20),
                                 children=[
                                     Line(
-                                        "[italic]PAEEM[/] - Emerging markets",
-                                        key="7036606",
+                                        "Emerging markets [italic](PAEEM)[/]",
+                                        key="13577962",
                                         target=TargetRatio(50),
                                         envelope=pea,
                                     ),
                                     Line(
-                                        "[italic]xxxxx[/] - Emerging markets ESG",
+                                        "Emerging markets ESG [italic](xxxxx)[/]",
                                         key="8804145",
                                         target=TargetRatio(30),
                                         envelope=av_linxea,
                                     ),
                                     Line(
-                                        "[italic]PTPXE[/] - Japon",
+                                        "Japon [italic](PTPXE)[/]",
                                         key="",
                                         target=TargetRatio(20),
                                         newline=True,
@@ -390,6 +416,27 @@ if __name__ in {"__main__", "__mp_main__"}:
                 ],
             ),
             Folder(
+                "Bloqué",
+                perf=LinePerf(0, skip=True),
+                children=[
+                    Line(
+                        "PEE (à récupérer)",
+                        AssetClass.CASH,
+                        AssetSubclass.MONETARY,
+                        key="13009544",
+                        envelope=pee,
+                    ),
+                    Line(
+                        "Shares To Win Stellantis (à récupérer)",
+                        AssetClass.STOCK,
+                        AssetSubclass.STOCK_SHARE,
+                        key="13417344",
+                        envelope=pee,
+                        newline=True,
+                    ),
+                ],
+            ),
+            Folder(
                 "Retraite",
                 perf=LinePerf(0, skip=True),
                 children=[
@@ -431,17 +478,10 @@ if __name__ in {"__main__", "__mp_main__"}:
                         envelope=bank_boursorama,
                     ),
                     Line(
-                        "PEE (à récupérer)",
-                        AssetClass.CASH,
-                        AssetSubclass.MONETARY,
-                        key="10117145",
-                        envelope=pee,
-                    ),
-                    Line(
                         "Liquidités PEA (à investir)",
                         AssetClass.CASH,
                         AssetSubclass.LIQUIDITY,
-                        key="7024202",
+                        key="13577959",
                         envelope=pea,
                         target=TargetMax(0),
                     ),
@@ -509,9 +549,19 @@ if __name__ in {"__main__", "__mp_main__"}:
         ],
         simulation=Simulation(
             events=[
-                Salary(livreta, income=2300, expenses=1400, end_date=date(2024, 11, 30)),
-                Event(AddLineAmount(livreta, 3500), planned_date=date(2024, 4, 10), name="Prime"),
-                Event(AddLineAmount(livreta, 3500), planned_date=date(2025, 4, 10), name="Prime"),
+                Salary(
+                    livreta, income=2300, expenses=1400, end_date=date(2024, 11, 30)
+                ),
+                Event(
+                    AddLineAmount(livreta, 3500),
+                    planned_date=date(2024, 4, 10),
+                    name="Prime",
+                ),
+                Event(
+                    AddLineAmount(livreta, 3500),
+                    planned_date=date(2025, 4, 10),
+                    name="Prime",
+                ),
                 Salary(
                     livreta,
                     income=3500,

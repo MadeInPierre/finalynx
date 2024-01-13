@@ -22,7 +22,7 @@ copyright = "2023, Pierre Laclau"
 author = "Pierre Laclau"
 
 # The full version, including alpha/beta/rc tags
-release = "1.22.3"
+release = "1.22.4"
 
 
 # -- General configuration ---------------------------------------------------

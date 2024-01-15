@@ -2,6 +2,21 @@
 
 
 
+## v1.23.0 (2024-01-15)
+
+### Ci
+
+* ci: manual bump to v1.22.4 ([`8e8ec72`](https://github.com/MadeInPierre/finalynx/commit/8e8ec723eb6f3db2f03170cf28a155b9c08c3f2f))
+
+* ci: add permissions for semantic release ([`7e986a5`](https://github.com/MadeInPierre/finalynx/commit/7e986a57fd9db0f6ce098bef59d88b164d94d68c))
+
+### Feature
+
+* feat(dashboard): add layered evolution graphs (#150)
+
+More graphs available in the dashboard with view per classification (envelopes, asset classes, line by line, ...) by @gcoue ([`6f0d1b3`](https://github.com/MadeInPierre/finalynx/commit/6f0d1b39d72682fc005fc0e7e28101c725f6b7c5))
+
+
 ## v1.22.4 (2024-01-13)
 
 ### Chore

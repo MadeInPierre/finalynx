@@ -1,4 +1,3 @@
-from datetime import date
 from typing import Any
 from typing import Dict
 
@@ -70,15 +69,15 @@ class AnalyzeAssetClasses(Analyzer):
 
     def analyze(self) -> Dict[str, Any]:
         """:returns: A dictionary with keys as the asset class names and values as the
-        sum of investments corresponding to each class."""
+        sum of investments corresponding to each class. Two-layer dictionary with classes and subclasses."""
         return self._recursive_merge(self.node)
 
-    def analyzeTime(self, target_date: date) -> Dict[str, float]:
+    def analyze_flat(self) -> Dict[str, float]:
         """:returns: A dictionary with keys as the asset class names and values as the
         sum of investments corresponding to each class."""
-        return self._recursive_mergeTime(self.node, target_date)
+        return self._recursive_merge_flat(self.node)
 
-    def _recursive_mergeTime(self, node: Node, target_date: date) -> Dict[str, Any]:
+    def _recursive_merge_flat(self, node: Node) -> Dict[str, Any]:
         """Internal method for recursive searching."""
         total = {c.value: 0.0 for c in AssetClass}
 
@@ -90,7 +89,7 @@ class AnalyzeAssetClasses(Analyzer):
         # Folders merge what the children return
         elif isinstance(node, Folder):
             for child in node.children:
-                for key, value in self._recursive_mergeTime(child, target_date).items():
+                for key, value in self._recursive_merge_flat(child).items():
                     total[key] += value
             return total
 

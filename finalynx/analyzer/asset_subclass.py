@@ -1,4 +1,3 @@
-from datetime import date
 from typing import Any
 from typing import Dict
 
@@ -10,7 +9,7 @@ from ..portfolio import Node
 from .analyzer import Analyzer
 
 
-class AnalyzeSubAssetClasses(Analyzer):
+class AnalyzeAssetSubclasses(Analyzer):
     """Aims to agglomerate the children's Sub asset classes and return
     the amount represented by each Sub asset class.
     :returns: a dictionary with Sub asset classes as keys and the
@@ -102,16 +101,16 @@ class AnalyzeSubAssetClasses(Analyzer):
     }
 
     def analyze(self) -> Dict[str, Any]:
-        """:returns: A dictionary with keys as the asset class names and values as the
-        sum of investments corresponding to each class."""
+        """:returns: A dictionary with keys as the asset class names and values as the sum of
+        investments corresponding to each class. Two-layer dictionary with classes and subclasses."""
         return self._recursive_merge(self.node)
 
-    def analyzeTime(self, target_date: date) -> Dict[str, float]:
+    def analyze_flat(self) -> Dict[str, float]:
         """:returns: A dictionary with keys as the Sub asset class names and values as the
-        sum of investments corresponding to each class."""
-        return self._recursive_mergeTime(self.node, target_date)
+        sum of investments corresponding to each subclass."""
+        return self._recursive_merge_flat(self.node)
 
-    def _recursive_mergeTime(self, node: Node, target_date: date) -> Dict[str, Any]:
+    def _recursive_merge_flat(self, node: Node) -> Dict[str, Any]:
         """Internal method for recursive searching."""
         total = {}
 
@@ -123,7 +122,7 @@ class AnalyzeSubAssetClasses(Analyzer):
         # Folders merge what the children return
         elif isinstance(node, Folder):
             for child in node.children:
-                for key, value in self._recursive_mergeTime(child, target_date).items():
+                for key, value in self._recursive_merge_flat(child).items():
                     if key in total.keys():
                         total[key] += value
                     else:

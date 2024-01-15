@@ -10,9 +10,9 @@ from typing import Optional
 from typing import Set
 
 from finalynx.analyzer.asset_class import AnalyzeAssetClasses
+from finalynx.analyzer.asset_subclass import AnalyzeAssetSubclasses
 from finalynx.analyzer.envelopes import AnalyzeEnvelopes
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
-from finalynx.analyzer.subasset_class import AnalyzeSubAssetClasses
 from finalynx.portfolio.folder import Folder
 from finalynx.portfolio.folder import FolderDisplay
 from finalynx.portfolio.line import Line
@@ -183,8 +183,8 @@ class Dashboard:
                         with ui.row():
                             self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
                             self.chart_etats_enveloppes = ui.chart(
-                                timeline.chartOnTimeline(
-                                    "Evolution des états d'enveloppes",
+                                timeline.chart_timeline(
+                                    "Envelope States Evolution",
                                     timeline._log_env_states,
                                     {
                                         "Unknown": "#434348",
@@ -198,13 +198,13 @@ class Dashboard:
                                 else {}
                             )
                             self.chart_enveloppes = ui.chart(
-                                timeline.chartOnTimeline("Evolution des enveloppes", timeline._log_enveloppe_values)
+                                timeline.chart_timeline("Envelopes Evolution", timeline._log_enveloppe_values)
                                 if timeline
                                 else {}
                             )
                             self.chart_asset_classes = ui.chart(
-                                timeline.chartOnTimeline(
-                                    "Evolution des classes d'actifs",
+                                timeline.chart_timeline(
+                                    "Asset Classes Evolution",
                                     timeline._log_assets_classes_values,
                                     AnalyzeAssetClasses.ASSET_COLORS_FINARY,
                                 )
@@ -212,17 +212,17 @@ class Dashboard:
                                 else {}
                             )
                             self.chart_subasset_classes = ui.chart(
-                                timeline.chartOnTimeline(
-                                    "Evolution des sous-classes d'actifs",
+                                timeline.chart_timeline(
+                                    "Asset Subclasses Evolution",
                                     timeline._log_assets_subclasses_values,
-                                    AnalyzeSubAssetClasses.SUBASSET_COLORS_FINARY,
+                                    AnalyzeAssetSubclasses.SUBASSET_COLORS_FINARY,
                                 )
                                 if timeline
                                 else {}
                             )
                             self.chart_lines = ui.chart(
-                                timeline.chartOnTimeline(
-                                    "Evolution des lignes du portefeuille",
+                                timeline.chart_timeline(
+                                    "Line-by-line Evolution",
                                     timeline._log_lines_values,
                                     visible_by_default=False,
                                 )

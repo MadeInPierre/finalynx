@@ -8,10 +8,10 @@ from typing import List
 from typing import Optional
 
 from finalynx.analyzer.asset_class import AnalyzeAssetClasses
+from finalynx.analyzer.asset_subclass import AnalyzeAssetSubclasses
 from finalynx.analyzer.envelopes import AnalyzeEnvelopes
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
 from finalynx.analyzer.lines import AnalyzeLines
-from finalynx.analyzer.subasset_class import AnalyzeSubAssetClasses
 from finalynx.portfolio.bucket import Bucket
 from finalynx.portfolio.constants import AssetClass
 from finalynx.portfolio.envelope import EnvelopeState
@@ -48,7 +48,7 @@ class Simulation:
     step_years: int = 5
 
     # Record the portfolio stats on each day of the simulation 'DAY', 'MONTH', 'YEAR'
-    metrics_record_freqency: str = "MONTH"
+    metrics_record_frequency: str = "MONTH"
 
 
 class Timeline:
@@ -144,18 +144,11 @@ class Timeline:
         self._sort_events()
 
         # Record the metrics if the year changed
-        # if next_event.planned_date.year != self.current_date.year:
-        #    self._record_metrics()
+        _freq = self.simulation.metrics_record_frequency
         if (
-            (self.simulation.metrics_record_freqency == "DAY" and next_event.planned_date != self.current_date)
-            or (
-                self.simulation.metrics_record_freqency == "YEAR"
-                and next_event.planned_date.year != self.current_date.year
-            )
-            or (
-                self.simulation.metrics_record_freqency == "MONTH"
-                and next_event.planned_date.month != self.current_date.month
-            )
+            (_freq == "DAY" and next_event.planned_date != self.current_date)
+            or (_freq == "YEAR" and next_event.planned_date.year != self.current_date.year)
+            or (_freq == "MONTH" and next_event.planned_date.month != self.current_date.month)
         ):
             self.current_date = next_event.planned_date
             self._record_metrics()
@@ -187,52 +180,53 @@ class Timeline:
             for key, value in AnalyzeInvestmentStates(self._portfolio).analyze(self.current_date).items():
                 self._log_env_states[key].append(value)
 
-            for key, value in AnalyzeEnvelopes(self._portfolio).analyzeTime(self.current_date).items():
+            for key, value in AnalyzeEnvelopes(self._portfolio).analyze().items():
                 if key in self._log_enveloppe_values:
                     self._log_enveloppe_values[key].append(value)
                 else:
                     self._log_enveloppe_values[key] = [value]
 
-            for key, value in AnalyzeAssetClasses(self._portfolio).analyzeTime(self.current_date).items():
+            for key, value in AnalyzeAssetClasses(self._portfolio).analyze_flat().items():
                 self._log_assets_classes_values[key].append(value)
 
-            for key, value in AnalyzeSubAssetClasses(self._portfolio).analyzeTime(self.current_date).items():
+            for key, value in AnalyzeAssetSubclasses(self._portfolio).analyze_flat().items():
                 if key in self._log_assets_subclasses_values:
                     self._log_assets_subclasses_values[key].append(value)
                 else:
                     self._log_assets_subclasses_values[key] = [value]
 
-            for key, value in AnalyzeLines(self._portfolio).analyzeTime(self.current_date).items():
+            for key, value in AnalyzeLines(self._portfolio).analyze().items():
                 if key in self._log_lines_values:
                     self._log_lines_values[key].append(value)
                 else:
                     self._log_lines_values[key] = [value]
         else:
-            # On doit remplacer les valeurs stockées par les nouvelles sans créer 2 fois l'enregistrement
-            # ident = self._log_dates.index(self.current_date)  # TODO
-
             # Record the envelope states and their amounts at this date
             for key, value in AnalyzeInvestmentStates(self._portfolio).analyze(self.current_date).items():
                 self._log_env_states[key][-1] = value
-            for key, value in AnalyzeEnvelopes(self._portfolio).analyzeTime(self.current_date).items():
+
+            for key, value in AnalyzeEnvelopes(self._portfolio).analyze().items():
                 if key in self._log_enveloppe_values:
                     self._log_enveloppe_values[key][-1] = value
                 else:
                     self._log_enveloppe_values[key] = [value]
-            for key, value in AnalyzeAssetClasses(self._portfolio).analyzeTime(self.current_date).items():
+
+            for key, value in AnalyzeAssetClasses(self._portfolio).analyze_flat().items():
                 self._log_assets_classes_values[key][-1] = value
-            for key, value in AnalyzeSubAssetClasses(self._portfolio).analyzeTime(self.current_date).items():
+
+            for key, value in AnalyzeAssetSubclasses(self._portfolio).analyze_flat().items():
                 if key in self._log_assets_subclasses_values:
                     self._log_assets_subclasses_values[key][-1] = value
                 else:
                     self._log_assets_subclasses_values[key] = [value]
-            for key, value in AnalyzeLines(self._portfolio).analyzeTime(self.current_date).items():
+
+            for key, value in AnalyzeLines(self._portfolio).analyze().items():
                 if key in self._log_lines_values:
                     self._log_lines_values[key][-1] = value
                 else:
                     self._log_lines_values[key] = [value]
 
-    def chartOnTimeline(
+    def chart_timeline(
         self,
         title: str,
         valuesToGraph: Dict[str, List[float]],
@@ -249,7 +243,7 @@ class Timeline:
                 "plotShadow": False,
                 "type": "area",
                 "zooming": {"type": "xy"},
-                "height": 1200,
+                "height": 800,
                 "width": 1000,
             },
             "title": {"text": title, "align": "center"},
@@ -264,7 +258,7 @@ class Timeline:
             "series": [
                 {
                     "name": key,
-                    "data": self.convertDataSeries(value),
+                    "data": self._convert_data_series(value),
                     "visible": visible_by_default,
                     "color": colors[key] if (key in colors) else {None},
                 }
@@ -280,7 +274,7 @@ class Timeline:
             "credits": {"enabled": False},
         }
 
-    def convertDataSeries(self, data: [float]) -> [Any]:
+    def _convert_data_series(self, data: List[float]) -> List[Any]:
         """Convert DataSeries in a time series format to allow non regular data"""
         res = []
         i = 0

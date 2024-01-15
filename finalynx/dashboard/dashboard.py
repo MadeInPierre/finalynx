@@ -10,6 +10,7 @@ from typing import Optional
 from typing import Set
 
 from finalynx.analyzer.asset_class import AnalyzeAssetClasses
+from finalynx.analyzer.asset_subclass import AnalyzeAssetSubclasses
 from finalynx.analyzer.envelopes import AnalyzeEnvelopes
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
 from finalynx.portfolio.folder import Folder
@@ -181,7 +182,53 @@ class Dashboard:
                             )
                         with ui.row():
                             self.chart_envelopes = ui.chart(AnalyzeEnvelopes(self.selected_node).chart())
-                            self.chart_simulation = ui.chart(timeline.chart() if timeline else {})
+                            self.chart_etats_enveloppes = ui.chart(
+                                timeline.chart_timeline(
+                                    "Envelope States Evolution",
+                                    timeline._log_env_states,
+                                    {
+                                        "Unknown": "#434348",
+                                        "Closed": "#999999",
+                                        "Locked": "#F94144",
+                                        "Taxed": "#F9C74F",
+                                        "Free": "#7BB151",
+                                    },
+                                )
+                                if timeline
+                                else {}
+                            )
+                            self.chart_enveloppes = ui.chart(
+                                timeline.chart_timeline("Envelopes Evolution", timeline._log_enveloppe_values)
+                                if timeline
+                                else {}
+                            )
+                            self.chart_asset_classes = ui.chart(
+                                timeline.chart_timeline(
+                                    "Asset Classes Evolution",
+                                    timeline._log_assets_classes_values,
+                                    AnalyzeAssetClasses.ASSET_COLORS_FINARY,
+                                )
+                                if timeline
+                                else {}
+                            )
+                            self.chart_subasset_classes = ui.chart(
+                                timeline.chart_timeline(
+                                    "Asset Subclasses Evolution",
+                                    timeline._log_assets_subclasses_values,
+                                    AnalyzeAssetSubclasses.SUBASSET_COLORS_FINARY,
+                                )
+                                if timeline
+                                else {}
+                            )
+                            self.chart_lines = ui.chart(
+                                timeline.chart_timeline(
+                                    "Line-by-line Evolution",
+                                    timeline._log_lines_values,
+                                    visible_by_default=False,
+                                )
+                                if timeline
+                                else {}
+                            )
 
         ui.run(
             title="Finalynx Dashboard",

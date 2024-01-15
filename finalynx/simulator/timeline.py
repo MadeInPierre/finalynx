@@ -1,13 +1,19 @@
 from dataclasses import dataclass
 from datetime import date
+from datetime import datetime
 from datetime import timedelta
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
 
+from finalynx.analyzer.asset_class import AnalyzeAssetClasses
+from finalynx.analyzer.asset_subclass import AnalyzeAssetSubclasses
+from finalynx.analyzer.envelopes import AnalyzeEnvelopes
 from finalynx.analyzer.investment_state import AnalyzeInvestmentStates
+from finalynx.analyzer.lines import AnalyzeLines
 from finalynx.portfolio.bucket import Bucket
+from finalynx.portfolio.constants import AssetClass
 from finalynx.portfolio.envelope import EnvelopeState
 from finalynx.portfolio.folder import Portfolio
 from finalynx.simulator.actions import AutoBalance
@@ -40,6 +46,9 @@ class Simulation:
 
     # Display the portfolio's worth in the console every `step` years
     step_years: int = 5
+
+    # Record the portfolio stats on each day of the simulation 'DAY', 'MONTH', 'YEAR'
+    metrics_record_frequency: str = "MONTH"
 
 
 class Timeline:
@@ -74,6 +83,11 @@ class Timeline:
         # Log some metrics during the simulation to display them at the end
         self._log_dates: List[date] = []  # Dates at which the portfolio metrics were logged
         self._log_env_states: Dict[str, List[float]] = {c.value: [] for c in EnvelopeState}
+        self._log_enveloppe_values: Dict[str, List[float]] = {}
+        self._log_assets_classes_values: Dict[str, List[float]] = {c.value: [] for c in AssetClass}
+        self._log_assets_subclasses_values: Dict[str, List[float]] = {}
+        self._log_lines_values: Dict[str, List[float]] = {}
+        self._log_events: Dict[date, List[str]] = {}
 
     def run(self) -> None:
         """Step all events until the simulation limit is reached."""
@@ -93,6 +107,9 @@ class Timeline:
         """Execute all events until the specified date is reached."""
         assert self.current_date < target_date, "Target date must be in the future."
 
+        # Enregistrement de la situation de démarrage du Portefeuille
+        self._record_metrics()
+
         while self.current_date < target_date and not self.is_finished:
             if self.step():
                 return
@@ -111,6 +128,10 @@ class Timeline:
 
         # Add the newly generated events and sort the event list by date
         new_events = next_event.apply(self._portfolio)
+        if next_event.planned_date in self._log_events:
+            self._log_events[next_event.planned_date].append(next_event.name)
+        else:
+            self._log_events[next_event.planned_date] = [next_event.name]
 
         # Recalculate the amounts for shared folders
         for bucket in self._buckets:
@@ -123,7 +144,13 @@ class Timeline:
         self._sort_events()
 
         # Record the metrics if the year changed
-        if next_event.planned_date.year != self.current_date.year:
+        _freq = self.simulation.metrics_record_frequency
+        if (
+            (_freq == "DAY" and next_event.planned_date != self.current_date)
+            or (_freq == "YEAR" and next_event.planned_date.year != self.current_date.year)
+            or (_freq == "MONTH" and next_event.planned_date.month != self.current_date.month)
+        ):
+            self.current_date = next_event.planned_date
             self._record_metrics()
 
         # Move the current date to this event's date
@@ -146,29 +173,81 @@ class Timeline:
 
     def _record_metrics(self) -> None:
         """Record the portfolio's metrics at the current date to display later."""
-        self._log_dates.append(self.current_date)
+        if self.current_date not in self._log_dates:
+            self._log_dates.append(self.current_date)
 
-        # Record the envelope states and their amounts at this date
-        for key, value in AnalyzeInvestmentStates(self._portfolio).analyze(self.current_date).items():
-            self._log_env_states[key].append(value)
+            # Record the envelope states and their amounts at this date
+            for key, value in AnalyzeInvestmentStates(self._portfolio).analyze(self.current_date).items():
+                self._log_env_states[key].append(value)
 
-    def chart(self) -> Dict[str, Any]:
-        """Plot a Highcharts chart of the portfolio's envelopes' states and amounts over time."""
-        assert self._log_env_states, "Run the simulation before charting."
+            for key, value in AnalyzeEnvelopes(self._portfolio).analyze().items():
+                if key in self._log_enveloppe_values:
+                    self._log_enveloppe_values[key].append(value)
+                else:
+                    self._log_enveloppe_values[key] = [value]
 
-        colors = {
-            "Unknown": "#434348",
-            "Closed": "#999999",
-            "Locked": "#F94144",
-            "Taxed": "#F9C74F",
-            "Free": "#7BB151",
-        }
+            for key, value in AnalyzeAssetClasses(self._portfolio).analyze_flat().items():
+                self._log_assets_classes_values[key].append(value)
+
+            for key, value in AnalyzeAssetSubclasses(self._portfolio).analyze_flat().items():
+                if key in self._log_assets_subclasses_values:
+                    self._log_assets_subclasses_values[key].append(value)
+                else:
+                    self._log_assets_subclasses_values[key] = [value]
+
+            for key, value in AnalyzeLines(self._portfolio).analyze().items():
+                if key in self._log_lines_values:
+                    self._log_lines_values[key].append(value)
+                else:
+                    self._log_lines_values[key] = [value]
+        else:
+            # Record the envelope states and their amounts at this date
+            for key, value in AnalyzeInvestmentStates(self._portfolio).analyze(self.current_date).items():
+                self._log_env_states[key][-1] = value
+
+            for key, value in AnalyzeEnvelopes(self._portfolio).analyze().items():
+                if key in self._log_enveloppe_values:
+                    self._log_enveloppe_values[key][-1] = value
+                else:
+                    self._log_enveloppe_values[key] = [value]
+
+            for key, value in AnalyzeAssetClasses(self._portfolio).analyze_flat().items():
+                self._log_assets_classes_values[key][-1] = value
+
+            for key, value in AnalyzeAssetSubclasses(self._portfolio).analyze_flat().items():
+                if key in self._log_assets_subclasses_values:
+                    self._log_assets_subclasses_values[key][-1] = value
+                else:
+                    self._log_assets_subclasses_values[key] = [value]
+
+            for key, value in AnalyzeLines(self._portfolio).analyze().items():
+                if key in self._log_lines_values:
+                    self._log_lines_values[key][-1] = value
+                else:
+                    self._log_lines_values[key] = [value]
+
+    def chart_timeline(
+        self,
+        title: str,
+        valuesToGraph: Dict[str, List[float]],
+        colors: Dict[str, str] = {},
+        visible_by_default: bool = True,
+    ) -> Dict[str, Any]:
+        """Plot a Highcharts chart of the portfolio's caracteristics and amounts over time."""
+        # assert self._log_enveloppe_values, "Run the simulation before charting."
 
         return {
-            "chart": {"plotBackgroundColor": None, "plotBorderWidth": None, "plotShadow": False, "type": "area"},
-            "title": {"text": "Simulation", "align": "center"},
+            "chart": {
+                "plotBackgroundColor": None,
+                "plotBorderWidth": None,
+                "plotShadow": False,
+                "type": "area",
+                "zooming": {"type": "xy"},
+                "height": 800,
+                "width": 1000,
+            },
+            "title": {"text": title, "align": "center"},
             "plotOptions": {
-                "series": {"pointStart": self._log_dates[0].year},
                 "area": {
                     "stacking": "normal",
                     "lineColor": "#666666",
@@ -179,13 +258,39 @@ class Timeline:
             "series": [
                 {
                     "name": key,
-                    "data": value,
-                    "color": colors[key],
+                    "data": self._convert_data_series(value),
+                    "visible": visible_by_default,
+                    "color": colors[key] if (key in colors) else {None},
                 }
-                for key, value in self._log_env_states.items()
+                for key, value in valuesToGraph.items()
             ],
+            "xAxis": {"type": "datetime"},
+            "yAxis": {"crosshair": True},
+            "tooltip": {
+                "xDateFormat": "%m %Y",
+                "pointFormat": "{point.x:%e/%m/%Y}: <b>{point.y:,.0f}€</b><br>",
+                "footerFormat": "<i>{series.name}</i>",
+            },
             "credits": {"enabled": False},
         }
+
+    def _convert_data_series(self, data: List[float]) -> List[Any]:
+        """Convert DataSeries in a time series format to allow non regular data"""
+        res = []
+        i = 0
+        while i < len(data):
+            if self._log_dates[i] in self._log_events:
+                evenements = "* " + "<br>* ".join(self._log_events[self._log_dates[i]])
+            else:
+                evenements = ""
+            point = {
+                "x": datetime.combine(self._log_dates[i], datetime.min.time()).timestamp() * 1000,
+                "y": data[i],
+                "name": evenements,
+            }
+            res.append(point)
+            i += 1
+        return res
 
     def _sort_events(self) -> None:
         """Internal method to sort the event list by planned date."""

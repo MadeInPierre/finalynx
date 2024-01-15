@@ -57,5 +57,6 @@ Options:
   --sim-steps=int      Display the simulated portfolio's worth every X years, defaults to 5
   --future             Print the portfolio after the simulation has finished
   --each-step          Print the portfolio for each step of the simulation
+  --metric-frequency   Record the portfolio stats on each day of the simulation 'DAY', 'MONTH', 'YEAR'
 
 """

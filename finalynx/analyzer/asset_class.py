@@ -69,8 +69,33 @@ class AnalyzeAssetClasses(Analyzer):
 
     def analyze(self) -> Dict[str, Any]:
         """:returns: A dictionary with keys as the asset class names and values as the
-        sum of investments corresponding to each class."""
+        sum of investments corresponding to each class. Two-layer dictionary with classes and subclasses."""
         return self._recursive_merge(self.node)
+
+    def analyze_flat(self) -> Dict[str, float]:
+        """:returns: A dictionary with keys as the asset class names and values as the
+        sum of investments corresponding to each class."""
+        return self._recursive_merge_flat(self.node)
+
+    def _recursive_merge_flat(self, node: Node) -> Dict[str, Any]:
+        """Internal method for recursive searching."""
+        total = {c.value: 0.0 for c in AssetClass}
+
+        # Lines simply return their own amount
+        if isinstance(node, Line):
+            total[node.asset_class.value] = node.get_amount()
+            return total
+
+        # Folders merge what the children return
+        elif isinstance(node, Folder):
+            for child in node.children:
+                for key, value in self._recursive_merge_flat(child).items():
+                    total[key] += value
+            return total
+
+        # Safeguard for future versions
+        else:
+            raise ValueError(f"Unknown node type '{type(node)}'.")
 
     def _recursive_merge(self, node: Node) -> Dict[str, Any]:
         """Internal method for recursive searching."""

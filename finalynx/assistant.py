@@ -197,6 +197,8 @@ class Assistant:
             self.simulation.print_each_step = True
         if args["--sim-steps"] and self.simulation:
             self.simulation.step_years = int(args["--sim-steps"])
+        if args["--metric-frequency"] and self.simulation:
+            self.simulation.metrics_record_frequency = str(args["--metric-frequency"])
         if args["--theme"]:
             theme_name = str(args["--theme"])
             if theme_name not in finalynx.theme.AVAILABLE_THEMES:

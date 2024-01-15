@@ -46,19 +46,16 @@ if __name__ in {"__main__", "__mp_main__"}:
     (Optional) Custom shortcuts in variables used below to control the config quickly.
     """
     short_display = FolderDisplay.EXPANDED  # Display style for all short-term folders
-    medium_term_amount = (
-        20000  # Amount of money to keep for medium-term (i.e. Livrets in this config)
-    )
+    medium_term_amount = 20000  # Amount of money to keep for medium-term (i.e. Livrets in this config)
     date_retirement = date(2063, 7, 1)
 
     # Define envelopes used in the portfolio
     bank_lbp = Envelope("La Banque Postale", "LBP")
     bank_n26 = Envelope("N26", "N26")
     bank_boursorama = Envelope("BoursoBank", "BOU")
+    bank_revolut = Envelope("Revolut", "REV")
 
-    pea = PEA(
-        "Bourse Direct", "PEA", date(2022, 7, 1), key="MR LACLAU PIERRE (Compte PEA)"
-    )
+    pea = PEA("Bourse Direct", "PEA", date(2022, 7, 1), key="MR LACLAU PIERRE (Compte PEA)")
     pee = PEE(
         "Natixis",
         "PEE",
@@ -72,9 +69,9 @@ if __name__ in {"__main__", "__mp_main__"}:
     av_ramify = AV("Ramify", "RAM", date(2022, 7, 1), key="Ramify AV")
 
     per_linxea = PER("Linxea Spirit PER", "PER", date(2022, 7, 1), date_retirement)
-    per_prefon = PER(
-        "Prefon", "PRF", date(2022, 7, 1), date_retirement, key="Autres actifs"
-    )
+    per_prefon = PER("Prefon", "PRF", date(2022, 7, 1), date_retirement, key="Autres actifs")
+
+    cto_tr = Envelope("Trade Republic", "TRP", key="Trade Republic Portfolio")
 
     at_home = Envelope("At Home", "PHY", key="Metaux precieux")
 
@@ -151,6 +148,14 @@ if __name__ in {"__main__", "__mp_main__"}:
                                 key="CCP N26",
                                 target=TargetRange(100, 500, tolerance=100),
                                 envelope=bank_n26,
+                            ),
+                            Line(
+                                "Revolut",
+                                AssetClass.CASH,
+                                AssetSubclass.CCP,
+                                key="Revolut Current EUR",
+                                target=TargetRange(100, 500, tolerance=100),
+                                envelope=bank_revolut,
                             ),
                         ],
                     ),
@@ -508,6 +513,13 @@ if __name__ in {"__main__", "__mp_main__"}:
                         key="8804143",
                         envelope=av_linxea,
                         target=TargetMax(0),
+                    ),
+                    Line(
+                        "Livret Trade Republic",
+                        AssetClass.GUARANTEED,
+                        AssetSubclass.LIVRET_TAXED,
+                        key="13666160",
+                        envelope=cto_tr,
                         newline=True,
                     ),
                 ],
@@ -549,9 +561,7 @@ if __name__ in {"__main__", "__mp_main__"}:
         ],
         simulation=Simulation(
             events=[
-                Salary(
-                    livreta, income=2300, expenses=1400, end_date=date(2024, 11, 30)
-                ),
+                Salary(livreta, income=2300, expenses=1400, end_date=date(2024, 11, 30)),
                 Event(
                     AddLineAmount(livreta, 3500),
                     planned_date=date(2024, 4, 10),

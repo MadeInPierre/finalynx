@@ -106,7 +106,7 @@ This project is under the [GPLv3 License](https://github.com/MadeInPierre/finaly
 
 ## 💌 Donations
 
-[<img align="right" src="https://www.mathisplumail.com/wp-content/uploads/2021/04/coffee.png" width="161" />](https://github.com/sponsors/MadeInPierre)
+[<img align="right" src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/buymeacoffee.png" width="161" />](https://github.com/sponsors/MadeInPierre)
 This is a personal project I have fun with on my free time. If you found it useful and wish to support my work, you can [buy me a coffee](https://github.com/sponsors/MadeInPierre)! It would give me the motivation to keep improving it further 😄 Thank you!
 
 Also, big thanks to all contributors 🌹 don't forget to check them out:
@@ -114,6 +114,8 @@ Also, big thanks to all contributors 🌹 don't forget to check them out:
 <a href="https://github.com/MadeInPierre/finalynx/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=MadeInPierre/finalynx" />
 </a>
+
+<!-- ![Alt](https://repobeats.axiom.co/api/embed/44fc99b8a4a89962a0e1a7170f8d44cd3e9ea2e0.svg "Repobeats analytics image") -->
 
 <!-- Breaking: :boom:
 

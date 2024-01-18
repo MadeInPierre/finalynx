@@ -322,7 +322,9 @@ class Assistant:
         # Run until the end date and append the final result
         self._timeline.run()
         append_worth(self._timeline.current_date.year, self.portfolio.get_amount())
-        console.log(f"    Portfolio will be worth [{TH().ACCENT}]{self.portfolio.get_amount():.0f} €[/]")
+        console.log(
+            f"    Portfolio will be worth [{TH().ACCENT}]{self.portfolio.get_amount():.0f} €[/] (net of inflation)"
+        )
         return tree
 
     def render_mainframe(self) -> Columns:

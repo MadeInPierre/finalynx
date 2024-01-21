@@ -2,6 +2,21 @@
 
 
 
+## v1.23.1 (2024-01-21)
+
+### Chore
+
+* chore: fix readme img ([`a3ed9a0`](https://github.com/MadeInPierre/finalynx/commit/a3ed9a0e2af4b732002bcc6adbe340a10515f064))
+
+### Ci
+
+* ci: manual bump to v1.23.0 ([`0daa0cc`](https://github.com/MadeInPierre/finalynx/commit/0daa0cc0ec3318db07f946779e0f7c6269efe00b))
+
+### Fix
+
+* fix: update finary-uapi to 0.2.0 ([`a547db0`](https://github.com/MadeInPierre/finalynx/commit/a547db016ca22ebfe56672d400379ce35566ea2b))
+
+
 ## v1.23.0 (2024-01-15)
 
 ### Ci

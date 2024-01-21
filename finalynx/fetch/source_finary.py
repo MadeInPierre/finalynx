@@ -135,7 +135,7 @@ class SourceFinary(SourceBaseLine):
                 result = ff.signin()
                 self._log("Signed in to Finary.")
 
-            if result is None or result["message"] != "Created":
+            if result is None or result["response"]["status"] != "complete":
                 self._log(
                     "[red][bold]Failed to signin to Finary![/] Deleting credentials and cookies, please try again.[/]"
                 )

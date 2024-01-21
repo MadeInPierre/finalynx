@@ -16,6 +16,7 @@ import finary_uapi.constants  # type: ignore # Set the credentials and cookies c
 
 finary_uapi.constants.CREDENTIAL_FILE = os.path.join(os.path.dirname(__file__), "finary_credentials.json")
 finary_uapi.constants.COOKIE_FILENAME = os.path.join(os.path.dirname(__file__), "finary_cookies.txt")
+finary_uapi.constants.JWT_FILENAME = os.path.join(os.path.dirname(__file__), "jwt.json")
 
 from ..console import console
 from .fetch import Fetch

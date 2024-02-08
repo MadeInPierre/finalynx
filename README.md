@@ -38,8 +38,8 @@ Don't have Finary yet? You can sign up using my [referral link](https://finary.c
   </div>
 </summary>
 
-| Recommendations | Web dashboard |
-| --- | --- |
+| Recommendations                                                                                                                    | Web dashboard                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_recommendations.png" width="600" /> | <img src="https://raw.githubusercontent.com/MadeInPierre/finalynx/main/docs/_static/screenshot_dashboard.png" width="600" /> |
 
 Finalynx also includes a daily budget manager to classify your expenses and show monthly & yearly statistics:
@@ -71,6 +71,8 @@ pip install finalynx  # run again with --upgrade to update
 ```
 
 And you're done! Now create your own copy of the [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) example anywhere and run it to make sure everything works. You can now customize it for your own needs 🚀
+
+**Beginners:** Here are detailed steps in the [documentation](https://finalynx.readthedocs.io/en/latest/quickstart/installation.html#detailed-instructions) or a [video](https://www.terminalizer.com/view/5fcce8cb5875). Feel free to [open a discussion](https://github.com/MadeInPierre/finalynx/discussions) for help!
 
 **Pro Tip 💡:** _Why not setup a script to autorun your config in a new terminal on startup? Could be a nice view_ 🤭
 

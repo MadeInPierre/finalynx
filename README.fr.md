@@ -72,6 +72,8 @@ pip install finalynx  # exécuter à nouveau avec --upgrade pour mettre à jour
 
 Et c'est tout ! Maintenant, créez votre propre copie de l'exemple [`demo.py`](https://github.com/MadeInPierre/finalynx/blob/main/examples/demo.py) n'importe où et exécutez-le pour vous assurer que tout fonctionne. Vous pouvez maintenant le personnaliser pour vos propres besoins 🚀
 
+**Débutants:** Voici des [étapes détaillées](https://finalynx.readthedocs.io/en/latest/quickstart/installation.html#detailed-instructions) et une [vidéo](https://www.terminalizer.com/view/5fcce8cb5875). N'hésitez pas à [ouvrir une discussion](https://github.com/MadeInPierre/finalynx/discussions), avec plaisir pour aider !
+
 **Pro Tip 💡:** _Pourquoi pas créer un script pour lancer le projet dans un terminal à chaque démarrage ? Jolie vue_ 🤭
 
 ## ⚙️ Utilisation et documentation

@@ -54,6 +54,7 @@ if __name__ in {"__main__", "__mp_main__"}:
     bank_n26 = Envelope("N26", "N26")
     bank_boursorama = Envelope("BoursoBank", "BOU")
     bank_revolut = Envelope("Revolut", "REV")
+    bank_lydia = Envelope("Lydia", "LYD")
 
     pea = PEA("Bourse Direct", "PEA", date(2022, 7, 1), key="MR LACLAU PIERRE (Compte PEA)")
     pee = PEE(
@@ -146,7 +147,7 @@ if __name__ in {"__main__", "__mp_main__"}:
                                 AssetClass.CASH,
                                 AssetSubclass.CCP,
                                 key="CCP N26",
-                                target=TargetRange(100, 500, tolerance=100),
+                                target=TargetRange(100, 500, tolerance=50),
                                 envelope=bank_n26,
                             ),
                             Line(
@@ -154,8 +155,30 @@ if __name__ in {"__main__", "__mp_main__"}:
                                 AssetClass.CASH,
                                 AssetSubclass.CCP,
                                 key="Revolut Current EUR",
-                                target=TargetRange(100, 500, tolerance=100),
+                                target=TargetRange(100, 500, tolerance=50),
                                 envelope=bank_revolut,
+                            ),
+                            Line(
+                                "Boursorama (à remplacer)",
+                                AssetClass.CASH,
+                                AssetSubclass.CCP,
+                                key="CCP Boursorama",
+                                envelope=bank_boursorama,
+                            ),
+                            Line(
+                                "Lydia Perso",
+                                AssetClass.CASH,
+                                AssetSubclass.CCP,
+                                target=TargetMax(100, tolerance=50),
+                                key="Compte principal",
+                                envelope=bank_lydia,
+                            ),
+                            Line(
+                                "Toothless",
+                                AssetClass.CASH,
+                                AssetSubclass.CCP,
+                                target=TargetRange(100, 500, tolerance=50),
+                                envelope=bank_lydia,
                             ),
                         ],
                     ),
@@ -223,6 +246,14 @@ if __name__ in {"__main__", "__mp_main__"}:
                                 display=FolderDisplay.LINE,
                             ),
                             Line(
+                                "Liquidités PEA",
+                                AssetClass.CASH,
+                                AssetSubclass.LIQUIDITY,
+                                key="13577959",
+                                envelope=pea,
+                                target=TargetRatio(0),
+                            ),
+                            Line(
                                 "Fonds euro",
                                 AssetClass.GUARANTEED,
                                 AssetSubclass.FOND_EURO,
@@ -236,7 +267,7 @@ if __name__ in {"__main__", "__mp_main__"}:
                     ),
                     Folder(
                         "Immobilier papier",
-                        target=TargetRatio(10),
+                        target=TargetRatio(15),
                         perf=LinePerf(4.5),
                         children=[
                             Line(
@@ -378,12 +409,12 @@ if __name__ in {"__main__", "__mp_main__"}:
                     ),
                     Folder(
                         "Défense",
-                        target=TargetRatio(10, zone=2),
+                        target=TargetRatio(5, zone=2),
                         children=[
                             Folder(
                                 "Or",
                                 display=FolderDisplay.LINE,
-                                target=TargetRatio(60, zone=2),
+                                target=TargetRatio(50, zone=2),
                                 perf=LinePerf(2),
                                 children=[
                                     Line(
@@ -405,7 +436,7 @@ if __name__ in {"__main__", "__mp_main__"}:
                             Folder(
                                 "Cryptos",
                                 display=FolderDisplay.LINE,
-                                target=TargetRatio(40, zone=2),
+                                target=TargetRatio(50, zone=2),
                                 perf=LinePerf(0),
                                 newline=True,
                                 children=[
@@ -442,7 +473,7 @@ if __name__ in {"__main__", "__mp_main__"}:
                 ],
             ),
             Folder(
-                "Retraite",
+                "PER Retraite",
                 perf=LinePerf(0, skip=True),
                 children=[
                     Line(
@@ -454,7 +485,7 @@ if __name__ in {"__main__", "__mp_main__"}:
                         perf=LinePerf(5.5),
                     ),
                     Line(
-                        "Fonds Euro PER",
+                        "Fonds Euro",
                         AssetClass.GUARANTEED,
                         AssetSubclass.FOND_EURO,
                         key="319493",
@@ -462,7 +493,7 @@ if __name__ in {"__main__", "__mp_main__"}:
                         perf=LinePerf(3.5),
                     ),
                     Line(
-                        "Prefon PER",
+                        "Prefon",
                         AssetClass.GUARANTEED,
                         AssetSubclass.FOND_EURO,
                         key="22276",
@@ -475,21 +506,6 @@ if __name__ in {"__main__", "__mp_main__"}:
                 "En attente",
                 perf=LinePerf(0, skip=True),
                 children=[
-                    Line(
-                        "Boursorama (à remplacer)",
-                        AssetClass.CASH,
-                        AssetSubclass.CCP,
-                        key="CCP Boursorama",
-                        envelope=bank_boursorama,
-                    ),
-                    Line(
-                        "Liquidités PEA (à investir)",
-                        AssetClass.CASH,
-                        AssetSubclass.LIQUIDITY,
-                        key="13577959",
-                        envelope=pea,
-                        target=TargetMax(0),
-                    ),
                     Line(
                         "AXA Court Terme (à arbitrer)",
                         AssetClass.CASH,
@@ -541,6 +557,7 @@ if __name__ in {"__main__", "__mp_main__"}:
             bank_n26,
             bank_boursorama,
             bank_revolut,
+            bank_lydia,
             pea,
             pee,
             av_linxea,

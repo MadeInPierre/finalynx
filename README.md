@@ -99,7 +99,7 @@ python your_config.py delta  # type --help for other options, like launching a w
 
 ## 👨‍💻 Feedback & Contributions
 
-This repository is at a very early stage. Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project (or [hire me](https://github.com/sponsors/MadeInPierre/commissions) if you can't develop it yourself). Pull requests, [issues](https://github.com/MadeInPierre/finalynx/issues/new) (🇬🇧 preferably) and [open discussions](https://github.com/MadeInPierre/finalynx/discussions/new) (🇬🇧/🇫🇷) are warmly welcome!
+This repository is at a very early stage. Unfortunately, I won't have time to make this tool work for everyone by default, but you are welcome to extend this project (or [hire me](https://github.com/sponsors/MadeInPierre) if you can't develop it yourself). Pull requests, [issues](https://github.com/MadeInPierre/finalynx/issues/new) (🇬🇧 preferably) and [open discussions](https://github.com/MadeInPierre/finalynx/discussions/new) (🇬🇧/🇫🇷) are warmly welcome!
 
 If you would like to contribute to this project, welcome on board and thanks for your interest! 🎉 Please read the [contribution guidelines](https://github.com/MadeInPierre/finalynx/blob/main/CONTRIBUTING.md) to setup the project on your machine and agree on common conventions.
 
